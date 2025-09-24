@@ -1,5 +1,9 @@
+
+import List from "./components/List"
+import './App.css';
+
 function App() {
-  return <h1>Hello</h1>
+  return <List />
 }
 
 export default App;

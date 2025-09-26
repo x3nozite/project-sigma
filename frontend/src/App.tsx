@@ -1,9 +1,14 @@
-
-import List from "./components/List"
-import './App.css';
+import SideBar from "./components/Sidebar";
+import List from "./components/List";
+import "./App.css";
 
 function App() {
-  return <List />
+  return (
+    <div className="relative">
+      <SideBar />
+      <List />
+    </div>
+  );
 }
 
 export default App;

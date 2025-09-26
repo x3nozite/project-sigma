@@ -1,6 +1,6 @@
 function SideBar() {
   return (
-    <div className="flex h-screen w-16 flex-col justify-between border-e border-gray-100 bg-white absolute">
+    <div className="flex h-screen w-16 flex-col justify-between border-e border-gray-100 bg-white z-2 absolute">
       <div>
         <div className="inline-flex size-16 items-center justify-center">
           <span className="grid size-10 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">

@@ -2,6 +2,14 @@
   padding: 15px;
 }
 
+.bottom-nav {
+  position: fixed;
+  bottom: 3dvh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+}
+
 .canvas {
   z-index: 1;
 }

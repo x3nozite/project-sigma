@@ -1,12 +1,14 @@
-import SideBar from "./components/Sidebar";
 import List from "./components/List";
 import { Stage, Layer } from "react-konva";
 import "./App.css";
+import BottomNav from "./components/BottomNav";
 
 function App() {
   return (
     <>
-      <SideBar />
+      <div className="bottom-nav">
+        <BottomNav />
+      </div>
       <div className="canvas">
         <Stage width={window.innerWidth} height={window.innerHeight}>
           <Layer></Layer>

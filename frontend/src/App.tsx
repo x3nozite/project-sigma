@@ -10,18 +10,30 @@ function App() {
   const placeholderText = {
     id: "text-" + rects.length,
     value: "placeholdertext " + rects.length,
-    fontSize: 16
-  }
+    fontSize: 16,
+  };
 
   const addRect = () => {
-    setRects([...rects, { x: 100, y: 100, width: 200, height: 200, id: "rect-" + rects.length, texts: [placeholderText] }]);
-  }
+    setRects([
+      ...rects,
+      {
+        x: 100,
+        y: 100,
+        width: 200,
+        height: 200,
+        id: "rect-" + rects.length,
+        texts: [placeholderText],
+      },
+    ]);
+  };
   return (
     <>
-      <div className="bottom-nav">
-        <BottomNav onClick={addRect} />
+      <div className="relative w-full h-screen overflow-hidden">
+        <div className="bottom-nav">
+          <BottomNav onClick={addRect} />
+        </div>
+        <ShapeCanvas rects={rects} setRects={setRects} />
       </div>
-      <ShapeCanvas rects={rects} setRects={setRects} />
     </>
   );
 }

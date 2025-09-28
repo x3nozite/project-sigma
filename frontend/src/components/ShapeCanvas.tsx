@@ -28,35 +28,43 @@ const ShapeCanvas = ({ rects, setRects }: Props) => {
         const sourceRect = e.source;
         if (rect === sourceRect) return;
         console.log("testing " + rect.id());
-      })
-    })
-  })
+      });
+    });
+  });
 
   const handleDragStart = (e) => {
     const shape = e.target;
     shape.moveTo(tempLayer.current);
-  }
+  };
 
   const handleDragMove = (e) => {
     const stage = e.target.getStage();
     const pointerPos = stage.getPointerPosition();
     const shape = mainLayer.current.getIntersection(pointerPos);
 
-    if (!prevShape.current && shape) { // If there is a shape in the pointer postition
+    if (!prevShape.current && shape) {
+      // If there is a shape in the pointer postition
       // Just entered a new shape
       prevShape.current = shape;
       shape.fire("dragenter", { evt: e.evt, source: e.target }, true);
     } else if (prevShape.current && shape && prevShape.current !== shape) {
       // Leave the shape
-      prevShape.current.fire("dragleave", { evt: e.evt, source: e.target }, true);
+      prevShape.current.fire(
+        "dragleave",
+        { evt: e.evt, source: e.target },
+        true
+      );
       shape.fire("dragenter", { evt: e.evt }, true);
       prevShape.current = shape;
-
     } else if (prevShape.current && !shape) {
-      prevShape.current.fire("dragleave", { evt: e.evt, source: e.target }, true);
+      prevShape.current.fire(
+        "dragleave",
+        { evt: e.evt, source: e.target },
+        true
+      );
       prevShape.current = undefined;
     }
-  }
+  };
 
   const handleDragEnd = (e) => {
     const shape = e.target;
@@ -64,11 +72,12 @@ const ShapeCanvas = ({ rects, setRects }: Props) => {
     const pointerPos = stage.getPointerPosition();
     const shapeOnPointer = mainLayer.current.getIntersection(pointerPos);
 
-    if (shapeOnPointer) prevShape.current.fire("drop", { evt: e.evt, source: e.target }, true);
+    if (shapeOnPointer)
+      prevShape.current.fire("drop", { evt: e.evt, source: e.target }, true);
 
     shape.moveTo(mainLayer.current);
     prevShape.current = undefined;
-  }
+  };
   return (
     <>
       <div className="canvas">
@@ -87,7 +96,6 @@ const ShapeCanvas = ({ rects, setRects }: Props) => {
       </div>
     </>
   );
+};
 
-}
-
-export default ShapeCanvas
+export default ShapeCanvas;

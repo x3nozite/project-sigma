@@ -1,10 +1,11 @@
 import { Stage, Layer } from "react-konva";
 import Rectangle from "./Rectangle";
 import { useEffect, useRef } from "react";
+import type { RectType } from "./types";
 
 interface Props {
-  rects: { x: number, y: number, width: number, height: number, id: string }[];
-  setRects: React.Dispatch<React.SetStateAction<{ x: number, y: number, width: number, height: number, id: string }[]>>;
+  rects: RectType[];
+  setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
 }
 
 const ShapeCanvas = ({ rects, setRects }: Props) => {

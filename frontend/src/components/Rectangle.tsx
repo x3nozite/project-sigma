@@ -34,10 +34,11 @@ const Rectangle = ({ rects, setRects, onDragStart, onDragMove, onDragEnd }: Prop
               stroke="black"
               strokeWidth={1}
             />
-            {rect.texts.map((text) => (
+            {rect.texts.map((text, j) => (
               <Text
                 x={0}
                 y={0}
+                key={j}
                 id={text.id}
                 text={text.value}
                 fontSize={16}

@@ -26,8 +26,8 @@ const ShapeCanvas = ({ rects, setRects }: Props) => {
 
       rect.on("dragenter", (e) => {
         const sourceRect = e.source;
+        if (rect === sourceRect) return;
         console.log("testing " + rect.id());
-
       })
     })
   })
@@ -42,17 +42,12 @@ const ShapeCanvas = ({ rects, setRects }: Props) => {
     const pointerPos = stage.getPointerPosition();
     const shape = mainLayer.current.getIntersection(pointerPos);
 
-    if (shape == e.target) return;
-
     if (!prevShape.current && shape) { // If there is a shape in the pointer postition
       // Just entered a new shape
       prevShape.current = shape;
       shape.fire("dragenter", { evt: e.evt, source: e.target }, true);
-    } else if (prevShape.current && shape) {
+    } else if (prevShape.current && shape && prevShape.current !== shape) {
       // Leave the shape
-      if (prevShape.current == shape) {
-        return;
-      }
       prevShape.current.fire("dragleave", { evt: e.evt, source: e.target }, true);
       shape.fire("dragenter", { evt: e.evt }, true);
       prevShape.current = shape;

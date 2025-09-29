@@ -3,6 +3,7 @@ export type RectType = {
   y: number;
   width: number;
   height: number;
+  color: string;
   id: string;
   texts: TextType[];
   isCollapsed: boolean;

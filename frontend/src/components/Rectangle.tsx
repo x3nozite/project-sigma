@@ -33,7 +33,7 @@ const Rectangle = ({
           <Rect
             width={rect.width}
             height={rect.height}
-            fill="white"
+            fill={rect.color}
             shadowBlur={2}
             stroke="black"
             strokeWidth={1}

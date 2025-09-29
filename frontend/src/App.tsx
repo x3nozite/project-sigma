@@ -21,8 +21,10 @@ function App() {
         y: 100,
         width: 200,
         height: 200,
+        color: "white",
         id: "rect-" + rects.length,
         texts: [placeholderText],
+        isCollapsed: false,
       },
     ]);
   };

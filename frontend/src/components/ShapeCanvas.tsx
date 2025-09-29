@@ -27,8 +27,28 @@ const ShapeCanvas = ({ rects, setRects }: Props) => {
       rect.on("dragenter", (e) => {
         const sourceRect = e.source;
         if (rect === sourceRect) return;
-        console.log("testing " + rect.id());
+
+        setRects(prev =>
+          prev.map(r =>
+            r.id === rect.id()
+              ? { ...r, color: "green" }
+              : r
+          )
+        )
       });
+      rect.on("dragleave", (e) => {
+        const sourceRect = e.source;
+        if (rect === sourceRect) return;
+
+        setRects(prev =>
+          prev.map(r =>
+            r.id === rect.id()
+              ? { ...r, color: "white" }
+              : r
+          )
+        )
+      });
+
     });
   });
 

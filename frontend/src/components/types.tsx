@@ -13,3 +13,9 @@ export type TextType = {
   value: string;
   fontSize: number;
 };
+
+export type ArrowType = {
+  id: string;
+  from: string;
+  to: string;
+}

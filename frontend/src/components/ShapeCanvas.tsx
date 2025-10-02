@@ -1,7 +1,8 @@
 import { Stage, Layer } from "react-konva";
 import Rectangle from "./Rectangle";
-import { useEffect, useRef } from "react";
-import type { RectType } from "./types";
+import { useEffect, useRef, useState } from "react";
+import type { RectType, ArrowType } from "./types";
+import ArrowShape from "./ArrowShape";
 
 interface Props {
   rects: RectType[];
@@ -12,6 +13,12 @@ const ShapeCanvas = ({ rects, setRects }: Props) => {
   const mainLayer = useRef(null);
   const prevShape = useRef(null);
   const tempLayer = useRef(null);
+
+  const [connectors, setConnectors] = useState<ArrowType[]>([]);
+
+  const addConnector = (from, to) => {
+    setConnectors([...connectors, { id: "connector-" + connectors.length, from: from.id(), to: to.id() }])
+  }
 
   useEffect(() => {
     if (!mainLayer.current) return;
@@ -49,6 +56,11 @@ const ShapeCanvas = ({ rects, setRects }: Props) => {
         )
       });
 
+      rect.on("drop", (e) => {
+        addConnector(e.source, rect);
+        console.log(e.source.id(), rect.id())
+      })
+
     });
   });
 
@@ -84,6 +96,7 @@ const ShapeCanvas = ({ rects, setRects }: Props) => {
       );
       prevShape.current = undefined;
     }
+
   };
 
   const handleDragEnd = (e) => {
@@ -107,8 +120,21 @@ const ShapeCanvas = ({ rects, setRects }: Props) => {
               rects={rects}
               setRects={setRects}
               onDragStart={handleDragStart}
-              onDragMove={handleDragMove}
+              onDragMove={(e) => {
+                setRects(rects.map(rect =>
+                  rect.id === e.target.id()
+                    ? { ...rect, x: e.target.x(), y: e.target.y() }
+                    : rect
+                ))
+
+                handleDragMove(e);
+              }}
               onDragEnd={handleDragEnd}
+            />
+            <ArrowShape
+              connectors={connectors}
+              setConnectors={setConnectors}
+              rectangles={rects}
             />
           </Layer>
           <Layer ref={tempLayer} />

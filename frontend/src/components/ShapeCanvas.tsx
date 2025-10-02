@@ -66,13 +66,13 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
   });
 
   const handleDragStart = (e) => {
-    if(tool === 'eraser') return;  
+    if (tool === 'eraser') return;
     const shape = e.target;
     shape.moveTo(tempLayer.current);
   };
 
   const handleDragMove = (e) => {
-    if(tool ==='eraser') return;
+    if (tool === 'eraser') return;
     const stage = e.target.getStage();
     const pointerPos = stage.getPointerPosition();
     const shape = mainLayer.current.getIntersection(pointerPos);
@@ -134,7 +134,7 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
                 handleDragMove(e);
               }}
               onDragEnd={handleDragEnd}
-              tool = {tool}
+              tool={tool}
             />
             <ArrowShape
               connectors={connectors}

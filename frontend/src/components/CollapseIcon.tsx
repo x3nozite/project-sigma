@@ -1,4 +1,4 @@
-import { Text } from :"react-konva"
+import { Text } from "react-konva"
 
 
 function CollapseIcon() {

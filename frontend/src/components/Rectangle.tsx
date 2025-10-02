@@ -8,6 +8,7 @@ interface Props {
   onDragStart: (e) => void;
   onDragMove: (e) => void;
   onDragEnd: (e) => void;
+  tool: 'select' | 'eraser';
 }
 
 const Rectangle = ({
@@ -16,7 +17,13 @@ const Rectangle = ({
   onDragStart,
   onDragMove,
   onDragEnd,
+  tool,
 }: Props) => {
+  const handleClick = (rectId: string) => {
+    if (tool === 'eraser') {
+      setRects(prev => prev.filter(r => r.id !== rectId));
+    }
+  };
   return (
     <>
       {rects.map((rect, i) => (
@@ -25,10 +32,11 @@ const Rectangle = ({
           key={i}
           x={rect.x}
           y={rect.y}
-          draggable
+          draggable={tool !== 'eraser'}
           onDragStart={onDragStart}
           onDragMove={onDragMove}
           onDragEnd={onDragEnd}
+          onClick={() => handleClick(rect.id)}
         >
           <Rect
             width={rect.width}
@@ -64,16 +72,19 @@ const Rectangle = ({
             height={rect.height}
             align="right"
             verticalAlign="top"
-            onClick={() => {
-              setRects((prev) => {
-                return prev.map((r) => {
-                  if (r.id === rect.id) {
-                    return { ...r, isCollapsed: !r.isCollapsed };
-                  } else {
-                    return r;
-                  }
+            onClick={(e) => {
+              if (tool !== 'eraser') {
+                e.cancelBubble = true;
+                setRects((prev) => {
+                  return prev.map((r) => {
+                    if (r.id === rect.id) {
+                      return { ...r, isCollapsed: !r.isCollapsed };
+                    } else {
+                      return r;
+                    }
+                  });
                 });
-              });
+              }
             }}
           ></Text>
         </Group>

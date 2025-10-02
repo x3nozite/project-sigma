@@ -6,6 +6,7 @@ import type { RectType, TextType } from "./components/types";
 
 function App() {
   const [rects, setRects] = useState<RectType[]>([]);
+  const [tool, setTool] = useState<'select' | 'eraser'>('select');
 
   const placeholderText = {
     id: "text-" + rects.length,
@@ -14,6 +15,7 @@ function App() {
   };
 
   const addRect = () => {
+    setTool("select");
     setRects([
       ...rects,
       {
@@ -28,13 +30,18 @@ function App() {
       },
     ]);
   };
+
+  const toggleEraser = () => {
+    setTool(tool === 'eraser' ? 'select' : 'eraser');
+  };
+
   return (
     <>
       <div className="relative w-full h-screen overflow-hidden">
         <div className="bottom-nav">
-          <BottomNav onClick={addRect} />
+          <BottomNav onShapeClick={addRect} onEraserClick={toggleEraser} isActive={tool === "eraser"} />
         </div>
-        <ShapeCanvas rects={rects} setRects={setRects} />
+        <ShapeCanvas rects={rects} setRects={setRects} tool={tool} />
       </div>
     </>
   );

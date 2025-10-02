@@ -7,9 +7,10 @@ import ArrowShape from "./ArrowShape";
 interface Props {
   rects: RectType[];
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
+  tool: 'select' | 'eraser';
 }
 
-const ShapeCanvas = ({ rects, setRects }: Props) => {
+const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
   const mainLayer = useRef(null);
   const prevShape = useRef(null);
   const tempLayer = useRef(null);
@@ -65,11 +66,13 @@ const ShapeCanvas = ({ rects, setRects }: Props) => {
   });
 
   const handleDragStart = (e) => {
+    if(tool === 'eraser') return;  
     const shape = e.target;
     shape.moveTo(tempLayer.current);
   };
 
   const handleDragMove = (e) => {
+    if(tool ==='eraser') return;
     const stage = e.target.getStage();
     const pointerPos = stage.getPointerPosition();
     const shape = mainLayer.current.getIntersection(pointerPos);
@@ -100,6 +103,7 @@ const ShapeCanvas = ({ rects, setRects }: Props) => {
   };
 
   const handleDragEnd = (e) => {
+    if (tool === "eraser") return;
     const shape = e.target;
     const stage = shape.getStage();
     const pointerPos = stage.getPointerPosition();
@@ -130,6 +134,7 @@ const ShapeCanvas = ({ rects, setRects }: Props) => {
                 handleDragMove(e);
               }}
               onDragEnd={handleDragEnd}
+              tool = {tool}
             />
             <ArrowShape
               connectors={connectors}

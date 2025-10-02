@@ -1,11 +1,13 @@
 interface Props {
-  onClick: () => void;
+  onEraserClick: () => void;
+  onShapeClick: () => void;
+  isActive: boolean;
 }
 
-function BottomNav({ onClick }: Props) {
+function BottomNav({ onShapeClick, onTextClick, onEraserClick, isActive }: Props) {
   return (
     <div className="inline-flex">
-      <button onClick={onClick} className="add-shape rounded-l-sm border border-gray-200 p-5 text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50">
+      <button onClick={onShapeClick} className="add-shape rounded-l-sm border border-gray-200 p-5 text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -31,7 +33,9 @@ function BottomNav({ onClick }: Props) {
           />
         </svg>
       </button>
-      <button className="delete-task -ml-px rounded-r-sm border border-gray-200 p-5 text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50">
+      <button onClick = {onEraserClick} className="delete-task -ml-px rounded-r-sm border border-gray-200 p-5 text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"
+      // isActive? .... : ....
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"

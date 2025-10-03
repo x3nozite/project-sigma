@@ -14,6 +14,7 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
   const mainLayer = useRef(null);
   const prevShape = useRef(null);
   const tempLayer = useRef(null);
+  const arrowLayer = useRef(null);
 
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
 
@@ -25,41 +26,28 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
     if (!mainLayer.current) return;
 
     rects.forEach((r) => {
+      const rectGroup = mainLayer.current.findOne(`#group-${r.id}`);
       const rect = mainLayer.current.findOne(`#${r.id}`);
-      if (!rect) return;
+      if (!rectGroup) return;
 
-      rect.off("drop");
-      rect.off("dragenter");
-      rect.off("dragleave");
+      rectGroup.off("drop");
+      rectGroup.off("dragenter");
+      rectGroup.off("dragleave");
 
-      rect.on("dragenter", (e) => {
+      rectGroup.on("dragenter", (e) => {
         const sourceRect = e.source;
-        if (rect === sourceRect) return;
-
-        setRects(prev =>
-          prev.map(r =>
-            r.id === rect.id()
-              ? { ...r, color: "green" }
-              : r
-          )
-        )
+        if (rectGroup === sourceRect) return;
+        rect.fill("green");
       });
-      rect.on("dragleave", (e) => {
+      rectGroup.on("dragleave", (e) => {
         const sourceRect = e.source;
-        if (rect === sourceRect) return;
-
-        setRects(prev =>
-          prev.map(r =>
-            r.id === rect.id()
-              ? { ...r, color: "white" }
-              : r
-          )
-        )
+        if (rectGroup === sourceRect) return;
+        rect.fill("white");
       });
 
-      rect.on("drop", (e) => {
-        addConnector(e.source, rect);
-        console.log(e.source.id(), rect.id())
+      rectGroup.on("drop", (e) => {
+        addConnector(e.source, rectGroup);
+        rect.fill("white");
       })
 
     });
@@ -73,6 +61,9 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
 
   const handleDragMove = (e) => {
     if (tool === 'eraser') return;
+
+    arrowMovement();
+
     const stage = e.target.getStage();
     const pointerPos = stage.getPointerPosition();
     const shape = mainLayer.current.getIntersection(pointerPos);
@@ -99,7 +90,6 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
       );
       prevShape.current = undefined;
     }
-
   };
 
   const handleDragEnd = (e) => {
@@ -115,6 +105,26 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
     shape.moveTo(mainLayer.current);
     prevShape.current = undefined;
   };
+
+  const arrowMovement = () => {
+    connectors.forEach(connector => {
+      const fromNode = tempLayer.current.findOne(`#${connector.from}`);
+      const toNode = mainLayer.current.findOne(`#${connector.to}`);
+      const arrowNode = arrowLayer.current.findOne(`#${connector.id}`);
+
+
+      if (!fromNode || !toNode || !arrowNode) return;
+
+      arrowNode.points([
+        fromNode.x() + fromNode.width() / 2,
+        fromNode.y() + fromNode.height() / 2,
+        toNode.x() + toNode.width() / 2,
+        toNode.y() + toNode.height() / 2,
+      ])
+
+    })
+  }
+
   return (
     <>
       <div className="canvas">
@@ -124,23 +134,27 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
               rects={rects}
               setRects={setRects}
               onDragStart={handleDragStart}
-              onDragMove={(e) => {
+              onDragMove={handleDragMove}
+              onDragEnd={(e) => {
                 setRects(rects.map(rect =>
-                  rect.id === e.target.id()
+                  ("group-" + rect.id) === e.target.id()
                     ? { ...rect, x: e.target.x(), y: e.target.y() }
                     : rect
                 ))
 
-                handleDragMove(e);
+                handleDragEnd(e);
               }}
-              onDragEnd={handleDragEnd}
               tool={tool}
             />
+
+
+          </Layer>
+          <Layer ref={arrowLayer}>
             <ArrowShape
               connectors={connectors}
-              setConnectors={setConnectors}
-              rectangles={rects}
+              mainLayer={mainLayer}
             />
+
           </Layer>
           <Layer ref={tempLayer} />
         </Stage>

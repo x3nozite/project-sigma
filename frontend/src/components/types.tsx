@@ -7,6 +7,8 @@ export type RectType = {
   id: string;
   texts: TextType[];
   isCollapsed: boolean;
+  children: string[];
+  parents: string[];
 };
 export type TextType = {
   id: string;

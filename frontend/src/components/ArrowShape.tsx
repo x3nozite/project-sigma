@@ -1,42 +1,29 @@
 import { Arrow } from "react-konva";
-import type { ArrowType, RectType } from "./types";
+import type { ArrowType } from "./types";
+import Konva from "konva";
 
 interface Props {
   connectors: ArrowType[],
-  setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>;
-  rectangles: RectType[],
+  mainLayer: React.RefObject<Konva.Layer>,
 }
 
-const ArrowShape = ({ connectors, setConnectors, rectangles }: Props) => {
+const ArrowShape = ({ connectors, mainLayer }: Props) => {
   const getConnectorPoints = (from, to) => {
-    const dx = to.x - from.x;
-    const dy = to.y - from.y;
-    const angle = Math.atan2(-dy, dx);
-
-    const radius = 0;
-
-    //return [
-    //  from.x + -radius * Math.cos(angle + Math.PI),
-    //  from.y + -radius * Math.sin(angle + Math.PI),
-    //  to.x + -radius * Math.cos(angle),
-    //  to.y + -radius * Math.sin(angle)
-    //];
-    //
     return [
-      from.x + from.width / 2,
-      from.y + from.height / 2,
-      to.x + to.width / 2,
-      to.y + to.height / 2
+      from.x() + from.width() / 2,
+      from.y() + from.height() / 2,
+      to.x() + to.width() / 2,
+      to.y() + to.height() / 2
     ]
   };
 
   return (
     <>
       {connectors.map((connector) => {
-        const fromNode = rectangles.find((r) => r.id === connector.from);
-        const toNode = rectangles.find((r) => r.id === connector.to);
-
+        const fromNode = mainLayer.current.findOne(`#${connector.from}`);
+        const toNode = mainLayer.current.findOne(`#${connector.to}`);
         if (!fromNode || !toNode) return null;
+
         const points = getConnectorPoints(fromNode, toNode);
         console.log(points);
         return (

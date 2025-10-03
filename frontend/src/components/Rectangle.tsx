@@ -28,8 +28,8 @@ const Rectangle = ({
     <>
       {rects.map((rect, i) => (
         <Group
-          id={rect.id}
           key={i}
+          id={"group-" + rect.id}
           x={rect.x}
           y={rect.y}
           draggable={tool !== 'eraser'}
@@ -39,6 +39,7 @@ const Rectangle = ({
           onClick={() => handleClick(rect.id)}
         >
           <Rect
+            id={rect.id}
             width={rect.width}
             height={rect.height}
             fill={rect.color}

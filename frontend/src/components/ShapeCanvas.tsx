@@ -7,7 +7,7 @@ import ArrowShape from "./ArrowShape";
 interface Props {
   rects: RectType[];
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
-  tool: 'select' | 'eraser';
+  tool: "select" | "eraser";
 }
 
 const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
@@ -19,8 +19,11 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
 
   const addConnector = (from, to) => {
-    setConnectors([...connectors, { id: "connector-" + connectors.length, from: from.id(), to: to.id() }])
-  }
+    setConnectors([
+      ...connectors,
+      { id: "connector-" + connectors.length, from: from.id(), to: to.id() },
+    ]);
+  };
 
   useEffect(() => {
     if (!mainLayer.current) return;
@@ -40,7 +43,11 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
         if (rectGroup === sourceRect) return;
         if (rect.fill() === "green") return;
 
-        if (r.children.includes(sourceRect.id()) || r.parents.includes(sourceRect.id())) return;
+        if (
+          r.children.includes(sourceRect.id()) ||
+          r.parents.includes(sourceRect.id())
+        )
+          return;
 
         rect.fill("green");
       });
@@ -53,35 +60,44 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
       rectGroup.on("drop", (e) => {
         const sourceRect = e.source;
         if (!sourceRect) return;
-        if (r.children.includes(sourceRect.id()) || r.parents.includes(sourceRect.id())) return;
+        if (
+          r.children.includes(sourceRect.id()) ||
+          r.parents.includes(sourceRect.id())
+        )
+          return;
 
         addConnector(e.source, rectGroup);
         rect.fill("white");
 
-        setRects(prev => {
-          return prev.map(rectangle => {
-            if (("group-" + rectangle.id) === e.source.id()) {
-              return { ...rectangle, parents: [...rectangle.parents, rectGroup.id()] }
+        setRects((prev) => {
+          return prev.map((rectangle) => {
+            if ("group-" + rectangle.id === e.source.id()) {
+              return {
+                ...rectangle,
+                parents: [...rectangle.parents, rectGroup.id()],
+              };
             }
-            if (("group-" + rectangle.id) === rectGroup.id()) {
-              return { ...rectangle, children: [...rectangle.children, e.source.id()] }
+            if ("group-" + rectangle.id === rectGroup.id()) {
+              return {
+                ...rectangle,
+                children: [...rectangle.children, e.source.id()],
+              };
             }
-            return rectangle
-          })
-        })
-      })
-
+            return rectangle;
+          });
+        });
+      });
     });
   });
 
   const handleDragStart = (e) => {
-    if (tool === 'eraser') return;
+    if (tool === "eraser") return;
     const shape = e.target;
     shape.moveTo(tempLayer.current);
   };
 
   const handleDragMove = (e) => {
-    if (tool === 'eraser') return;
+    if (tool === "eraser") return;
 
     arrowMovement();
 
@@ -128,19 +144,25 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
   };
 
   const arrowMovement = () => {
-    connectors.forEach(connector => {
+    connectors.forEach((connector) => {
       if (!mainLayer.current || !tempLayer.current) return;
 
-      const fromNode = tempLayer.current.findOne(`#${connector.from}`)
-        || mainLayer.current.findOne(`#${connector.from}`);
-      const toNode = tempLayer.current.findOne(`#${connector.to}`)
-        || mainLayer.current.findOne(`#${connector.to}`);
+      const fromNode =
+        tempLayer.current.findOne(`#${connector.from}`) ||
+        mainLayer.current.findOne(`#${connector.from}`);
+      const toNode =
+        tempLayer.current.findOne(`#${connector.to}`) ||
+        mainLayer.current.findOne(`#${connector.to}`);
       const arrowNode = arrowLayer.current.findOne(`#${connector.id}`);
 
-      const fromShape = mainLayer.current.findOne(`#${connector.from.replace(/^group-/, "")}`)
-        || tempLayer.current.findOne(`#${connector.from.replace(/^group-/, "")}`);
-      const toShape = mainLayer.current.findOne(`#${connector.to.replace(/^group-/, "")}`)
-        || tempLayer.current.findOne(`#${connector.to.replace(/^group-/, "")}`);;
+      const fromShape =
+        mainLayer.current.findOne(
+          `#${connector.from.replace(/^group-/, "")}`
+        ) ||
+        tempLayer.current.findOne(`#${connector.from.replace(/^group-/, "")}`);
+      const toShape =
+        mainLayer.current.findOne(`#${connector.to.replace(/^group-/, "")}`) ||
+        tempLayer.current.findOne(`#${connector.to.replace(/^group-/, "")}`);
 
       if (!fromNode || !toNode || !arrowNode || !fromShape || !toShape) return;
 
@@ -149,20 +171,16 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
         fromNode.y() + fromShape.height() / 2,
         toNode.x() + toShape.width() / 2,
         toNode.y() + toShape.height() / 2,
-      ])
-
-    })
-  }
+      ]);
+    });
+  };
 
   return (
     <>
       <div className="canvas">
         <Stage width={window.innerWidth} height={window.innerHeight}>
           <Layer ref={arrowLayer}>
-            <ArrowShape
-              connectors={connectors}
-              mainLayer={mainLayer}
-            />
+            <ArrowShape connectors={connectors} mainLayer={mainLayer} />
           </Layer>
 
           <Layer ref={mainLayer}>
@@ -172,17 +190,18 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
               onDragStart={handleDragStart}
               onDragMove={handleDragMove}
               onDragEnd={(e) => {
-                setRects(rects.map(rect =>
-                  ("group-" + rect.id) === e.target.id()
-                    ? { ...rect, x: e.target.x(), y: e.target.y() }
-                    : rect
-                ))
+                setRects(
+                  rects.map((rect) =>
+                    "group-" + rect.id === e.target.id()
+                      ? { ...rect, x: e.target.x(), y: e.target.y() }
+                      : rect
+                  )
+                );
 
                 handleDragEnd(e);
               }}
               tool={tool}
             />
-
           </Layer>
           <Layer ref={tempLayer} />
         </Stage>

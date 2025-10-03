@@ -4,6 +4,7 @@ import type { RectType } from "./types";
 interface Props {
   rects: RectType[];
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
+  highlighted: Record<string, boolean>;
 
   onDragStart: (e) => void;
   onDragMove: (e) => void;

@@ -22,12 +22,14 @@ function App() {
       {
         x: 100,
         y: 100,
-        width: 200,
-        height: 200,
+        width: 100,
+        height: 100,
         color: "white",
         id: "rect-" + rects.length,
         texts: [placeholderText],
         isCollapsed: false,
+        children: [],
+        parents: [],
       },
     ]);
   };

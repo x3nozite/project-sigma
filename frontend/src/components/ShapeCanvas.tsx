@@ -36,7 +36,12 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
 
       rectGroup.on("dragenter", (e) => {
         const sourceRect = e.source;
+        if (!sourceRect) return;
         if (rectGroup === sourceRect) return;
+        if (rect.fill() === "green") return;
+
+        if (r.children.includes(sourceRect.id()) || r.parents.includes(sourceRect.id())) return;
+
         rect.fill("green");
       });
       rectGroup.on("dragleave", (e) => {
@@ -46,8 +51,24 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
       });
 
       rectGroup.on("drop", (e) => {
+        const sourceRect = e.source;
+        if (!sourceRect) return;
+        if (r.children.includes(sourceRect.id()) || r.parents.includes(sourceRect.id())) return;
+
         addConnector(e.source, rectGroup);
         rect.fill("white");
+
+        setRects(prev => {
+          return prev.map(rectangle => {
+            if (("group-" + rectangle.id) === e.source.id()) {
+              return { ...rectangle, parents: [...rectangle.parents, rectGroup.id()] }
+            }
+            if (("group-" + rectangle.id) === rectGroup.id()) {
+              return { ...rectangle, children: [...rectangle.children, e.source.id()] }
+            }
+            return rectangle
+          })
+        })
       })
 
     });
@@ -99,19 +120,20 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
     const pointerPos = stage.getPointerPosition();
     const shapeOnPointer = mainLayer.current.getIntersection(pointerPos);
 
-    if (shapeOnPointer)
+    if (shapeOnPointer) {
       prevShape.current.fire("drop", { evt: e.evt, source: e.target }, true);
-
+    }
     shape.moveTo(mainLayer.current);
     prevShape.current = undefined;
   };
 
   const arrowMovement = () => {
     connectors.forEach(connector => {
-      const fromNode = tempLayer.current.findOne(`#${connector.from}`);
-      const toNode = mainLayer.current.findOne(`#${connector.to}`);
+      const fromNode = tempLayer.current.findOne(`#${connector.from}`)
+        || mainLayer.current.findOne(`#${connector.from}`);
+      const toNode = tempLayer.current.findOne(`#${connector.to}`)
+        || mainLayer.current.findOne(`#${connector.to}`);
       const arrowNode = arrowLayer.current.findOne(`#${connector.id}`);
-
 
       if (!fromNode || !toNode || !arrowNode) return;
 

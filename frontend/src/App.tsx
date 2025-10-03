@@ -1,6 +1,6 @@
 import "./App.css";
 import BottomNav from "./components/BottomNav";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import ShapeCanvas from "./components/ShapeCanvas";
 import type { RectType, TextType } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
@@ -8,14 +8,19 @@ import { MainButton, SecondButton } from "./components/ui/buttons";
 function App() {
   const [rects, setRects] = useState<RectType[]>([]);
   const [tool, setTool] = useState<"select" | "eraser">("select");
+  const idCounter = useRef(0);
 
-  const placeholderText = {
-    id: "text-" + rects.length,
-    value: "placeholdertext " + rects.length,
-    fontSize: 16,
-  };
 
   const addRect = () => {
+    const newId = idCounter.current;
+    idCounter.current += 1;
+
+    const placeholderText = {
+      id: "text-" + newId,
+      value: "placeholdertext " + newId,
+      fontSize: 16,
+    };
+
     setTool("select");
     setRects([
       ...rects,
@@ -25,7 +30,7 @@ function App() {
         width: 100,
         height: 100,
         color: "white",
-        id: "rect-" + rects.length,
+        id: "rect-" + newId,
         texts: [placeholderText],
         isCollapsed: false,
         children: [],

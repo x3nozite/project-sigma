@@ -41,11 +41,11 @@ function App() {
   return (
     <>
       <div className="relative w-full h-screen overflow-hidden">
-        <div className="top-nav flex flex-row object-top-right gap-2 m-4">
+        <div className="top-nav absolute flex flex-row top-0 right-0 gap-2 m-4">
           <SecondButton title="Sign-Up" />
           <MainButton title="Login" />
         </div>
-        <div className="bottom-nav">
+        <div className="bottom-nav absolute bottom-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-lg/30 shadow-gray-600">
           <BottomNav
             onShapeClick={addRect}
             onEraserClick={toggleEraser}

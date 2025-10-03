@@ -8,23 +8,27 @@ interface Props {
 }
 
 const ArrowShape = ({ connectors, mainLayer }: Props) => {
-  const getConnectorPoints = (from, to) => {
+  const getConnectorPoints = (fromGroup, toGroup, fromShape, toShape) => {
     return [
-      from.x() + from.width() / 2,
-      from.y() + from.height() / 2,
-      to.x() + to.width() / 2,
-      to.y() + to.height() / 2
+      fromGroup.x() + fromShape.width() / 2,
+      fromGroup.y() + fromShape.height() / 2,
+      toGroup.x() + toShape.width() / 2,
+      toGroup.y() + toShape.height() / 2
     ]
   };
 
   return (
     <>
       {connectors.map((connector) => {
-        const fromNode = mainLayer.current.findOne(`#${connector.from}`);
-        const toNode = mainLayer.current.findOne(`#${connector.to}`);
-        if (!fromNode || !toNode) return null;
+        const fromGroup = mainLayer.current.findOne(`#${connector.from}`);
+        const toGroup = mainLayer.current.findOne(`#${connector.to}`);
 
-        const points = getConnectorPoints(fromNode, toNode);
+        const fromShape = mainLayer.current.findOne(`#${connector.from.replace(/^group-/, "")}`);
+        const toShape = mainLayer.current.findOne(`#${connector.to.replace(/^group-/, "")}`);
+
+        if (!fromGroup || !toGroup) return null;
+
+        const points = getConnectorPoints(fromGroup, toGroup, fromShape, toShape);
         console.log(points);
         return (
           < Arrow

@@ -129,19 +129,26 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
 
   const arrowMovement = () => {
     connectors.forEach(connector => {
+      if (!mainLayer.current || !tempLayer.current) return;
+
       const fromNode = tempLayer.current.findOne(`#${connector.from}`)
         || mainLayer.current.findOne(`#${connector.from}`);
       const toNode = tempLayer.current.findOne(`#${connector.to}`)
         || mainLayer.current.findOne(`#${connector.to}`);
       const arrowNode = arrowLayer.current.findOne(`#${connector.id}`);
 
-      if (!fromNode || !toNode || !arrowNode) return;
+      const fromShape = mainLayer.current.findOne(`#${connector.from.replace(/^group-/, "")}`)
+        || tempLayer.current.findOne(`#${connector.from.replace(/^group-/, "")}`);
+      const toShape = mainLayer.current.findOne(`#${connector.to.replace(/^group-/, "")}`)
+        || tempLayer.current.findOne(`#${connector.to.replace(/^group-/, "")}`);;
+
+      if (!fromNode || !toNode || !arrowNode || !fromShape || !toShape) return;
 
       arrowNode.points([
-        fromNode.x() + fromNode.width() / 2,
-        fromNode.y() + fromNode.height() / 2,
-        toNode.x() + toNode.width() / 2,
-        toNode.y() + toNode.height() / 2,
+        fromNode.x() + fromShape.width() / 2,
+        fromNode.y() + fromShape.height() / 2,
+        toNode.x() + toShape.width() / 2,
+        toNode.y() + toShape.height() / 2,
       ])
 
     })
@@ -151,6 +158,13 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
     <>
       <div className="canvas">
         <Stage width={window.innerWidth} height={window.innerHeight}>
+          <Layer ref={arrowLayer}>
+            <ArrowShape
+              connectors={connectors}
+              mainLayer={mainLayer}
+            />
+          </Layer>
+
           <Layer ref={mainLayer}>
             <Rectangle
               rects={rects}
@@ -167,14 +181,6 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
                 handleDragEnd(e);
               }}
               tool={tool}
-            />
-
-
-          </Layer>
-          <Layer ref={arrowLayer}>
-            <ArrowShape
-              connectors={connectors}
-              mainLayer={mainLayer}
             />
 
           </Layer>

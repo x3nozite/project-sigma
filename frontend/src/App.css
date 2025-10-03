@@ -2,6 +2,14 @@
   padding: 15px;
 }
 
+.top-nav {
+  position: fixed;
+  top: 1dvh;
+  left: 90%;
+  transform: translateX(-90%);
+  z-index: 51;
+}
+
 .bottom-nav {
   position: fixed;
   bottom: 3dvh;

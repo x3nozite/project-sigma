@@ -8,7 +8,7 @@ interface Props {
   onDragStart: (e) => void;
   onDragMove: (e) => void;
   onDragEnd: (e) => void;
-  tool: 'select' | 'eraser';
+  tool: "select" | "eraser";
 }
 
 const Rectangle = ({
@@ -20,8 +20,8 @@ const Rectangle = ({
   tool,
 }: Props) => {
   const handleClick = (rectId: string) => {
-    if (tool === 'eraser') {
-      setRects(prev => prev.filter(r => r.id !== rectId));
+    if (tool === "eraser") {
+      setRects((prev) => prev.filter((r) => r.id !== rectId));
     }
   };
   return (
@@ -32,7 +32,7 @@ const Rectangle = ({
           key={i}
           x={rect.x}
           y={rect.y}
-          draggable={tool !== 'eraser'}
+          draggable={tool !== "eraser"}
           onDragStart={onDragStart}
           onDragMove={onDragMove}
           onDragEnd={onDragEnd}
@@ -68,12 +68,12 @@ const Rectangle = ({
             y={0}
             text={rect.isCollapsed ? "+" : "-"}
             fontSize={32}
-            width={rect.width}
-            height={rect.height}
+            width={50}
+            height={50}
             align="right"
             verticalAlign="top"
             onClick={(e) => {
-              if (tool !== 'eraser') {
+              if (tool !== "eraser") {
                 e.cancelBubble = true;
                 setRects((prev) => {
                   return prev.map((r) => {

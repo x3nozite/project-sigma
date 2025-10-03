@@ -1,10 +1,12 @@
 interface Props {
   onEraserClick: () => void;
   onShapeClick: () => void;
+  onClearClick: () => void;
   isActive: boolean;
 }
 
 function BottomNav({
+  onClearClick,
   onShapeClick,
   onTextClick,
   onEraserClick,
@@ -74,7 +76,10 @@ function BottomNav({
           >
             Delete Card
           </button>
-          <button className="block px-2.5 py-2.5 rounded-md outline-red-100 text-sm text-white bg-red-500 hover:bg-red-600">
+          <button
+            onClick={onClearClick}
+            className="block px-2.5 py-2.5 rounded-md outline-red-100 text-sm text-white bg-red-500 hover:bg-red-600"
+          >
             Clear Canvas
           </button>
         </div>

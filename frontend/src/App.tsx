@@ -38,6 +38,10 @@ function App() {
     setTool(tool === "eraser" ? "select" : "eraser");
   };
 
+  const clearCanvas = () => {
+    setRects([]);
+  };
+
   return (
     <>
       <div className="relative w-full h-screen overflow-hidden">
@@ -49,6 +53,7 @@ function App() {
           <BottomNav
             onShapeClick={addRect}
             onEraserClick={toggleEraser}
+            onClearClick={clearCanvas}
             isActive={tool === "eraser"}
           />
         </div>

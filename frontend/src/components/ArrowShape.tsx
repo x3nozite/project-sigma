@@ -9,11 +9,17 @@ interface Props {
 
 const ArrowShape = ({ connectors, mainLayer }: Props) => {
   const getConnectorPoints = (fromGroup, toGroup, fromShape, toShape) => {
+    const dx = toGroup.x() - fromGroup.x();
+    const dy = toGroup.y() - fromGroup.y();
+    const angle = Math.atan2(-dy, dx);
+
+    const radius = 80;
+
     return [
-      fromGroup.x() + fromShape.width() / 2,
-      fromGroup.y() + fromShape.height() / 2,
-      toGroup.x() + toShape.width() / 2,
-      toGroup.y() + toShape.height() / 2
+      fromGroup.x() + fromShape.width() / 2 + -radius * Math.cos(angle + Math.PI),
+      fromGroup.y() + fromShape.height() / 2 + radius * Math.sin(angle + Math.PI),
+      toGroup.x() + toShape.width() / 2 - radius * Math.cos(angle),
+      toGroup.y() + toShape.height() / 2 + radius * Math.sin(angle)
     ]
   };
 

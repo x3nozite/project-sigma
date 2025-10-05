@@ -166,11 +166,18 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
 
       if (!fromNode || !toNode || !arrowNode || !fromShape || !toShape) return;
 
+      const dx = toNode.x() - fromNode.x();
+      const dy = toNode.y() - fromNode.y();
+      const angle = Math.atan2(-dy, dx);
+
+      const radius = 80;
+
+
       arrowNode.points([
-        fromNode.x() + fromShape.width() / 2,
-        fromNode.y() + fromShape.height() / 2,
-        toNode.x() + toShape.width() / 2,
-        toNode.y() + toShape.height() / 2,
+        fromNode.x() + fromShape.width() / 2 + -radius * Math.cos(angle + Math.PI),
+        fromNode.y() + fromShape.height() / 2 + radius * Math.sin(angle + Math.PI),
+        toNode.x() + toShape.width() / 2 - radius * Math.cos(angle),
+        toNode.y() + toShape.height() / 2 + radius * Math.sin(angle)
       ]);
     });
   };

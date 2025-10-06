@@ -2,7 +2,7 @@ import "./App.css";
 import BottomNav from "./components/BottomNav";
 import { useRef, useState } from "react";
 import ShapeCanvas from "./components/ShapeCanvas";
-import type { RectType, TextType } from "./components/types";
+import type { RectType } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
 
 function App() {

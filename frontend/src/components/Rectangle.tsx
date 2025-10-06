@@ -62,6 +62,7 @@ const Rectangle = ({
               height={rect.height}
               align="center"
               verticalAlign="middle"
+              listening={false}
             />
           ))}
           <Text

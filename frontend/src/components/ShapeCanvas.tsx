@@ -52,6 +52,14 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
 
         rect.fill("green");
       });
+
+      rectGroup.on("dragmove", (e) => {
+        const sourceRect = e.source;
+        if (!sourceRect || rectGroup === sourceRect || rect.fill() === "green") return;
+
+        rect.fill("green");
+      })
+
       rectGroup.on("dragleave", (e) => {
         const sourceRect = e.source;
         if (rectGroup === sourceRect) return;

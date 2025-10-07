@@ -13,7 +13,7 @@ const ArrowShape = ({ connectors, mainLayer }: Props) => {
     const dy = toGroup.y() - fromGroup.y();
     const angle = Math.atan2(-dy, dx);
 
-    const radius = 80;
+    const radius = fromShape.width() / 2 + 40;
 
     return [
       fromGroup.x() + fromShape.width() / 2 + -radius * Math.cos(angle + Math.PI),
@@ -77,16 +77,16 @@ export function arrowMovement(connectors: ArrowType[], mainLayer: any, tempLayer
 
     const dx = toNode.x() - fromNode.x();
     const dy = toNode.y() - fromNode.y();
-    const angle = Math.atan2(-dy, dx);
+    const dist = Math.sqrt(dx * dx + dy * dy);
 
-    const radius = 80;
-
+    const vectorX = dx / dist;
+    const vectorY = dy / dist;
 
     arrowNode.points([
-      fromNode.x() + fromShape.width() / 2 + -radius * Math.cos(angle + Math.PI),
-      fromNode.y() + fromShape.height() / 2 + radius * Math.sin(angle + Math.PI),
-      toNode.x() + toShape.width() / 2 - radius * Math.cos(angle),
-      toNode.y() + toShape.height() / 2 + radius * Math.sin(angle)
+      fromNode.x() + fromShape.width() / 2 + vectorX * (fromShape.width() / 2 + 40),
+      fromNode.y() + fromShape.height() / 2 + vectorY * (fromShape.height() / 2 + 40),
+      toNode.x() + toShape.width() / 2 - vectorX * (toShape.width() / 2 + 40),
+      toNode.y() + toShape.height() / 2 - vectorY * (toShape.height() / 2 + 40)
     ]);
   });
 }

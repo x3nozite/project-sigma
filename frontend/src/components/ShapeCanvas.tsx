@@ -1,10 +1,10 @@
 import { Stage, Layer } from "react-konva";
-import Rectangle from "./Rectangle";
 import { useEffect, useRef, useState } from "react";
 import type { RectType, ArrowType } from "./types";
 import ArrowShape from "./ArrowShape";
 import { handleDragStart, handleDragMove, handleDragEnd } from "./utilities/DragHandler";
 import { arrowMovement } from "./ArrowShape";
+import RectLayer from "./RectLayer";
 
 interface Props {
   rects: RectType[];
@@ -108,7 +108,7 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
           </Layer>
 
           <Layer ref={mainLayer}>
-            <Rectangle
+            <RectLayer
               rects={rects}
               setRects={setRects}
               onDragStart={(e) => handleDragStart(e, tool, tempLayer)}

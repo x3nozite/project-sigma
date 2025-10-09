@@ -1,13 +1,13 @@
-import { useState } from "react";
+import Konva from "konva";
 import type { RectType } from "./types";
 import Rectangle from "./Rectangle";
 
 interface Props {
   rects: RectType[];
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
-  onDragStart: (e) => void;
-  onDragMove: (e) => void;
-  onDragEnd: (e) => void;
+  onDragStart: (e: Konva.KonvaEventObject<DragEvent>) => void;
+  onDragMove: (e: Konva.KonvaEventObject<DragEvent>) => void;
+  onDragEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   tool: "select" | "eraser";
 }
 

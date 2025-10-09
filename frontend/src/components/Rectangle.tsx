@@ -1,14 +1,15 @@
 import { Group, Rect, Text } from "react-konva";
 import type { RectType } from "./types";
+import Konva from "konva";
 
 interface Props {
   rect: RectType;
   i: number;
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
 
-  onDragStart: (e) => void;
-  onDragMove: (e) => void;
-  onDragEnd: (e) => void;
+  onDragStart: (e: Konva.KonvaEventObject<DragEvent>) => void;
+  onDragMove: (e: Konva.KonvaEventObject<DragEvent>) => void;
+  onDragEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   tool: "select" | "eraser";
 }
 

@@ -5,6 +5,7 @@ import ArrowShape from "./ArrowShape";
 import { handleDragStart, handleDragMove, handleDragEnd } from "./utilities/DragHandler";
 import { arrowMovement } from "./ArrowShape";
 import RectLayer from "./RectLayer";
+import Konva from "konva";
 
 interface Props {
   rects: RectType[];
@@ -13,10 +14,10 @@ interface Props {
 }
 
 const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
-  const mainLayer = useRef(null);
-  const prevShape = useRef(null);
-  const tempLayer = useRef(null);
-  const arrowLayer = useRef(null);
+  const mainLayer = useRef<Konva.Layer>(null);
+  const prevShape = useRef<Konva.Layer>(null);
+  const tempLayer = useRef<Konva.Layer>(null);
+  const arrowLayer = useRef<Konva.Layer>(null);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
 
   const addConnector = (from, to) => {
@@ -30,9 +31,9 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
     if (!mainLayer.current) return;
 
     rects.forEach((r) => {
-      const rectGroup = mainLayer.current.findOne(`#group-${r.id}`);
-      const rect = mainLayer.current.findOne(`#${r.id}`);
-      if (!rectGroup) return;
+      const rectGroup = mainLayer.current?.findOne(`#group-${r.id}`);
+      const rect = mainLayer.current?.findOne(`#${r.id}`);
+      if (!rectGroup || !rect) return;
 
       rectGroup.off("drop");
       rectGroup.off("dragenter");

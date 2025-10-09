@@ -14,10 +14,10 @@ interface Props {
 }
 
 const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
-  const mainLayer = useRef<Konva.Layer>(null);
-  const prevShape = useRef<Konva.Layer>(null);
-  const tempLayer = useRef<Konva.Layer>(null);
-  const arrowLayer = useRef<Konva.Layer>(null);
+  const mainLayer = useRef(null);
+  const prevShape = useRef(null);
+  const tempLayer = useRef(null);
+  const arrowLayer = useRef(null);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
 
   const addConnector = (from, to) => {
@@ -76,15 +76,21 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
         )
           return;
 
-        addConnector(e.source, rectGroup);
         rect.fill("white");
+
+        const dx = rectGroup.x() - sourceRect.x();
+        const dy = rectGroup.y() - sourceRect.y();
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const vectorX = dx / dist;
+        const vectorY = dy / dist;
+        const offset = 100;
 
         setRects((prev) => {
           return prev.map((rectangle) => {
             if ("group-" + rectangle.id === e.source.id()) {
               return {
                 ...rectangle,
-                parents: [...rectangle.parents, rectGroup.id()],
+                parents: [...rectangle.parents, rectGroup.id()], x: rectangle.x + -offset * vectorX, y: rectangle.y + -offset * vectorY
               };
             }
             if ("group-" + rectangle.id === rectGroup.id()) {
@@ -96,6 +102,7 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
             return rectangle;
           });
         });
+        addConnector(e.source, rectGroup);
       });
     });
   });

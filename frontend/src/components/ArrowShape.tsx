@@ -36,7 +36,6 @@ const ArrowShape = ({ connectors, mainLayer }: Props) => {
         if (!fromGroup || !toGroup) return null;
 
         const points = getConnectorPoints(fromGroup, toGroup, fromShape, toShape);
-        console.log(points);
         return (
           < Arrow
             key={connector.id}

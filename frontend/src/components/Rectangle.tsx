@@ -4,7 +4,6 @@ import Konva from "konva";
 
 interface Props {
   rect: RectType;
-  i: number;
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
 
   onDragStart: (e: Konva.KonvaEventObject<DragEvent>) => void;
@@ -15,7 +14,6 @@ interface Props {
 
 const Rectangle = ({
   rect,
-  i,
   setRects,
   onDragStart,
   onDragMove,
@@ -29,7 +27,7 @@ const Rectangle = ({
   };
   return (
     <Group
-      key={i}
+      key={"key-" + rect.id}
       id={"group-" + rect.id}
       x={rect.x}
       y={rect.y}

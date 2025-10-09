@@ -11,15 +11,16 @@ const ArrowShape = ({ connectors, mainLayer }: Props) => {
   const getConnectorPoints = (fromGroup, toGroup, fromShape, toShape) => {
     const dx = toGroup.x() - fromGroup.x();
     const dy = toGroup.y() - fromGroup.y();
-    const angle = Math.atan2(-dy, dx);
+    const dist = Math.sqrt(dx * dx + dy * dy);
 
-    const radius = fromShape.width() / 2 + 40;
-
+    const vectorX = dx / dist;
+    const vectorY = dy / dist;
+    const offset = Math.min(30, dist / 5 - 1);
     return [
-      fromGroup.x() + fromShape.width() / 2 + -radius * Math.cos(angle + Math.PI),
-      fromGroup.y() + fromShape.height() / 2 + radius * Math.sin(angle + Math.PI),
-      toGroup.x() + toShape.width() / 2 - radius * Math.cos(angle),
-      toGroup.y() + toShape.height() / 2 + radius * Math.sin(angle)
+      fromGroup.x() + fromShape.width() / 2 + vectorX * (fromShape.width() / 2 + offset),
+      fromGroup.y() + fromShape.height() / 2 + vectorY * (fromShape.height() / 2 + offset),
+      toGroup.x() + toShape.width() / 2 - vectorX * (toShape.width() / 2 + offset),
+      toGroup.y() + toShape.height() / 2 - vectorY * (toShape.height() / 2 + offset)
     ]
   };
 
@@ -81,12 +82,13 @@ export function arrowMovement(connectors: ArrowType[], mainLayer: any, tempLayer
 
     const vectorX = dx / dist;
     const vectorY = dy / dist;
+    const offset = Math.min(30, dist / 5 - 1);
 
     arrowNode.points([
-      fromNode.x() + fromShape.width() / 2 + vectorX * (fromShape.width() / 2 + 40),
-      fromNode.y() + fromShape.height() / 2 + vectorY * (fromShape.height() / 2 + 40),
-      toNode.x() + toShape.width() / 2 - vectorX * (toShape.width() / 2 + 40),
-      toNode.y() + toShape.height() / 2 - vectorY * (toShape.height() / 2 + 40)
+      fromNode.x() + fromShape.width() / 2 + vectorX * (fromShape.width() / 2 + offset),
+      fromNode.y() + fromShape.height() / 2 + vectorY * (fromShape.height() / 2 + offset),
+      toNode.x() + toShape.width() / 2 - vectorX * (toShape.width() / 2 + offset),
+      toNode.y() + toShape.height() / 2 - vectorY * (toShape.height() / 2 + offset)
     ]);
   });
 }

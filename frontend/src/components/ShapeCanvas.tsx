@@ -1,9 +1,10 @@
 import { Stage, Layer } from "react-konva";
 import { useEffect, useRef, useState } from "react";
 import type { RectType, ArrowType } from "./types";
+import type { DragEventWithSource } from "./eventTypes";
 import ArrowShape from "./ArrowShape";
 import { handleDragStart, handleDragMove, handleDragEnd } from "./utilities/DragHandler";
-import { arrowMovement } from "./ArrowShape";
+import { arrowMovement } from "./utilities/ArrowFunction.ts";
 import RectLayer from "./RectLayer";
 import Konva from "konva";
 
@@ -14,13 +15,13 @@ interface Props {
 }
 
 const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
-  const mainLayer = useRef(null);
-  const prevShape = useRef(null);
-  const tempLayer = useRef(null);
-  const arrowLayer = useRef(null);
+  const mainLayer = useRef<Konva.Layer | null>(null!);
+  const prevShape = useRef<Konva.Shape | null>(null!);
+  const tempLayer = useRef<Konva.Layer | null>(null!);
+  const arrowLayer = useRef<Konva.Layer | null>(null!);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
 
-  const addConnector = (from, to) => {
+  const addConnector = (from: Konva.Node, to: Konva.Node) => {
     setConnectors([
       ...connectors,
       { id: "connector-" + connectors.length, from: from.id(), to: to.id() },
@@ -32,7 +33,7 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
 
     rects.forEach((r) => {
       const rectGroup = mainLayer.current?.findOne(`#group-${r.id}`);
-      const rect = mainLayer.current?.findOne(`#${r.id}`);
+      const rect = mainLayer.current?.findOne(`#${r.id}`) as Konva.Rect;
       if (!rectGroup || !rect) return;
 
       rectGroup.off("drop");
@@ -40,7 +41,7 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
       rectGroup.off("dragleave");
 
       rectGroup.on("dragenter", (e) => {
-        const sourceRect = e.source;
+        const sourceRect = (e as DragEventWithSource).source;
         if (!sourceRect) return;
         if (rectGroup === sourceRect) return;
         if (rect.fill() === "green") return;
@@ -55,20 +56,20 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
       });
 
       rectGroup.on("dragmove", (e) => {
-        const sourceRect = e.source;
+        const sourceRect = (e as DragEventWithSource).source;
         if (!sourceRect || rectGroup === sourceRect || rect.fill() === "green") return;
 
         rect.fill("green");
       })
 
       rectGroup.on("dragleave", (e) => {
-        const sourceRect = e.source;
+        const sourceRect = (e as DragEventWithSource).source;
         if (rectGroup === sourceRect) return;
         rect.fill("white");
       });
 
       rectGroup.on("drop", (e) => {
-        const sourceRect = e.source;
+        const sourceRect = (e as DragEventWithSource).source;
         if (!sourceRect) return;
         if (
           r.children.includes(sourceRect.id()) ||
@@ -87,7 +88,7 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
 
         setRects((prev) => {
           return prev.map((rectangle) => {
-            if ("group-" + rectangle.id === e.source.id()) {
+            if ("group-" + rectangle.id === (e as DragEventWithSource).source.id()) {
               return {
                 ...rectangle,
                 parents: [...rectangle.parents, rectGroup.id()], x: rectangle.x + -offset * vectorX, y: rectangle.y + -offset * vectorY
@@ -96,51 +97,52 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
             if ("group-" + rectangle.id === rectGroup.id()) {
               return {
                 ...rectangle,
-                children: [...rectangle.children, e.source.id()],
+                children: [...rectangle.children, (e as DragEventWithSource).source.id()],
               };
             }
             return rectangle;
           });
         });
-        addConnector(e.source, rectGroup);
+        addConnector((e as DragEventWithSource).source, rectGroup);
       });
     });
   });
 
   return (
     <>
-      <div className="canvas">
-        <Stage width={window.innerWidth} height={window.innerHeight}>
-          <Layer ref={arrowLayer}>
-            <ArrowShape connectors={connectors} mainLayer={mainLayer} />
-          </Layer>
+      <Stage width={window.innerWidth} height={window.innerHeight}
+        draggable
+        onDragMove={() => { }}
+      >
+        <Layer ref={arrowLayer}>
+          <ArrowShape connectors={connectors} mainLayer={mainLayer} />
+        </Layer>
 
-          <Layer ref={mainLayer}>
-            <RectLayer
-              rects={rects}
-              setRects={setRects}
-              onDragStart={(e) => handleDragStart(e, tool, tempLayer)}
-              onDragMove={(e) => {
-                handleDragMove(e, mainLayer, prevShape, tool)
-                arrowMovement(connectors, mainLayer, tempLayer, arrowLayer);
-              }}
-              onDragEnd={(e) => {
-                setRects(
-                  rects.map((rect) =>
-                    "group-" + rect.id === e.target.id()
-                      ? { ...rect, x: e.target.x(), y: e.target.y() }
-                      : rect
-                  )
-                );
+        <Layer ref={mainLayer}>
+          <RectLayer
+            rects={rects}
+            setRects={setRects}
+            onDragStart={(e) => handleDragStart(e, tool, tempLayer)}
+            onDragMove={(e) => {
+              handleDragMove(e, mainLayer, prevShape, tool)
+              arrowMovement(connectors, mainLayer, tempLayer, arrowLayer);
+            }}
+            onDragEnd={(e) => {
+              setRects(
+                rects.map((rect) =>
+                  "group-" + rect.id === e.target.id()
+                    ? { ...rect, x: e.target.x(), y: e.target.y() }
+                    : rect
+                )
+              );
 
-                handleDragEnd(e, mainLayer, tool, prevShape);
-              }}
-              tool={tool}
-            />
-          </Layer>
-          <Layer ref={tempLayer} />
-        </Stage>
-      </div>
+              handleDragEnd(e, mainLayer, tool, prevShape);
+            }}
+            tool={tool}
+          />
+        </Layer>
+        <Layer ref={tempLayer} />
+      </Stage>
     </>
   );
 };

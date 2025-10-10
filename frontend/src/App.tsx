@@ -10,7 +10,6 @@ function App() {
   const [tool, setTool] = useState<"select" | "eraser">("select");
   const idCounter = useRef(0);
 
-
   const addRect = () => {
     const newId = idCounter.current;
     idCounter.current += 1;
@@ -50,11 +49,11 @@ function App() {
   return (
     <>
       <div className="relative w-full h-screen overflow-hidden">
-        <div className="top-nav absolute flex flex-row top-0 right-0 gap-2 m-4">
+        <div className="account-buttons absolute flex flex-row top-1.5 right-0 gap-2 m-4 z-51">
           <SecondButton title="Sign-Up" />
           <MainButton title="Login" />
         </div>
-        <div className="bottom-nav absolute bottom-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-lg/30 shadow-gray-600">
+        <div className="bottom-nav absolute top-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-md/15 shadow-gray-600">
           <BottomNav
             onShapeClick={addRect}
             onEraserClick={toggleEraser}

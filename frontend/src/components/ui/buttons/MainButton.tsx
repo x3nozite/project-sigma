@@ -24,7 +24,7 @@ export default function MainButton({ title }: MainProps) {
       </span>
       <button
         type="button"
-        className="focus:outline-none whitespace-nowrap font-bold text-sm"
+        className="focus:outline-none whitespace-nowrap font-bold text-sm hidden md:inline"
       >
         {title}
       </button>

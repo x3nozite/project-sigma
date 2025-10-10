@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import type { RectType, ArrowType } from "./types";
 import type { DragEventWithSource } from "./eventTypes";
 import ArrowShape from "./ArrowShape";
-import { handleDragStart, handleDragMove, handleDragEnd } from "./utilities/DragHandler";
+import { handleDragStart, handleDragMove, handleDragEnd, handleStageDragStart, handleStageDragEnd } from "./utilities/DragHandler";
 import { arrowMovement } from "./utilities/ArrowFunction.ts";
 import RectLayer from "./RectLayer";
 import Konva from "konva";
@@ -19,6 +19,7 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
   const prevShape = useRef<Konva.Shape | null>(null!);
   const tempLayer = useRef<Konva.Layer | null>(null!);
   const arrowLayer = useRef<Konva.Layer | null>(null!);
+  const stageRef = useRef<Konva.Stage | null>(null!);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
 
   const addConnector = (from: Konva.Node, to: Konva.Node) => {
@@ -111,8 +112,10 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
   return (
     <>
       <Stage width={window.innerWidth} height={window.innerHeight}
+        ref={stageRef}
         draggable
-        onDragMove={() => { }}
+        onDragStart={(e) => handleStageDragStart(e, mainLayer, arrowLayer)}
+        onDragEnd={(e) => handleStageDragEnd(e, mainLayer, arrowLayer)}
       >
         <Layer ref={arrowLayer}>
           <ArrowShape connectors={connectors} mainLayer={mainLayer} />

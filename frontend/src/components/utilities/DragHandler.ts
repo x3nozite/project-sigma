@@ -1,6 +1,6 @@
 import Konva from "konva";
 import type { Vector2d } from "konva/lib/types";
-import type { RefObject } from "react";
+import type { Ref, RefObject } from "react";
 
 export function handleDragStart(e: Konva.KonvaEventObject<DragEvent>, tool: string, tempLayer: RefObject<Konva.Layer | null>) {
   if (tool === "eraser") return;
@@ -52,4 +52,36 @@ export function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: R
   shape.moveTo(mainLayer.current);
   prevShape.current = null;
 
+}
+
+export function handleStageDragStart(e: Konva.KonvaEventObject<DragEvent>, mainLayer: RefObject<Konva.Layer | null>, arrowLayer: RefObject<Konva.Layer | null>) {
+  //const stage = stageRef.current;
+  if (e.target !== e.target.getStage()) return;
+  if (mainLayer) {
+    mainLayer.current?.getChildren().forEach((child) => {
+      child.cache();
+    })
+    //mainLayer.current?.cache({ width: stage?.width(), height: stage?.height() });
+  }
+  if (arrowLayer) {
+    arrowLayer.current?.getChildren().forEach((child) => {
+      child.cache();
+    })
+    //arrowLayer.current?.cache({ width: stage?.width(), height: stage?.height() });
+  }
+}
+export function handleStageDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: RefObject<Konva.Layer | null>, arrowLayer: RefObject<Konva.Layer | null>) {
+  if (e.target !== e.target.getStage()) return;
+  if (mainLayer) {
+    mainLayer.current?.getChildren().forEach(child => {
+      child.clearCache();
+    })
+    mainLayer.current?.batchDraw();
+  }
+  if (arrowLayer) {
+    arrowLayer.current?.getChildren().forEach(child => {
+      child.clearCache();
+    })
+    arrowLayer.current?.batchDraw();
+  }
 }

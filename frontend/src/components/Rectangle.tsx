@@ -1,6 +1,7 @@
 import { Group, Rect, Text } from "react-konva";
 import type { RectType } from "./types";
 import Konva from "konva";
+import { useEffect, useRef } from "react";
 
 interface Props {
   rect: RectType;
@@ -25,6 +26,7 @@ const Rectangle = ({
       setRects((prev) => prev.filter((r) => r.id !== rectId));
     }
   };
+
   return (
     <Group
       key={"key-" + rect.id}

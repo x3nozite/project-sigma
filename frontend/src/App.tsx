@@ -16,7 +16,7 @@ function App() {
 
     const placeholderText = {
       id: "text-" + newId,
-      value: "placeholdertext " + newId,
+      value: "Project Title #" + newId,
       fontSize: 16,
     };
 
@@ -26,11 +26,15 @@ function App() {
       {
         x: 100,
         y: 100,
-        width: 100,
-        height: 100,
+        width: 300,
+        height: 200,
         color: "white",
         id: "rect-" + newId,
-        texts: [placeholderText],
+        title: "Title Project #" + newId,
+        description:
+          "A presentation that explains key scientific principles and their real-world applications through visual examples and demonstrations.",
+        dueDate: "December 25th, 2025",
+        status: "In Progress",
         isCollapsed: false,
         children: [],
         parents: [],

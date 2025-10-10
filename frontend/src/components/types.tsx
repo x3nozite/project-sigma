@@ -5,7 +5,10 @@ export type RectType = {
   height: number;
   color: string;
   id: string;
-  texts: TextType[];
+  title: string;
+  description: string;
+  dueDate: string;
+  status: string;
   isCollapsed: boolean;
   children: string[];
   parents: string[];
@@ -20,4 +23,4 @@ export type ArrowType = {
   id: string;
   from: string;
   to: string;
-}
+};

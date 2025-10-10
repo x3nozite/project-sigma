@@ -1,7 +1,7 @@
 import { Group, Rect, Text } from "react-konva";
 import type { RectType } from "./types";
 import Konva from "konva";
-import { useEffect, useRef } from "react";
+import { useEffect, useReducer, useRef } from "react";
 
 interface Props {
   rect: RectType;
@@ -41,55 +41,111 @@ const Rectangle = ({
     >
       <Rect
         id={rect.id}
-        width={rect.width}
-        height={rect.height}
+        width={Math.round(rect.width)}
+        height={Math.round(rect.height)}
         fill={rect.color}
-        shadowBlur={2}
-        stroke="black"
-        strokeWidth={1}
+        shadowBlur={10}
+        shadowOpacity={0.5}
+        shadowOffset={{ x: 0, y: 4 }}
+        cornerRadius={[16, 4, 4, 4]}
         isCollapsed={false}
       />
-      {rect.texts.map((text, j) => (
-        <Text
+      <Group>
+        <Rect
           x={0}
           y={0}
-          key={j}
-          id={text.id}
-          text={text.value}
+          width={rect.width}
+          height={rect.height * 0.25}
+          cornerRadius={[16, 4, 4, 4]}
+          fill="purple"
+        ></Rect>
+        <Text
+          x={10}
+          y={15}
+          text={rect.title}
+          fontFamily="Inter"
+          fill="white"
+          fontStyle="bold"
           fontSize={16}
-          fontFamily="Calibri"
-          fill="black"
+        ></Text>
+        <Text
+          x={rect.width * 0.9}
+          y={5}
+          fill="white"
+          text={rect.isCollapsed ? "+" : "-"}
+          fontSize={32}
+          align="right"
+          verticalAlign="top"
+          onClick={(e) => {
+            if (tool !== "eraser") {
+              e.cancelBubble = true;
+              setRects((prev) => {
+                return prev.map((r) => {
+                  if (r.id === rect.id) {
+                    return { ...r, isCollapsed: !r.isCollapsed };
+                  } else {
+                    return r;
+                  }
+                });
+              });
+            }
+          }}
+        ></Text>
+      </Group>
+      <Group>
+        <Text
+          x={0}
+          y={50}
+          text={rect.description}
+          fontSize={14}
+          fontFamily="Inter"
+          fontStyle="normal"
+          fill="gray"
+          align="justify"
+          ellipsis={true}
+          lineHeight={1.25}
+          padding={10}
           width={rect.width}
           height={rect.height}
-          align="center"
-          verticalAlign="middle"
           listening={false}
         />
-      ))}
+      </Group>
       <Text
+        text={rect.dueDate}
         x={0}
-        y={0}
-        text={rect.isCollapsed ? "+" : "-"}
-        fontSize={32}
-        width={50}
-        height={50}
+        y={rect.height - 35}
+        width={rect.width}
+        height={rect.height}
+        fontFamily="Inter"
+        fontSize={12}
+        fontStyle="light"
+        padding={5}
         align="right"
-        verticalAlign="top"
-        onClick={(e) => {
-          if (tool !== "eraser") {
-            e.cancelBubble = true;
-            setRects((prev) => {
-              return prev.map((r) => {
-                if (r.id === rect.id) {
-                  return { ...r, isCollapsed: !r.isCollapsed };
-                } else {
-                  return r;
-                }
-              });
-            });
-          }
-        }}
+        fill="blue"
+        opacity={0.8}
+        listening={false}
       ></Text>
+      <Group>
+        <Rect
+          fill="orange"
+          width={100}
+          height={30}
+          x={10}
+          y={rect.height - 40}
+          cornerRadius={10}
+        ></Rect>
+        <Text
+          text={rect.status}
+          width={100}
+          height={30}
+          fontFamily="Inter"
+          align="left"
+          fill="white"
+          x={17}
+          y={rect.height - 42}
+          padding={10}
+        ></Text>
+      </Group>
     </Group>
   );
 };

@@ -135,7 +135,7 @@ function BottomNav({
       <div className="delete-dropup group inline-flex flex-col">
         <button
           className="delete-task group relative inline-flex flex-col items-center justify-center -ml-px rounded-r-sm border-none w-10 h-10 p-1 duration-50 text-gray-700 transition-colors ease-linear hover:bg-red-100 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"
-          // isActive? .... : ....
+        // isActive? .... : ....
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

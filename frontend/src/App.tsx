@@ -4,11 +4,21 @@ import { useRef, useState } from "react";
 import ShapeCanvas from "./components/ShapeCanvas";
 import type { RectType } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
+import TaskForm from "./components/forms/TaskForm";
 
 function App() {
+  const [showForm, setShowForm] = useState(false);
   const [rects, setRects] = useState<RectType[]>([]);
   const [tool, setTool] = useState<"select" | "eraser">("select");
   const idCounter = useRef(0);
+
+  const openForm = () => {
+    setShowForm(true);
+  };
+
+  const closeForm = () => {
+    setShowForm(false);
+  };
 
   const addRect = () => {
     const newId = idCounter.current;
@@ -59,12 +69,13 @@ function App() {
         </div>
         <div className="bottom-nav absolute top-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-md/15 shadow-gray-600">
           <BottomNav
-            onShapeClick={addRect}
+            onShapeClick={openForm}
             onEraserClick={toggleEraser}
             onClearClick={clearCanvas}
             isActive={tool === "eraser"}
           />
         </div>
+        {showForm && <TaskForm onAddTask={addRect} onCloseForm={closeForm} />}
         <ShapeCanvas rects={rects} setRects={setRects} tool={tool} />
       </div>
     </>

@@ -25,12 +25,6 @@ function App() {
     const newId = idCounter.current;
     idCounter.current += 1;
 
-    const placeholderText = {
-      id: "text-" + newId,
-      value: "Project Title #" + newId,
-      fontSize: 16,
-    };
-
     setTool("select");
     setRects([
       ...rects,
@@ -58,6 +52,7 @@ function App() {
 
   const clearCanvas = () => {
     setRects([]);
+    idCounter.current = 0;
   };
 
   return (

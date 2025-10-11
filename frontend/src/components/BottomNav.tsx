@@ -13,7 +13,7 @@ function BottomNav({
   isActive,
 }: Props) {
   return (
-    <div className="grid grid-cols-7 px-2 py-2 border-gray-200 justify-center items-center">
+    <div className="grid grid-cols-8 px-2 py-2 border-gray-200 justify-center items-center">
       <button
         onClick={onShapeClick}
         className="add-shape group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"
@@ -132,41 +132,50 @@ function BottomNav({
           Add Image
         </span>
       </button>
-      <div className="delete-dropup group inline-flex flex-col">
-        <button
-          className="delete-task group relative inline-flex flex-col items-center justify-center -ml-px rounded-r-sm border-none w-10 h-10 p-1 duration-50 text-gray-700 transition-colors ease-linear hover:bg-red-100 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"
-        // isActive? .... : ....
+      <button
+        onClick={onEraserClick}
+        className="add-shape group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-red-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="currentColor"
+          className=""
+          viewBox="0 0 16 16"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-          >
-            <path
-              fill="currentColor"
-              d="M18 19a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V7H4V4h4.5l1-1h4l1 1H19v3h-1zM6 7v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2V7zm12-1V5h-4l-1-1h-3L9 5H5v1zM8 9h1v10H8zm6 0h1v10h-1z"
-            />
-          </svg>
-          <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity delay-500">
-            Delete Task
-          </span>
-        </button>
-        <div className="absolute opacity-0 dropup-content grid grid-row-2 -bottom-50 max-w-lg rounded-md  outline-1 -outline-offset-1 outline-gray-200 group-hover:opacity-100 transition-opacity delay-1000">
-          <button
-            onClick={onEraserClick}
-            className="block `px-2.5 py-2.5 outline-red-100 text-sm text-gray-700 rounded-md hover:bg-red-100 ${tool}"
-          >
-            Delete Card
-          </button>
-          <button
-            onClick={onClearClick}
-            className="block px-2.5 py-2.5 rounded-md outline-red-100 text-sm text-white bg-red-500 hover:bg-red-600"
-          >
-            Clear Canvas
-          </button>
-        </div>
-      </div>
+          <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828zm2.121.707a1 1 0 0 0-1.414 0L4.16 7.547l5.293 5.293 4.633-4.633a1 1 0 0 0 0-1.414zM8.746 13.547 3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293z" />
+        </svg>
+        <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+          Delete Task
+        </span>
+      </button>
+      <button
+        onClick={onClearClick}
+        className="add-shape group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-red-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"
+      >
+        <svg
+          className="w-6 h-6 text-gray-800"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1"
+            d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"
+          />
+        </svg>
+
+        <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+          Clear Canvas
+        </span>
+      </button>
     </div>
   );
 }

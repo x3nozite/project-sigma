@@ -1,80 +1,101 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
+import { z } from "zod";
+
+const schema = z.object({
+  title: z
+    .string()
+    .min(3, "Title must be at least 3 characters")
+    .max(50, "Title must be at most 50 characters"),
+  description: z
+    .string()
+    .min(10, "Description must be at least 10 characters")
+    .max(100, "Description must be at most 100 characters"),
+  color: z.string(),
+  date: z.string(),
+});
+
+type taskFields = z.infer<typeof schema>;
+
 interface Props {
   onAddTask: () => void;
   onCloseForm: () => void;
 }
 
-import { useState } from "react";
-
 export default function TaskForm({ onAddTask, onCloseForm }: Props) {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    date: "",
-    color: "",
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<taskFields>({
+    defaultValues: {
+      title: "My New Task",
+      description: "This is a description about my task!",
+    },
+    resolver: zodResolver(schema),
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+  const onSubmit: SubmitHandler<taskFields> = async (data) => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      throw new Error();
+      console.log(data);
+    } catch (error) {
+      setError("root", {
+        message: "This Task already exists!",
+      });
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const newTask = {
-      title: formData.title,
-      description: formData.description,
-      dueDate: formData.date,
-      color: formData.color,
-    };
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();SubmitHandler
+  //   const newTask = {
+  //     title: formData.title,
+  //     description: formData.description,
+  //     dueDate: formData.date,
+  //     color: formData.color,
+  //   };
 
-    onAddTask(newTask);
-  };
+  //   onAddTask(newTask);ContentVisibilityAutoStateChangeEvent.
+  // };
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-5">
-          <label htmlFor="title">Task Title</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-          />
+          <label>Task Title</label>
+          <input {...register("title")} type="text" id="title" />
+          {errors.title && (
+            <div className="text-red-500">{errors.title?.message}</div>
+          )}
         </div>
         <div className="mb-5">
-          <label htmlFor="desc">Description</label>
-          <input
-            type="text"
-            id="desc"
-            value={formData.description}
-            onChange={handleChange}
-          />
+          <label>Description</label>
+          <input {...register("description")} type="text" />
+          {errors.description && (
+            <div className="text-red-500">{errors.description?.message}</div>
+          )}
         </div>
         <div className="mb-5">
-          <label htmlFor="desc">Description</label>
-          <input
-            type="date"
-            id="desc"
-            value={formData.date}
-            onChange={handleChange}
-          />
+          <label>Date</label>
+          <input {...register("date")} type="date" name="date" />
         </div>
         <div className="mb-5">
-          <label htmlFor="color">Color</label>
-          <select
-            name="color"
-            value={formData.color}
-            id="color"
-            onChange={handleChange}
-          >
+          <label>Color</label>
+          <select {...register("color")} name="color">
             <option value="red">Red</option>
             <option value="blue">Blue</option>
             <option value="green">Green</option>
           </select>
         </div>
-        <button type="submit">Create New Task</button>
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Loading..." : "Create New Task"}
+        </button>
+        {errors.root && (
+          <div className="text-red-500">{errors.root?.message}</div>
+        )}
       </form>
     </>
   );

@@ -13,6 +13,7 @@ export type RectType = {
   children: string[];
   parents: string[];
 };
+
 export type TextType = {
   id: string;
   value: string;

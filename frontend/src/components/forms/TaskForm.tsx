@@ -19,7 +19,7 @@ const schema = z.object({
 type taskFields = z.infer<typeof schema>;
 
 interface Props {
-  onAddTask: () => void;
+  onAddTask: (task: taskFields) => void;
   onCloseForm: () => void;
 }
 
@@ -40,8 +40,8 @@ export default function TaskForm({ onAddTask, onCloseForm }: Props) {
   const onSubmit: SubmitHandler<taskFields> = async (data) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      throw new Error();
-      console.log(data);
+      onAddTask(data);
+      onCloseForm();
     } catch (error) {
       setError("root", {
         message: "This Task already exists!",
@@ -49,20 +49,8 @@ export default function TaskForm({ onAddTask, onCloseForm }: Props) {
     }
   };
 
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();SubmitHandler
-  //   const newTask = {
-  //     title: formData.title,
-  //     description: formData.description,
-  //     dueDate: formData.date,
-  //     color: formData.color,
-  //   };
-
-  //   onAddTask(newTask);ContentVisibilityAutoStateChangeEvent.
-  // };
-
   return (
-    <>
+    <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-5">
           <label>Task Title</label>
@@ -97,6 +85,6 @@ export default function TaskForm({ onAddTask, onCloseForm }: Props) {
           <div className="text-red-500">{errors.root?.message}</div>
         )}
       </form>
-    </>
+    </div>
   );
 }

@@ -5,6 +5,7 @@ import ShapeCanvas from "./components/ShapeCanvas";
 import type { RectType } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
 import TaskForm from "./components/forms/TaskForm";
+import type { taskFields } from "./components/forms/TaskForm";
 
 function App() {
   const [showForm, setShowForm] = useState(false);
@@ -20,7 +21,7 @@ function App() {
     setShowForm(false);
   };
 
-  const addRect = () => {
+  const addRect = (newTask: taskFields) => {
     const newId = idCounter.current;
     idCounter.current += 1;
 
@@ -40,10 +41,9 @@ function App() {
         height: 200,
         color: "white",
         id: "rect-" + newId,
-        title: "Title Project #" + newId,
-        description:
-          "A presentation that explains key scientific principles and their real-world applications through visual examples and demonstrations.",
-        dueDate: "December 25th, 2025",
+        title: newTask.title + " #" + newId,
+        description: newTask.description,
+        dueDate: newTask.date,
         status: "In Progress",
         isCollapsed: false,
         children: [],

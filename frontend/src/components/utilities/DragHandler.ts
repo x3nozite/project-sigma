@@ -55,33 +55,34 @@ export function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: R
 }
 
 export function handleStageDragStart(e: Konva.KonvaEventObject<DragEvent>, mainLayer: RefObject<Konva.Layer | null>, arrowLayer: RefObject<Konva.Layer | null>) {
-  //const stage = stageRef.current;
   if (e.target !== e.target.getStage()) return;
-  if (mainLayer) {
-    mainLayer.current?.getChildren().forEach((child) => {
-      child.cache();
-    })
-    //mainLayer.current?.cache({ width: stage?.width(), height: stage?.height() });
-  }
-  if (arrowLayer) {
-    arrowLayer.current?.getChildren().forEach((child) => {
-      child.cache();
-    })
-    //arrowLayer.current?.cache({ width: stage?.width(), height: stage?.height() });
-  }
+  if (!mainLayer || !arrowLayer) return;
+  // if (mainLayer) {
+  //   mainLayer.current?.getChildren().forEach((child) => {
+  //     child.cache();
+  //   })
+  //   //mainLayer.current?.cache({ width: stage?.width(), height: stage?.height() });
+  // }
+  // if (arrowLayer) {
+  //   arrowLayer.current?.getChildren().forEach((child) => {
+  //     child.cache();
+  //   })
+  //   //arrowLayer.current?.cache({ width: stage?.width(), height: stage?.height() });
+  // }
 }
 export function handleStageDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: RefObject<Konva.Layer | null>, arrowLayer: RefObject<Konva.Layer | null>) {
   if (e.target !== e.target.getStage()) return;
-  if (mainLayer) {
-    mainLayer.current?.getChildren().forEach(child => {
-      child.clearCache();
-    })
-    mainLayer.current?.batchDraw();
-  }
-  if (arrowLayer) {
-    arrowLayer.current?.getChildren().forEach(child => {
-      child.clearCache();
-    })
-    arrowLayer.current?.batchDraw();
-  }
+  if (!mainLayer || !arrowLayer) return;
+  // if (mainLayer) {
+  //   mainLayer.current?.getChildren().forEach(child => {
+  //     child.clearCache();
+  //   })
+  //   mainLayer.current?.batchDraw();
+  // }
+  // if (arrowLayer) {
+  //   arrowLayer.current?.getChildren().forEach(child => {
+  //     child.clearCache()
+  //   })
+  //   arrowLayer.current?.batchDraw();
+  // }
 }

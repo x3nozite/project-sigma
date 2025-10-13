@@ -7,6 +7,7 @@ import { handleDragStart, handleDragMove, handleDragEnd, handleStageDragStart, h
 import { arrowMovement } from "./utilities/ArrowFunction.ts";
 import RectLayer from "./RectLayer";
 import Konva from "konva";
+import { handleZoom } from "./utilities/zoom.ts";
 
 interface Props {
   rects: RectType[];
@@ -116,6 +117,7 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
         draggable
         onDragStart={(e) => handleStageDragStart(e, mainLayer, arrowLayer)}
         onDragEnd={(e) => handleStageDragEnd(e, mainLayer, arrowLayer)}
+        onWheel={(e) => handleZoom(stageRef, e)}
       >
         <Layer ref={arrowLayer}>
           <ArrowShape connectors={connectors} mainLayer={mainLayer} />

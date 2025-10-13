@@ -32,6 +32,8 @@ export default function TaskForm({ onAddTask, onCloseForm }: Props) {
     formState: { errors, isSubmitting },
   } = useForm<taskFields>({
     defaultValues: {
+      title: "abc",
+      description: "abcedfghijkl",
       date: "2025-10-11",
       time: "06:07",
     },

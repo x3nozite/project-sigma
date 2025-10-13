@@ -1,7 +1,8 @@
 import type { RefObject } from "react";
 import Konva from "konva";
 
-export function handleZoom(stageRef: RefObject<Konva.Stage | null>, e: any) {
+export function handleZoom(stageRef: RefObject<Konva.Stage | null>, e: any, setZoomValue: React.Dispatch<React.SetStateAction<number>>) {
+
   e.evt.preventDefault();
   const stage = stageRef.current;
   const pointer = stage?.getPointerPosition();
@@ -18,7 +19,7 @@ export function handleZoom(stageRef: RefObject<Konva.Stage | null>, e: any) {
   if (e.evt.wheel) {
     direction -= direction;
   }
-  const scaleBy = 1.1;
+  const scaleBy = 1.05;
   const newScale = direction > 0 ? Math.min(oldScale * scaleBy, 2) : Math.max(oldScale / scaleBy, 0.5);
 
   stage.scale({ x: newScale, y: newScale });
@@ -28,5 +29,5 @@ export function handleZoom(stageRef: RefObject<Konva.Stage | null>, e: any) {
     y: pointer.y - mousePointTo.y * newScale
   }
   stage.position(newPos);
-  console.log(newScale);
+  setZoomValue(Math.round(newScale * 100));
 }

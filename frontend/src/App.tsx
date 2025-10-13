@@ -8,6 +8,7 @@ import TaskForm from "./components/forms/TaskForm";
 import type { taskFields } from "./components/forms/TaskForm";
 
 function App() {
+  const [zoomValue, setZoomValue] = useState(100);
   const [showForm, setShowForm] = useState(false);
   const [rects, setRects] = useState<RectType[]>([]);
   const [tool, setTool] = useState<"select" | "eraser">("select");
@@ -70,8 +71,11 @@ function App() {
             isActive={tool === "eraser"}
           />
         </div>
+        <div>
+          <h1>{zoomValue}</h1>
+        </div>
         {showForm && <TaskForm onAddTask={addRect} onCloseForm={closeForm} />}
-        <ShapeCanvas rects={rects} setRects={setRects} tool={tool} />
+        <ShapeCanvas rects={rects} setRects={setRects} tool={tool} setZoomValue={setZoomValue} />
       </div>
     </>
   );

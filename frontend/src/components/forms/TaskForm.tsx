@@ -17,7 +17,7 @@ const schema = z.object({
   time: z.string(),
 });
 
-type taskFields = z.infer<typeof schema>;
+export type taskFields = z.infer<typeof schema>;
 
 interface Props {
   onAddTask: (task: taskFields) => void;

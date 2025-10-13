@@ -13,9 +13,10 @@ interface Props {
   rects: RectType[];
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
   tool: "select" | "eraser";
+  setZoomValue: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
+const ShapeCanvas = ({ rects, setRects, tool, setZoomValue }: Props) => {
   const mainLayer = useRef<Konva.Layer | null>(null!);
   const prevShape = useRef<Konva.Shape | null>(null!);
   const tempLayer = useRef<Konva.Layer | null>(null!);
@@ -117,7 +118,7 @@ const ShapeCanvas = ({ rects, setRects, tool }: Props) => {
         draggable
         onDragStart={(e) => handleStageDragStart(e, mainLayer, arrowLayer)}
         onDragEnd={(e) => handleStageDragEnd(e, mainLayer, arrowLayer)}
-        onWheel={(e) => handleZoom(stageRef, e)}
+        onWheel={(e) => handleZoom(stageRef, e, setZoomValue)}
       >
         <Layer ref={arrowLayer}>
           <ArrowShape connectors={connectors} mainLayer={mainLayer} />

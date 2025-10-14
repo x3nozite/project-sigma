@@ -73,9 +73,11 @@ function App() {
         </div>
         <div>
           <h1>{zoomValue}</h1>
+          <button onClick={() => setZoomValue(Math.max(zoomValue - 10, 50))}>zoom out</button>
+          <button onClick={() => setZoomValue(Math.min(zoomValue + 10, 200))}>zoom in</button>
         </div>
         {showForm && <TaskForm onAddTask={addRect} onCloseForm={closeForm} />}
-        <ShapeCanvas rects={rects} setRects={setRects} tool={tool} setZoomValue={setZoomValue} />
+        <ShapeCanvas rects={rects} setRects={setRects} tool={tool} setZoomValue={setZoomValue} zoom={zoomValue} />
       </div>
     </>
   );

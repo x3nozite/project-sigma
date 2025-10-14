@@ -7,16 +7,17 @@ import { handleDragStart, handleDragMove, handleDragEnd, handleStageDragStart, h
 import { arrowMovement } from "./utilities/ArrowFunction.ts";
 import RectLayer from "./RectLayer";
 import Konva from "konva";
-import { handleZoom } from "./utilities/zoom.ts";
+import { handleZoomWithScroll } from "./utilities/zoom.ts";
 
 interface Props {
   rects: RectType[];
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
   tool: "select" | "eraser";
+  zoom: number
   setZoomValue: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const ShapeCanvas = ({ rects, setRects, tool, setZoomValue }: Props) => {
+const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
   const mainLayer = useRef<Konva.Layer | null>(null!);
   const prevShape = useRef<Konva.Shape | null>(null!);
   const tempLayer = useRef<Konva.Layer | null>(null!);
@@ -30,8 +31,8 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue }: Props) => {
       { id: "connector-" + connectors.length, from: from.id(), to: to.id() },
     ]);
   };
-
   useEffect(() => {
+
     if (!mainLayer.current) return;
 
     rects.forEach((r) => {
@@ -118,7 +119,9 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue }: Props) => {
         draggable
         onDragStart={(e) => handleStageDragStart(e, mainLayer, arrowLayer)}
         onDragEnd={(e) => handleStageDragEnd(e, mainLayer, arrowLayer)}
-        onWheel={(e) => handleZoom(stageRef, e, setZoomValue)}
+        onWheel={(e) => handleZoomWithScroll(stageRef, e, setZoomValue)}
+        scaleX={zoom / 100}
+        scaleY={zoom / 100}
       >
         <Layer ref={arrowLayer}>
           <ArrowShape connectors={connectors} mainLayer={mainLayer} />

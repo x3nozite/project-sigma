@@ -5,8 +5,8 @@ from .serializers import RectCardSerializer
 from users.serializers import UserSerializers
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import RectCard
-from django.contrib.auth import get_user_model
-User = get_user_model()
+# from django.contrib.auth import get_user_model
+# User = get_user_model()
 
 
 class RectCardListCreate(generics.ListCreateAPIView):
@@ -29,7 +29,7 @@ class RectCardDelete(generics.DestroyAPIView):
     
 
     
-class CreateUserView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializers
-    permission_classes = [AllowAny]
+# class CreateUserView(generics.CreateAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializers
+#     permission_classes = [AllowAny]

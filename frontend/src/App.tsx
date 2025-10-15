@@ -1,11 +1,13 @@
 import "./App.css";
 import BottomNav from "./components/BottomNav";
-import { useRef, useState } from "react";
+import { use, useRef, useState } from "react";
 import ShapeCanvas from "./components/ShapeCanvas";
 import type { RectType } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
 import TaskForm from "./components/forms/TaskForm";
 import type { taskFields } from "./components/forms/TaskForm";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import SignIn from "./components/SignInPage";
 
 function App() {
   const [zoomValue, setZoomValue] = useState(100);
@@ -13,6 +15,7 @@ function App() {
   const [rects, setRects] = useState<RectType[]>([]);
   const [tool, setTool] = useState<"select" | "eraser">("select");
   const idCounter = useRef(0);
+  const navigate = useNavigate();
 
   const openForm = () => {
     setShowForm(true);
@@ -60,7 +63,7 @@ function App() {
     <>
       <div className="relative w-full h-screen overflow-hidden">
         <div className="account-buttons absolute flex flex-row top-1.5 right-0 gap-2 m-4 z-51">
-          <SecondButton title="Sign In" />
+          <SecondButton title="Sign In" onClick={() => navigate("/signin")}/>
           <MainButton title="Create Account" />
         </div>
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-md/15 shadow-gray-600">
@@ -101,10 +104,19 @@ function App() {
           tool={tool}
           setZoomValue={setZoomValue}
           zoom={zoomValue}
-        />
+        />  
       </div>
     </>
   );
 }
 
-export default App;
+export default function AppWithRouter() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/signin" element={<SignIn />} />
+      </Routes>
+    </Router>
+  );
+}

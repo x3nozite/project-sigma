@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { z } from "zod";
@@ -40,6 +41,8 @@ export default function TaskForm({ onAddTask, onCloseForm }: Props) {
     resolver: zodResolver(schema),
   });
 
+  const [selCol, setSelCol] = useState("#ff2056");
+
   const onSubmit: SubmitHandler<taskFields> = async (data) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -54,6 +57,10 @@ export default function TaskForm({ onAddTask, onCloseForm }: Props) {
 
   return (
     <div className="absolute bg-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-10 py-10 inset-0 flex flex-col gap-4 items-center justify-center w-fit h-fit border-px rounded-lg shadow-2xl z-100">
+      <div
+        className="absolute top-0 rounded-t-lg w-full h-5 "
+        style={{ backgroundColor: selCol }}
+      ></div>
       <div className="flex flex-row justify-between w-full h-full">
         <span className="text-2xl font-bold text-left">Create New Task</span>
         <button onClick={onCloseForm} className="hover:cursor-pointer">
@@ -113,6 +120,7 @@ export default function TaskForm({ onAddTask, onCloseForm }: Props) {
             <label className="text-lg font-semibold">Color</label>
             <select
               {...register("color")}
+              onChange={(e) => setSelCol(e.target.value)}
               name="color"
               className="border border-gray-300 bg-gray-100 rounded-lg p-2 shadow-xs hover:cursor-pointer"
             >

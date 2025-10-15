@@ -78,9 +78,15 @@ function App() {
           >
             -
           </button>
-          <span className="w-20 py-2 hover:cursor-pointer text-center">
+          <button
+            onClick={() => setZoomValue(100)}
+            className="relative w-20 py-2 hover:cursor-pointer text-center group"
+          >
             {zoomValue}%
-          </span>
+            <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+              Reset Value
+            </span>
+          </button>
           <button
             className="hover:bg-purple-200 hover:cursor-pointer px-4 py-2 rounded-r-lg"
             onClick={() => setZoomValue(Math.min(zoomValue + 10, 200))}

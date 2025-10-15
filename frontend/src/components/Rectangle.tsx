@@ -46,6 +46,7 @@ const Rectangle = ({
         fill="white"
         shadowBlur={10}
         shadowOpacity={0.5}
+        shadowColor="black"
         shadowOffset={{ x: 0, y: 4 }}
         cornerRadius={[16, 4, 4, 4]}
         isCollapsed={false}
@@ -127,7 +128,7 @@ const Rectangle = ({
       ></Text>
       <Group>
         <Rect
-          fill="orange"
+          fill="#efb100"
           width={100}
           height={30}
           x={10}

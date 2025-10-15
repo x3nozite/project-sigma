@@ -3,7 +3,13 @@ import { useEffect, useRef, useState } from "react";
 import type { RectType, ArrowType } from "./types";
 import type { DragEventWithSource } from "./eventTypes";
 import ArrowShape from "./ArrowShape";
-import { handleDragStart, handleDragMove, handleDragEnd, handleStageDragStart, handleStageDragEnd } from "./utilities/DragHandler";
+import {
+  handleDragStart,
+  handleDragMove,
+  handleDragEnd,
+  handleStageDragStart,
+  handleStageDragEnd,
+} from "./utilities/DragHandler";
 import { arrowMovement } from "./utilities/ArrowFunction.ts";
 import RectLayer from "./RectLayer";
 import Konva from "konva";
@@ -13,7 +19,7 @@ interface Props {
   rects: RectType[];
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
   tool: "select" | "eraser";
-  zoom: number
+  zoom: number;
   setZoomValue: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -32,7 +38,6 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
     ]);
   };
   useEffect(() => {
-
     if (!mainLayer.current) return;
 
     rects.forEach((r) => {
@@ -56,15 +61,20 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
         )
           return;
 
-        rect.fill("green");
+        rect.fill("#b9f8cf");
       });
 
       rectGroup.on("dragmove", (e) => {
         const sourceRect = (e as DragEventWithSource).source;
-        if (!sourceRect || rectGroup === sourceRect || rect.fill() === "green") return;
+        if (
+          !sourceRect ||
+          rectGroup === sourceRect ||
+          rect.fill() === "#b9f8cf"
+        )
+          return;
 
-        rect.fill("green");
-      })
+        rect.fill("#b9f8cf");
+      });
 
       rectGroup.on("dragleave", (e) => {
         const sourceRect = (e as DragEventWithSource).source;
@@ -92,16 +102,24 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
 
         setRects((prev) => {
           return prev.map((rectangle) => {
-            if ("group-" + rectangle.id === (e as DragEventWithSource).source.id()) {
+            if (
+              "group-" + rectangle.id ===
+              (e as DragEventWithSource).source.id()
+            ) {
               return {
                 ...rectangle,
-                parents: [...rectangle.parents, rectGroup.id()], x: rectangle.x + -offset * vectorX, y: rectangle.y + -offset * vectorY
+                parents: [...rectangle.parents, rectGroup.id()],
+                x: rectangle.x + -offset * vectorX,
+                y: rectangle.y + -offset * vectorY,
               };
             }
             if ("group-" + rectangle.id === rectGroup.id()) {
               return {
                 ...rectangle,
-                children: [...rectangle.children, (e as DragEventWithSource).source.id()],
+                children: [
+                  ...rectangle.children,
+                  (e as DragEventWithSource).source.id(),
+                ],
               };
             }
             return rectangle;
@@ -114,7 +132,9 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
 
   return (
     <>
-      <Stage width={window.innerWidth} height={window.innerHeight}
+      <Stage
+        width={window.innerWidth}
+        height={window.innerHeight}
         ref={stageRef}
         draggable
         onDragStart={(e) => handleStageDragStart(e, mainLayer, arrowLayer)}
@@ -133,7 +153,7 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
             setRects={setRects}
             onDragStart={(e) => handleDragStart(e, tool, tempLayer)}
             onDragMove={(e) => {
-              handleDragMove(e, mainLayer, prevShape, tool)
+              handleDragMove(e, mainLayer, prevShape, tool);
               arrowMovement(connectors, mainLayer, tempLayer, arrowLayer);
             }}
             onDragEnd={(e) => {

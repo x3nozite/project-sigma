@@ -60,7 +60,7 @@ function App() {
     <>
       <div className="relative w-full h-screen overflow-hidden">
         <div className="account-buttons absolute flex flex-row top-1.5 right-0 gap-2 m-4 z-51">
-          <SecondButton title="Sign-Up" />
+          <SecondButton title="Sign In" />
           <MainButton title="Create Account" />
         </div>
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-md/15 shadow-gray-600">

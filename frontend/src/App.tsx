@@ -34,7 +34,7 @@ function App() {
         y: 100,
         width: 300,
         height: 200,
-        color: "white",
+        color: newTask.color,
         id: "rect-" + newId,
         title: newTask.title + " #" + newId,
         description: newTask.description,

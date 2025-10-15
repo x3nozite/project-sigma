@@ -116,9 +116,11 @@ export default function TaskForm({ onAddTask, onCloseForm }: Props) {
               name="color"
               className="border border-gray-300 bg-gray-100 rounded-lg p-2 shadow-xs hover:cursor-pointer"
             >
-              <option value="red">Red</option>
-              <option value="blue">Blue</option>
-              <option value="green">Green</option>
+              <option value="#ff2056">Red</option>
+              <option value="#2b7fff">Blue</option>
+              <option value="#00bc7d">Green</option>
+              <option value="#ad46ff">Purple</option>
+              <option value="#ff6900">Orange</option>
             </select>
           </div>
         </div>

@@ -43,7 +43,7 @@ const Rectangle = ({
         id={rect.id}
         width={Math.round(rect.width)}
         height={Math.round(rect.height)}
-        fill={rect.color}
+        fill="white"
         shadowBlur={10}
         shadowOpacity={0.5}
         shadowOffset={{ x: 0, y: 4 }}
@@ -57,7 +57,7 @@ const Rectangle = ({
           width={rect.width}
           height={rect.height * 0.25}
           cornerRadius={[16, 4, 4, 4]}
-          fill="purple"
+          fill={rect.color}
         ></Rect>
         <Text
           x={10}

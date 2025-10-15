@@ -13,7 +13,7 @@ function BottomNav({
   isActive,
 }: Props) {
   return (
-    <div className="grid grid-cols-8 px-2 py-2 border-gray-200 justify-center items-center">
+    <div className="grid grid-cols-8 px-2 py-2 border-gray-200 justify-center items-center bg-white rounded-xl">
       <button
         onClick={onShapeClick}
         className="add-shape group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"

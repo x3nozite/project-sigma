@@ -63,7 +63,7 @@ function App() {
           <SecondButton title="Sign-Up" />
           <MainButton title="Create Account" />
         </div>
-        <div className="bottom-nav absolute top-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-md/15 shadow-gray-600">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-md/15 shadow-gray-600">
           <BottomNav
             onShapeClick={openForm}
             onEraserClick={toggleEraser}
@@ -71,13 +71,31 @@ function App() {
             isActive={tool === "eraser"}
           />
         </div>
-        <div>
-          <h1>{zoomValue}</h1>
-          <button onClick={() => setZoomValue(Math.max(zoomValue - 10, 50))}>zoom out</button>
-          <button onClick={() => setZoomValue(Math.min(zoomValue + 10, 200))}>zoom in</button>
+        <div className="absolute bottom-4 left-4 inline-flex items-center z-100 bg-purple-100 rounded-xl w-fit">
+          <button
+            className="hover:bg-purple-200 hover:cursor-pointer px-4 py-2 rounded-l-lg"
+            onClick={() => setZoomValue(Math.max(zoomValue - 10, 50))}
+          >
+            -
+          </button>
+          <span className="w-20 py-2 hover:cursor-pointer text-center">
+            {zoomValue}%
+          </span>
+          <button
+            className="hover:bg-purple-200 hover:cursor-pointer px-4 py-2 rounded-r-lg"
+            onClick={() => setZoomValue(Math.min(zoomValue + 10, 200))}
+          >
+            +
+          </button>
         </div>
         {showForm && <TaskForm onAddTask={addRect} onCloseForm={closeForm} />}
-        <ShapeCanvas rects={rects} setRects={setRects} tool={tool} setZoomValue={setZoomValue} zoom={zoomValue} />
+        <ShapeCanvas
+          rects={rects}
+          setRects={setRects}
+          tool={tool}
+          setZoomValue={setZoomValue}
+          zoom={zoomValue}
+        />
       </div>
     </>
   );

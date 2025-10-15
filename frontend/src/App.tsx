@@ -8,6 +8,7 @@ import TaskForm from "./components/forms/TaskForm";
 import type { taskFields } from "./components/forms/TaskForm";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import SignIn from "./components/SignInPage";
+import CreateAccount from "./components/CreateAccountPage";
 
 function App() {
   const [zoomValue, setZoomValue] = useState(100);
@@ -64,7 +65,7 @@ function App() {
       <div className="relative w-full h-screen overflow-hidden">
         <div className="account-buttons absolute flex flex-row top-1.5 right-0 gap-2 m-4 z-51">
           <SecondButton title="Sign In" onClick={() => navigate("/signin")}/>
-          <MainButton title="Create Account" />
+          <MainButton title="Create Account" onClick={() => navigate("/create-acc")}/>
         </div>
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-md/15 shadow-gray-600">
           <BottomNav
@@ -116,6 +117,7 @@ export default function AppWithRouter() {
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/create-acc" element={<CreateAccount />} />
       </Routes>
     </Router>
   );

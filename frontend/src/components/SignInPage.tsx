@@ -1,7 +1,16 @@
-const SignIn = () => (
-    <div>
-        signin
-    </div>
-);
+import { useNavigate } from "react-router-dom";
+import { SecondButton } from "./ui/buttons";
 
-export default SignIn;
+
+
+function SignIn() {
+    const navigate = useNavigate();
+    return (
+        <div>
+            signin
+            <SecondButton title="Back" onClick={() => navigate("/")}/>
+        </div>
+    )
+}
+
+export default SignIn;  

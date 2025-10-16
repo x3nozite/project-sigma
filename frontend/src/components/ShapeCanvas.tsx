@@ -62,7 +62,7 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
           return;
 
         const sourceRectInArray = rects.find(rectToFind => ("group-" + rectToFind.id === sourceRect.id()));
-        if (sourceRectInArray.parents !== "") return;
+        if (sourceRectInArray?.parents !== "") return;
 
         rect.fill("#b9f8cf");
       });
@@ -94,7 +94,7 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
         )
           return;
         const sourceRectInArray = rects.find(rectToFind => ("group-" + rectToFind.id === sourceRect.id()));
-        if (sourceRectInArray.parents !== "") return;
+        if (sourceRectInArray?.parents !== "") return;
 
         rect.fill("white");
 
@@ -113,7 +113,7 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
             ) {
               return {
                 ...rectangle,
-                parents: [...rectangle.parents, rectGroup.id()],
+                parents: rectGroup.id(),
                 x: rectangle.x + -offset * vectorX,
                 y: rectangle.y + -offset * vectorY,
               };

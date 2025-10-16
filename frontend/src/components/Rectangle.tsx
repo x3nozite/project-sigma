@@ -1,12 +1,11 @@
 import { Group, Rect, Text } from "react-konva";
 import type { RectType } from "./types";
 import Konva from "konva";
-import { useEffect, useReducer, useRef } from "react";
 
 interface Props {
   rect: RectType;
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
-
+  collapseChild: (rect: RectType) => void;
   onDragStart: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragMove: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
@@ -20,12 +19,14 @@ const Rectangle = ({
   onDragMove,
   onDragEnd,
   tool,
+  collapseChild
 }: Props) => {
   const handleClick = (rectId: string) => {
     if (tool === "eraser") {
       setRects((prev) => prev.filter((r) => r.id !== rectId));
     }
   };
+
 
   return (
     <Group
@@ -40,7 +41,7 @@ const Rectangle = ({
       onClick={() => handleClick(rect.id)}
     >
       <Group
-        visible={rect.isCollapsed}
+        visible={!rect.isCollapsed}
       >
         <Rect
           id={rect.id}
@@ -118,7 +119,7 @@ const Rectangle = ({
           shadowOpacity={0.5}
           shadowColor="black"
           shadowOffset={{ x: 0, y: 4 }}
-          visible={!rect.isCollapsed}
+          visible={rect.isCollapsed}
         />
         <Rect
           x={0}
@@ -157,6 +158,7 @@ const Rectangle = ({
                   }
                 });
               });
+              collapseChild(rect);
             }
           }}
         ></Text>

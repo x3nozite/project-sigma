@@ -5,13 +5,14 @@ import Rectangle from "./Rectangle";
 interface Props {
   rects: RectType[];
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
+  collapseChild: (rect: RectType) => void;
   onDragStart: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragMove: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   tool: "select" | "eraser";
 }
 
-const RectLayer = ({ rects, setRects, onDragStart, onDragMove, onDragEnd, tool }: Props) => {
+const RectLayer = ({ rects, setRects, onDragStart, onDragMove, onDragEnd, tool, collapseChild }: Props) => {
 
   return (
     <>
@@ -24,6 +25,7 @@ const RectLayer = ({ rects, setRects, onDragStart, onDragMove, onDragEnd, tool }
           onDragMove={onDragMove}
           onDragEnd={onDragEnd}
           tool={tool}
+          collapseChild={collapseChild}
         />
       ))}
     </>

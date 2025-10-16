@@ -61,6 +61,9 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
         )
           return;
 
+        const sourceRectInArray = rects.find(rectToFind => ("group-" + rectToFind.id === sourceRect.id()));
+        if (sourceRectInArray.parents !== "") return;
+
         rect.fill("#b9f8cf");
       });
 
@@ -90,6 +93,8 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
           r.parents.includes(sourceRect.id())
         )
           return;
+        const sourceRectInArray = rects.find(rectToFind => ("group-" + rectToFind.id === sourceRect.id()));
+        if (sourceRectInArray.parents !== "") return;
 
         rect.fill("white");
 
@@ -130,6 +135,27 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
     });
   });
 
+  const collapseChild = (rect: RectType) => {
+    rect.children.forEach((child) => {
+      const childInArray = rects.find(r => ("group-" + r.id) === child);
+      if (!childInArray) return;
+      collapseChild(childInArray);
+      const rectGroup = mainLayer.current?.findOne(`#${child}`);
+      if (!rectGroup) return;
+      rectGroup.visible(!rectGroup.visible());
+
+      // set arrow's visibility
+      const connectorReact = connectors.find(connector => {
+        if (connector.from === child) return connector;
+      });
+      if (!connectorReact) return;
+      // find the node
+      const connectorNode = arrowLayer.current?.findOne(`#${connectorReact.id}`);
+      if (!connectorNode) return;
+      connectorNode.visible(!connectorNode.visible());
+    })
+  }
+
   return (
     <>
       <Stage
@@ -168,6 +194,7 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
               handleDragEnd(e, mainLayer, tool, prevShape);
             }}
             tool={tool}
+            collapseChild={collapseChild}
           />
         </Layer>
         <Layer ref={tempLayer} />

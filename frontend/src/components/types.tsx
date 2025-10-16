@@ -11,7 +11,7 @@ export type RectType = {
   status: string;
   isCollapsed: boolean;
   children: string[];
-  parents: string[];
+  parents: string;
 };
 
 export type TextType = {

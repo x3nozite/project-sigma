@@ -185,9 +185,19 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
     })
   }
 
+  const getRelativePointerPosition = (stage: Konva.Stage | null) => {
+    if (!stage) return null;
+    const pointer = stage.getPointerPosition();
+    if (!pointer) return null;
+    
+    //convert cursor coordinates to stage coordinates 
+    const transform = stage.getAbsoluteTransform().copy().invert();
+    return transform.point(pointer);
+  }
+
   const handleStageMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     if (tool !== "pencil") return;
-    const pos = stageRef.current?.getPointerPosition();
+    const pos = getRelativePointerPosition(stageRef.current);
     if (!pos) return;
     setIsDrawing(true);
     const newLine = {
@@ -201,7 +211,7 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
 
   const handleStageMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
     if (!isDrawing || tool !== "pencil") return;
-    const pos = stageRef.current?.getPointerPosition();
+    const pos = getRelativePointerPosition(stageRef.current);
     if (!pos) return;
     setDrawLines((prev) => {
       if (prev.length === 0) return prev;

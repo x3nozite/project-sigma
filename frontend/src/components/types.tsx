@@ -25,3 +25,5 @@ export type ArrowType = {
   from: string;
   to: string;
 };
+
+export type ToolType = "select" | "eraser" | "pencil";

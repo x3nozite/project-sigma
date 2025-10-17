@@ -1,5 +1,5 @@
 import { Group, Rect, Text } from "react-konva";
-import type { RectType } from "./types";
+import type { RectType, ToolType } from "./types";
 import Konva from "konva";
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
   onDragStart: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragMove: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
-  tool: "select" | "eraser";
+  tool: ToolType;
   handleClick: (rectId: string) => void;
 }
 

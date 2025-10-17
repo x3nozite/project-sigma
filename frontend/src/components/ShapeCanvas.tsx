@@ -1,6 +1,6 @@
 import { Stage, Layer, Line } from "react-konva";
 import { useEffect, useRef, useState } from "react";
-import type { RectType, ArrowType } from "./types";
+import type { RectType, ArrowType, ToolType } from "./types";
 import type { DragEventWithSource } from "./eventTypes";
 import ArrowShape from "./ArrowShape";
 import {
@@ -20,7 +20,7 @@ interface Props {
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
   connectors: ArrowType[];
   setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>;
-  tool: "select" | "eraser" | "pencil";
+  tool: ToolType;
   zoom: number;
   setZoomValue: React.Dispatch<React.SetStateAction<number>>;
 }

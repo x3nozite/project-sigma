@@ -2,7 +2,7 @@ import "./App.css";
 import BottomNav from "./components/BottomNav";
 import { useRef, useState, useEffect } from "react";
 import ShapeCanvas from "./components/ShapeCanvas";
-import type { RectType, ArrowType } from "./components/types";
+import type { RectType, ArrowType, ToolType } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
 import TaskForm from "./components/forms/TaskForm";
 import type { taskFields } from "./components/forms/TaskForm";
@@ -17,7 +17,7 @@ function App() {
   const [showForm, setShowForm] = useState(false);
   const [rects, setRects] = useState<RectType[]>([]);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
-  const [tool, setTool] = useState<"select" | "eraser" | "pencil">("select");
+  const [tool, setTool] = useState<ToolType>("select");
   const idCounter = useRef(0);
   const navigate = useNavigate();
 

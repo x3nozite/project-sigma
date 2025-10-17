@@ -1,4 +1,4 @@
-import { Stage, Layer, Line } from "react-konva";
+import { Stage, Layer } from "react-konva";
 import { useEffect, useRef, useState } from "react";
 import type { RectType, ArrowType } from "./types";
 import type { DragEventWithSource } from "./eventTypes";
@@ -14,27 +14,23 @@ import { arrowMovement } from "./utilities/ArrowFunction.ts";
 import RectLayer from "./RectLayer";
 import Konva from "konva";
 import { handleZoomWithScroll } from "./utilities/zoom.ts";
-import { changeCursor } from "./utilities/ChangeCursor.ts";
+import type { Rect } from "konva/lib/shapes/Rect";
 
 interface Props {
   rects: RectType[];
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
-  tool: "select" | "eraser" | "pencil";
+  tool: "select" | "eraser";
   zoom: number;
   setZoomValue: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, setConnectors }: Props) => {
+const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
   const mainLayer = useRef<Konva.Layer | null>(null!);
   const prevShape = useRef<Konva.Shape | null>(null!);
   const tempLayer = useRef<Konva.Layer | null>(null!);
   const arrowLayer = useRef<Konva.Layer | null>(null!);
   const stageRef = useRef<Konva.Stage | null>(null!);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [drawLines, setDrawLines] = useState<
-    { id: string; points: number[]; stroke?: string; strokeWidth?: number }[]
-  >([]);
 
   const addConnector = (from: Konva.Node, to: Konva.Node) => {
     setConnectors([
@@ -42,7 +38,6 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, se
       { id: "connector-" + connectors.length, from: from.id(), to: to.id() },
     ]);
   };
-
   useEffect(() => {
     if (!mainLayer.current) return;
 
@@ -92,6 +87,7 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, se
       });
 
       rectGroup.on("drop", (e) => {
+        console.log(connectors.length);
         const sourceRect = (e as DragEventWithSource).source;
         if (!sourceRect) return;
         if (
@@ -140,38 +136,6 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, se
       });
     });
   });
-
-
-  const handleStageMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    if (tool !== "pencil") return;
-    const pos = stageRef.current?.getPointerPosition();
-    if (!pos) return;
-    setIsDrawing(true);
-    const newLine = {
-      id: "line-" + drawLines.length,
-      points: [pos.x, pos.y],
-      stroke: "#000",
-      strokeWidth: 2,
-    };
-    setDrawLines((prev) => [...prev, newLine]);
-  };
-
-  const handleStageMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    if (!isDrawing || tool !== "pencil") return;
-    const pos = stageRef.current?.getPointerPosition();
-    if (!pos) return;
-    setDrawLines((prev) => {
-      if (prev.length === 0) return prev;
-      const last = prev[prev.length - 1];
-      const updatedLast = { ...last, points: [...last.points, pos.x, pos.y] };
-      return [...prev.slice(0, -1), updatedLast];
-    });
-  };
-
-  const handleStageMouseUp = () => {
-    if (isDrawing) setIsDrawing(false);
-  };
-
 
   const checkParentVisible = (rect: RectType) => {
     //find parent
@@ -244,9 +208,6 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, se
         onWheel={(e) => handleZoomWithScroll(stageRef, e, setZoomValue)}
         scaleX={zoom / 100}
         scaleY={zoom / 100}
-        onMouseDown={handleStageMouseDown}
-        onMouseMove={handleStageMouseMove}
-        onMouseUp={handleStageMouseUp}
       >
         <Layer ref={arrowLayer}>
           <ArrowShape connectors={connectors} mainLayer={mainLayer} />
@@ -277,19 +238,7 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, se
             handleClick={handleClick}
           />
         </Layer>
-        <Layer ref={tempLayer}>
-          {drawLines.map((ln) =>(
-            <Line
-              key={ln.id}
-              points={ln.points}
-              stroke={ln.stroke}
-              strokeWidth={ln.strokeWidth}
-              lineCap="round"
-              lineJoin="round"
-              globalCompositeOperation="source-over"
-            />  
-          ))}
-        </Layer>
+        <Layer ref={tempLayer} />
       </Stage>
     </>
   );

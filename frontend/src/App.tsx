@@ -1,12 +1,14 @@
 import "./App.css";
 import BottomNav from "./components/BottomNav";
-import { useRef, useState, useEffect } from "react";
+import { use, useRef, useState, useEffect } from "react";
 import ShapeCanvas from "./components/ShapeCanvas";
-import type { RectType, ArrowType } from "./components/types";
+import type { RectType } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
 import TaskForm from "./components/forms/TaskForm";
 import type { taskFields } from "./components/forms/TaskForm";
-import { useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import SignIn from "./components/SignInPage";
+import CreateAccount from "./components/CreateAccountPage";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
@@ -16,14 +18,13 @@ function App() {
   const [zoomValue, setZoomValue] = useState(100);
   const [showForm, setShowForm] = useState(false);
   const [rects, setRects] = useState<RectType[]>([]);
-  const [tool, setTool] = useState<"select" | "eraser" | "pencil">("select");
-  const [lines, setLines] = useState([]);
+  const [tool, setTool] = useState<"select" | "eraser">("select");
   const idCounter = useRef(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     getInstruments();
-  }, []);
+  }, []); 
 
   async function getInstruments() {
     const { data } = await supabase.from("instruments").select();
@@ -69,13 +70,8 @@ function App() {
 
   const clearCanvas = () => {
     setRects([]);
-    setConnectors([]);
     idCounter.current = 0;
   };
-
-  const annotate = () => {
-    setTool("pencil");
-  }
 
   return (
     <>
@@ -89,7 +85,6 @@ function App() {
             onShapeClick={openForm}
             onEraserClick={toggleEraser}
             onClearClick={clearCanvas}
-            onAnnotateClick={annotate}
             isActive={tool === "eraser"}
           />
         </div>
@@ -120,8 +115,6 @@ function App() {
         <ShapeCanvas
           rects={rects}
           setRects={setRects}
-          connectors={connectors}
-          setConnectors={setConnectors}
           tool={tool}
           setZoomValue={setZoomValue}
           zoom={zoomValue}
@@ -137,4 +130,14 @@ function App() {
   );
 }
 
-export default App;
+export default function AppWithRouter() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/create-acc" element={<CreateAccount />} />
+      </Routes>
+    </Router>
+  );
+}

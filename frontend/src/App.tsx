@@ -1,6 +1,6 @@
 import "./App.css";
 import BottomNav from "./components/BottomNav";
-import { use, useRef, useState } from "react";
+import { use, useRef, useState, useEffect } from "react";
 import ShapeCanvas from "./components/ShapeCanvas";
 import type { RectType } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
@@ -9,14 +9,27 @@ import type { taskFields } from "./components/forms/TaskForm";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import SignIn from "./components/SignInPage";
 import CreateAccount from "./components/CreateAccountPage";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
 
 function App() {
+  const [instruments, setInstruments] = useState<any[]>([]);
   const [zoomValue, setZoomValue] = useState(100);
   const [showForm, setShowForm] = useState(false);
   const [rects, setRects] = useState<RectType[]>([]);
   const [tool, setTool] = useState<"select" | "eraser">("select");
   const idCounter = useRef(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getInstruments();
+  }, []); 
+
+  async function getInstruments() {
+    const { data } = await supabase.from("instruments").select();
+    setInstruments(data ?? []);
+  }
 
   const openForm = () => {
     setShowForm(true);
@@ -107,6 +120,12 @@ function App() {
           zoom={zoomValue}
         />
       </div>
+
+      {/* <ul>
+        {instruments.map((instrument) => (
+          <li key={instrument.name}>{instrument.name}</li>
+        ))}
+      </ul> */}
     </>
   );
 }

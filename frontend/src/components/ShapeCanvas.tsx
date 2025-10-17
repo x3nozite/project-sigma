@@ -87,6 +87,7 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
       });
 
       rectGroup.on("drop", (e) => {
+        console.log(connectors.length);
         const sourceRect = (e as DragEventWithSource).source;
         if (!sourceRect) return;
         if (
@@ -171,6 +172,30 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
     })
   }
 
+  const changeChildToOrphan = (rectId: string) => {
+    const rectInArray = rects.find(r => r.id === rectId);
+
+    rectInArray?.children.forEach(child => {
+      const childInArray = rects.find(r => "group-" + r.id === child);
+      console.log(childInArray);
+      if (!childInArray) return;
+      childInArray.parents = "";
+    })
+  }
+  // TODO
+  // Change cursor based on tool
+  const handleClick = (rectId: string) => {
+    if (tool === "eraser") {
+      connectors.forEach((connector) => {
+        if (connector.to === "group-" + rectId || connector.from === "group-" + rectId) {
+          setConnectors((prev) => prev.filter(c => c.id !== connector.id));
+        }
+      })
+      changeChildToOrphan(rectId);
+      setRects((prev) => prev.filter((r) => r.id !== rectId))
+    }
+  };
+
   return (
     <>
       <Stage
@@ -210,6 +235,7 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
             }}
             tool={tool}
             collapseChild={collapseChild}
+            handleClick={handleClick}
           />
         </Layer>
         <Layer ref={tempLayer} />

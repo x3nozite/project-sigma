@@ -10,6 +10,7 @@ interface Props {
   onDragMove: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   tool: "select" | "eraser";
+  handleClick: (rectId: string) => void;
 }
 
 const Rectangle = ({
@@ -19,14 +20,9 @@ const Rectangle = ({
   onDragMove,
   onDragEnd,
   tool,
-  collapseChild
+  collapseChild,
+  handleClick
 }: Props) => {
-  const handleClick = (rectId: string) => {
-    if (tool === "eraser") {
-      setRects((prev) => prev.filter((r) => r.id !== rectId));
-    }
-  };
-
 
   return (
     <Group

@@ -14,6 +14,7 @@ import { arrowMovement } from "./utilities/ArrowFunction.ts";
 import RectLayer from "./RectLayer";
 import Konva from "konva";
 import { handleZoomWithScroll } from "./utilities/zoom.ts";
+import { changeCursor } from "./utilities/ChangeCursor.ts";
 
 interface Props {
   rects: RectType[];
@@ -254,6 +255,7 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, se
         onMouseUp={handleStageMouseUp}
         scaleX={zoom / 100}
         scaleY={zoom / 100}
+        style={{ cursor: changeCursor(tool) }}
       >
         <Layer ref={arrowLayer}>
           <ArrowShape connectors={connectors} mainLayer={mainLayer} />

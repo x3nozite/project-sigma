@@ -71,6 +71,10 @@ function App() {
     setTool(tool === "eraser" ? "select" : "eraser");
   };
 
+  const toggleSelect = () => {
+    setTool("select");
+  }
+
   const clearCanvas = () => {
     setRects([]);
     setConnectors([]);

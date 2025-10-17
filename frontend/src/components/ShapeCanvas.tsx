@@ -1,5 +1,5 @@
 import { Stage, Layer } from "react-konva";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import type { RectType, ArrowType } from "./types";
 import type { DragEventWithSource } from "./eventTypes";
 import ArrowShape from "./ArrowShape";
@@ -14,23 +14,24 @@ import { arrowMovement } from "./utilities/ArrowFunction.ts";
 import RectLayer from "./RectLayer";
 import Konva from "konva";
 import { handleZoomWithScroll } from "./utilities/zoom.ts";
-import type { Rect } from "konva/lib/shapes/Rect";
+import { changeCursor } from "./utilities/ChangeCursor.ts";
 
 interface Props {
   rects: RectType[];
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
+  connectors: ArrowType[];
+  setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>;
   tool: "select" | "eraser";
   zoom: number;
   setZoomValue: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
+const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, setConnectors }: Props) => {
   const mainLayer = useRef<Konva.Layer | null>(null!);
   const prevShape = useRef<Konva.Shape | null>(null!);
   const tempLayer = useRef<Konva.Layer | null>(null!);
   const arrowLayer = useRef<Konva.Layer | null>(null!);
   const stageRef = useRef<Konva.Stage | null>(null!);
-  const [connectors, setConnectors] = useState<ArrowType[]>([]);
 
   const addConnector = (from: Konva.Node, to: Konva.Node) => {
     setConnectors([
@@ -38,6 +39,7 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
       { id: "connector-" + connectors.length, from: from.id(), to: to.id() },
     ]);
   };
+
   useEffect(() => {
     if (!mainLayer.current) return;
 
@@ -87,7 +89,6 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
       });
 
       rectGroup.on("drop", (e) => {
-        console.log(connectors.length);
         const sourceRect = (e as DragEventWithSource).source;
         if (!sourceRect) return;
         if (
@@ -208,6 +209,7 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
         onWheel={(e) => handleZoomWithScroll(stageRef, e, setZoomValue)}
         scaleX={zoom / 100}
         scaleY={zoom / 100}
+        style={{ cursor: changeCursor(tool) }}
       >
         <Layer ref={arrowLayer}>
           <ArrowShape connectors={connectors} mainLayer={mainLayer} />

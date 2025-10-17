@@ -1,8 +1,8 @@
 import "./App.css";
 import BottomNav from "./components/BottomNav";
-import { use, useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import ShapeCanvas from "./components/ShapeCanvas";
-import type { RectType } from "./components/types";
+import type { RectType, ArrowType } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
 import TaskForm from "./components/forms/TaskForm";
 import type { taskFields } from "./components/forms/TaskForm";
@@ -16,13 +16,14 @@ function App() {
   const [zoomValue, setZoomValue] = useState(100);
   const [showForm, setShowForm] = useState(false);
   const [rects, setRects] = useState<RectType[]>([]);
+  const [connectors, setConnectors] = useState<ArrowType[]>([]);
   const [tool, setTool] = useState<"select" | "eraser">("select");
   const idCounter = useRef(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     getInstruments();
-  }, []); 
+  }, []);
 
   async function getInstruments() {
     const { data } = await supabase.from("instruments").select();
@@ -68,6 +69,7 @@ function App() {
 
   const clearCanvas = () => {
     setRects([]);
+    setConnectors([]);
     idCounter.current = 0;
   };
 
@@ -113,6 +115,8 @@ function App() {
         <ShapeCanvas
           rects={rects}
           setRects={setRects}
+          connectors={connectors}
+          setConnectors={setConnectors}
           tool={tool}
           setZoomValue={setZoomValue}
           zoom={zoomValue}

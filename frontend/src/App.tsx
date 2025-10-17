@@ -6,9 +6,7 @@ import type { RectType } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
 import TaskForm from "./components/forms/TaskForm";
 import type { taskFields } from "./components/forms/TaskForm";
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
-import SignIn from "./components/SignInPage";
-import CreateAccount from "./components/CreateAccountPage";
+import { useNavigate } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
@@ -18,7 +16,7 @@ function App() {
   const [zoomValue, setZoomValue] = useState(100);
   const [showForm, setShowForm] = useState(false);
   const [rects, setRects] = useState<RectType[]>([]);
-  const [tool, setTool] = useState<"select" | "eraser">("select");
+  const [tool, setTool] = useState<"select" | "eraser" | "pencil">("select");
   const idCounter = useRef(0);
   const navigate = useNavigate();
 
@@ -64,6 +62,10 @@ function App() {
     ]);
   };
 
+  const togglePencil = () => {
+    setTool(tool === "pencil" ? "select" : "pencil");
+  }
+
   const toggleEraser = () => {
     setTool(tool === "eraser" ? "select" : "eraser");
   };
@@ -85,7 +87,8 @@ function App() {
             onShapeClick={openForm}
             onEraserClick={toggleEraser}
             onClearClick={clearCanvas}
-            isActive={tool === "eraser"}
+            onAnnotateClick={togglePencil}
+            isActive={tool === "eraser" || tool === "pencil"}
           />
         </div>
         <div className="absolute bottom-4 left-4 inline-flex items-center z-100 bg-purple-100 rounded-xl w-fit">
@@ -130,14 +133,4 @@ function App() {
   );
 }
 
-export default function AppWithRouter() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/create-acc" element={<CreateAccount />} />
-      </Routes>
-    </Router>
-  );
-}
+export default App;

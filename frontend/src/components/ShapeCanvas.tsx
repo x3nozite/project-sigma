@@ -1,5 +1,5 @@
-import { Stage, Layer } from "react-konva";
-import { useEffect, useRef, useState } from "react";
+import { Stage, Layer, Line } from "react-konva";
+import { use, useEffect, useRef, useState } from "react";
 import type { RectType, ArrowType } from "./types";
 import type { DragEventWithSource } from "./eventTypes";
 import ArrowShape from "./ArrowShape";
@@ -19,7 +19,7 @@ import type { Rect } from "konva/lib/shapes/Rect";
 interface Props {
   rects: RectType[];
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
-  tool: "select" | "eraser";
+  tool: "select" | "eraser" | "pencil";
   zoom: number;
   setZoomValue: React.Dispatch<React.SetStateAction<number>>;
 }
@@ -31,6 +31,8 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
   const arrowLayer = useRef<Konva.Layer | null>(null!);
   const stageRef = useRef<Konva.Stage | null>(null!);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [drawLines, setDrawLines] = useState<{ id: string; points: number[]; stroke?: string; strokeWidth?: number }[]>([]);
 
   const addConnector = (from: Konva.Node, to: Konva.Node) => {
     setConnectors([
@@ -182,6 +184,37 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
       childInArray.parents = "";
     })
   }
+
+  const handleStageMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (tool !== "pencil") return;
+    const pos = stageRef.current?.getPointerPosition();
+    if (!pos) return;
+    setIsDrawing(true);
+    const newLine = {
+      id: "line-" + drawLines.length,
+      points: [pos.x, pos.y],
+      stroke: "#000",
+      strokeWidth: 2,
+    };
+    setDrawLines((prev) => [...prev, newLine]);
+  };
+
+  const handleStageMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (!isDrawing || tool !== "pencil") return;
+    const pos = stageRef.current?.getPointerPosition();
+    if (!pos) return;
+    setDrawLines((prev) => {
+      if (prev.length === 0) return prev;
+      const last = prev[prev.length - 1];
+      const updatedLast = { ...last, points: [...last.points, pos.x, pos.y] };
+      return [...prev.slice(0, -1), updatedLast];
+    });
+  };
+
+  const handleStageMouseUp = () => {
+    if (isDrawing) setIsDrawing(false);
+  };
+
   // TODO
   // Change cursor based on tool
   const handleClick = (rectId: string) => {
@@ -202,10 +235,13 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
         width={window.innerWidth}
         height={window.innerHeight}
         ref={stageRef}
-        draggable
+        draggable={tool !== "pencil"}
         onDragStart={(e) => handleStageDragStart(e, mainLayer, arrowLayer)}
         onDragEnd={(e) => handleStageDragEnd(e, mainLayer, arrowLayer)}
         onWheel={(e) => handleZoomWithScroll(stageRef, e, setZoomValue)}
+        onMouseDown={handleStageMouseDown}
+        onMouseMove={handleStageMouseMove}
+        onMouseUp={handleStageMouseUp}
         scaleX={zoom / 100}
         scaleY={zoom / 100}
       >
@@ -238,7 +274,19 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
             handleClick={handleClick}
           />
         </Layer>
-        <Layer ref={tempLayer} />
+        <Layer ref={tempLayer}>
+          {drawLines.map((ln) => (
+            <Line
+              key={ln.id}
+              points={ln.points}
+              stroke={ln.stroke}
+              strokeWidth={ln.strokeWidth}
+              lineCap="round"
+              lineJoin="round"
+              globalCompositeOperation="source-over"
+            />
+          ))}
+        </Layer>
       </Stage>
     </>
   );

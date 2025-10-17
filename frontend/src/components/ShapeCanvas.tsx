@@ -14,6 +14,7 @@ import { arrowMovement } from "./utilities/ArrowFunction.ts";
 import RectLayer from "./RectLayer";
 import Konva from "konva";
 import { handleZoomWithScroll } from "./utilities/zoom.ts";
+import type { Rect } from "konva/lib/shapes/Rect";
 
 interface Props {
   rects: RectType[];
@@ -135,24 +136,38 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom }: Props) => {
     });
   });
 
-  const collapseChild = (rect: RectType) => {
+  const checkParentVisible = (rect: RectType) => {
+    //find parent
+    const parentInArray = rects.find(r => ("group-" + r.id) === rect.parents);
+    const parentNode = mainLayer.current?.findOne(`#${rect.parents}`);
+    if (!parentNode || !parentInArray) return false;
+
+    return ((parentNode as Konva.Group).getChildren()[0].visible());
+  }
+
+  const collapseChild = (rect: RectType, currentlyCollapsed: boolean) => {
+    if (rect.children.length === 0) return;
     rect.children.forEach((child) => {
       const childInArray = rects.find(r => ("group-" + r.id) === child);
       if (!childInArray) return;
-      collapseChild(childInArray);
+
       const rectGroup = mainLayer.current?.findOne(`#${child}`);
       if (!rectGroup) return;
-      rectGroup.visible(!rectGroup.visible());
+      rectGroup.visible(currentlyCollapsed);
 
       // set arrow's visibility
       const connectorReact = connectors.find(connector => {
         if (connector.from === child) return connector;
       });
       if (!connectorReact) return;
+
       // find the node
       const connectorNode = arrowLayer.current?.findOne(`#${connectorReact.id}`);
       if (!connectorNode) return;
-      connectorNode.visible(!connectorNode.visible());
+      connectorNode.visible(currentlyCollapsed);
+
+      if (!checkParentVisible(childInArray)) return;
+      collapseChild(childInArray, currentlyCollapsed);
     })
   }
 

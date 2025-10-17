@@ -5,7 +5,7 @@ import Konva from "konva";
 interface Props {
   rect: RectType;
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
-  collapseChild: (rect: RectType) => void;
+  collapseChild: (rect: RectType, currentlyCollapsed: boolean) => void;
   onDragStart: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragMove: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
@@ -148,6 +148,13 @@ const Rectangle = ({
           verticalAlign="top"
           onClick={(e) => {
             if (tool !== "eraser") {
+              const isCurrentlyCollapsed = rect.isCollapsed;
+              if (isCurrentlyCollapsed) {
+                collapseChild(rect, true);
+              } else {
+                collapseChild(rect, false);
+              }
+
               e.cancelBubble = true;
               setRects((prev) => {
                 return prev.map((r) => {
@@ -158,7 +165,7 @@ const Rectangle = ({
                   }
                 });
               });
-              collapseChild(rect);
+
             }
           }}
         ></Text>

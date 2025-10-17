@@ -5,7 +5,7 @@ import Rectangle from "./Rectangle";
 interface Props {
   rects: RectType[];
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
-  collapseChild: (rect: RectType) => void;
+  collapseChild: (rect: RectType, currentlyCollapsed: boolean) => void;
   onDragStart: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragMove: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;

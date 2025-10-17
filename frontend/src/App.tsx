@@ -16,8 +16,8 @@ function App() {
   const [zoomValue, setZoomValue] = useState(100);
   const [showForm, setShowForm] = useState(false);
   const [rects, setRects] = useState<RectType[]>([]);
-  const [connectors, setConnectors] = useState<ArrowType[]>([]);
-  const [tool, setTool] = useState<"select" | "eraser">("select");
+  const [tool, setTool] = useState<"select" | "eraser" | "pencil">("select");
+  const [lines, setLines] = useState([]);
   const idCounter = useRef(0);
   const navigate = useNavigate();
 
@@ -73,6 +73,10 @@ function App() {
     idCounter.current = 0;
   };
 
+  const annotate = () => {
+    setTool("pencil");
+  }
+
   return (
     <>
       <div className="relative w-full h-screen overflow-hidden">
@@ -85,6 +89,7 @@ function App() {
             onShapeClick={openForm}
             onEraserClick={toggleEraser}
             onClearClick={clearCanvas}
+            onAnnotateClick={annotate}
             isActive={tool === "eraser"}
           />
         </div>

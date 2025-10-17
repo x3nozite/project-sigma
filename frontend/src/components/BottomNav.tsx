@@ -2,12 +2,14 @@ interface Props {
   onEraserClick: () => void;
   onShapeClick: () => void;
   onClearClick: () => void;
+  onAnnotateClick: () => void;
   isActive: boolean;
 }
 
 function BottomNav({
   onClearClick,
   onShapeClick,
+  onAnnotateClick,
   onTextClick,
   onEraserClick,
   isActive,
@@ -64,7 +66,10 @@ function BottomNav({
           Selection
         </span>
       </button>
-      <button className="draw-canvas group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 duration-50 text-gray-700 transition-colors hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50">
+      <button 
+        onClick={onAnnotateClick}
+        className="draw-canvas group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 duration-50 text-gray-700 transition-colors hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"
+      >
         <svg
           className="w-6 h-6 text-gray-800 rotate-[90deg]"
           aria-hidden="true"
@@ -83,7 +88,7 @@ function BottomNav({
           />
         </svg>
         <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
-          Add Task
+          Annotate
         </span>
       </button>
       <button className="add-annotate group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50">

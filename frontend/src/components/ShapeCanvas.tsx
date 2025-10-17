@@ -1,5 +1,5 @@
-import { Stage, Layer } from "react-konva";
-import { useEffect, useRef } from "react";
+import { Stage, Layer, Line } from "react-konva";
+import { useEffect, useRef, useState } from "react";
 import type { RectType, ArrowType } from "./types";
 import type { DragEventWithSource } from "./eventTypes";
 import ArrowShape from "./ArrowShape";
@@ -19,9 +19,7 @@ import { changeCursor } from "./utilities/ChangeCursor.ts";
 interface Props {
   rects: RectType[];
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
-  connectors: ArrowType[];
-  setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>;
-  tool: "select" | "eraser";
+  tool: "select" | "eraser" | "pencil";
   zoom: number;
   setZoomValue: React.Dispatch<React.SetStateAction<number>>;
 }
@@ -32,6 +30,11 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, se
   const tempLayer = useRef<Konva.Layer | null>(null!);
   const arrowLayer = useRef<Konva.Layer | null>(null!);
   const stageRef = useRef<Konva.Stage | null>(null!);
+  const [connectors, setConnectors] = useState<ArrowType[]>([]);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [drawLines, setDrawLines] = useState<
+    { id: string; points: number[]; stroke?: string; strokeWidth?: number }[]
+  >([]);
 
   const addConnector = (from: Konva.Node, to: Konva.Node) => {
     setConnectors([
@@ -138,6 +141,38 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, se
     });
   });
 
+
+  const handleStageMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (tool !== "pencil") return;
+    const pos = stageRef.current?.getPointerPosition();
+    if (!pos) return;
+    setIsDrawing(true);
+    const newLine = {
+      id: "line-" + drawLines.length,
+      points: [pos.x, pos.y],
+      stroke: "#000",
+      strokeWidth: 2,
+    };
+    setDrawLines((prev) => [...prev, newLine]);
+  };
+
+  const handleStageMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (!isDrawing || tool !== "pencil") return;
+    const pos = stageRef.current?.getPointerPosition();
+    if (!pos) return;
+    setDrawLines((prev) => {
+      if (prev.length === 0) return prev;
+      const last = prev[prev.length - 1];
+      const updatedLast = { ...last, points: [...last.points, pos.x, pos.y] };
+      return [...prev.slice(0, -1), updatedLast];
+    });
+  };
+
+  const handleStageMouseUp = () => {
+    if (isDrawing) setIsDrawing(false);
+  };
+
+
   const checkParentVisible = (rect: RectType) => {
     //find parent
     const parentInArray = rects.find(r => ("group-" + r.id) === rect.parents);
@@ -209,7 +244,9 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, se
         onWheel={(e) => handleZoomWithScroll(stageRef, e, setZoomValue)}
         scaleX={zoom / 100}
         scaleY={zoom / 100}
-        style={{ cursor: changeCursor(tool) }}
+        onMouseDown={handleStageMouseDown}
+        onMouseMove={handleStageMouseMove}
+        onMouseUp={handleStageMouseUp}
       >
         <Layer ref={arrowLayer}>
           <ArrowShape connectors={connectors} mainLayer={mainLayer} />
@@ -240,7 +277,19 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, se
             handleClick={handleClick}
           />
         </Layer>
-        <Layer ref={tempLayer} />
+        <Layer ref={tempLayer}>
+          {drawLines.map((ln) =>(
+            <Line
+              key={ln.id}
+              points={ln.points}
+              stroke={ln.stroke}
+              strokeWidth={ln.strokeWidth}
+              lineCap="round"
+              lineJoin="round"
+              globalCompositeOperation="source-over"
+            />  
+          ))}
+        </Layer>
       </Stage>
     </>
   );

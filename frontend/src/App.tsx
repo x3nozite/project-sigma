@@ -121,11 +121,11 @@ function App() {
         />
       </div>
 
-      {/* <ul>
+      <ul>
         {instruments.map((instrument) => (
           <li key={instrument.name}>{instrument.name}</li>
         ))}
-      </ul> */}
+      </ul>
     </>
   );
 }

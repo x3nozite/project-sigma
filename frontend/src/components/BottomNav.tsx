@@ -95,13 +95,13 @@ function BottomNav({
           </span>
         </button>
 
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex gap-1 bg-white p-2 rounded-md shadow-lg">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex gap-1 bg-white p-2 rounded-md shadow-lg">
           {["#000000", "#ff3b30", "#ff9500", "#ffcc00", "#34c759", "#0a84ff", "#5856d6", "#ff2d55"].map((c) => (
             <button
               key={c}
               onClick={() => onColorSelect?.(c)}
               aria-label={`Select ${c}`}
-              className="w-6 h-6 rounded-full border-2 border-gray-200"
+              className="w-6 h-6 rounded-full border-2 border-gray-200 hover:border-gray-500"
               style={{ background: c }}
             />
           ))}

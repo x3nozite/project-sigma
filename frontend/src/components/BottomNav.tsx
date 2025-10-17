@@ -109,7 +109,7 @@ function BottomNav({
               key={c}
               onClick={() => onColorSelect?.(c)}
               aria-label={`Select ${c}`}
-              className="w-6 h-6 rounded-full border-2 border-gray-200 hover:border-gray-500"
+              className="w-6 h-6 rounded-full border-2 border-gray-200 hover:border-gray-500 focus:border-gray-500"
               style={{ background: c }}
             />
           ))}

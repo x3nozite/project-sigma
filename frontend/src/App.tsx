@@ -18,6 +18,7 @@ function App() {
   const [rects, setRects] = useState<RectType[]>([]);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
   const [tool, setTool] = useState<ToolType>("select");
+  const [strokeColor, setStrokeColor] = useState<string>("#000000");
   const idCounter = useRef(0);
   const navigate = useNavigate();
 
@@ -94,6 +95,7 @@ function App() {
             onEraserClick={toggleEraser}
             onClearClick={clearCanvas}
             onAnnotateClick={togglePencil}
+            onColorSelect={setStrokeColor}
             isActive={tool === "eraser" || tool === "pencil"}
           />
         </div>
@@ -129,6 +131,7 @@ function App() {
           zoom={zoomValue}
           connectors={connectors}
           setConnectors={setConnectors}
+          strokeColor={strokeColor}
         />
       </div>
 

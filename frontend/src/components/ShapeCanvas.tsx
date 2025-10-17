@@ -24,9 +24,10 @@ interface Props {
   tool: ToolType;
   zoom: number;
   setZoomValue: React.Dispatch<React.SetStateAction<number>>;
+  strokeColor?: string;
 }
 
-const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, setConnectors }: Props) => {
+const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, setConnectors, strokeColor="#000"}: Props) => {
   const mainLayer = useRef<Konva.Layer | null>(null!);
   const prevShape = useRef<Konva.Shape | null>(null!);
   const tempLayer = useRef<Konva.Layer | null>(null!);
@@ -204,7 +205,7 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, se
     const newLine = {
       id: "line-" + drawLines.length,
       points: [pos.x, pos.y],
-      stroke: "#000",
+      stroke: strokeColor,
       strokeWidth: 2,
     };
     setDrawLines((prev) => [...prev, newLine]);

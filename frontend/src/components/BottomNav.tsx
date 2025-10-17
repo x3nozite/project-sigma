@@ -3,6 +3,7 @@ interface Props {
   onShapeClick: () => void;
   onClearClick: () => void;
   onAnnotateClick: () => void;
+  onColorSelect?: (color: string) => void;
   isActive: boolean;
 }
 
@@ -10,6 +11,7 @@ function BottomNav({
   onClearClick,
   onShapeClick,
   onAnnotateClick,
+  onColorSelect,
   onTextClick,
   onEraserClick,
   isActive,
@@ -66,31 +68,45 @@ function BottomNav({
           Selection
         </span>
       </button>
-      <button 
-        onClick={onAnnotateClick}
-        className="draw-canvas group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 duration-50 text-gray-700 transition-colors hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"
-      >
-        <svg
-          className="w-6 h-6 text-gray-800 rotate-[90deg]"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          fill="none"
-          viewBox="0 0 24 24"
+      <div className="relative group">
+        <button 
+          onClick={onAnnotateClick}
+          className="draw-canvas flex flex-col justify-center items-center rounded-l-sm border-none w-10 h-10 p-1 duration-50 text-gray-700 transition-colors hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"
         >
-          <path
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="1"
-            d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"
-          />
-        </svg>
-        <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
-          Annotate
-        </span>
-      </button>
+          <svg
+            className="w-6 h-6 text-gray-800 rotate-[90deg]"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1"
+              d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"
+            />
+          </svg>
+          <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+            Annotate
+          </span>
+        </button>
+
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex gap-1 bg-white p-2 rounded-md shadow-lg">
+          {["#000000", "#ff3b30", "#ff9500", "#ffcc00", "#34c759", "#0a84ff", "#5856d6", "#ff2d55"].map((c) => (
+            <button
+              key={c}
+              onClick={() => onColorSelect?.(c)}
+              aria-label={`Select ${c}`}
+              className="w-6 h-6 rounded-full border-2 border-gray-200"
+              style={{ background: c }}
+            />
+          ))}
+        </div>
+      </div>
       <button className="add-annotate group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50">
         <svg
           className="w-6 h-6 text-gray-800"

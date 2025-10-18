@@ -43,7 +43,7 @@ function CreateAccount() {
       <div className="flex min-h-screen items-center justify-center bg-gray-100">
         <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
           <h2 className="text-2xl text-purple-700 font-bold mb-6 text-center">
-            Sign In
+            Create Account
           </h2>
           <form className="space-y-5">
             <div>

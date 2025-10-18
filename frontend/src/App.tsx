@@ -8,13 +8,15 @@ import TaskForm from "./components/forms/TaskForm";
 import type { taskFields } from "./components/forms/TaskForm";
 import { useNavigate } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
-import { Auth } from '@supabase/auth-ui-react'
-import { ThemeSupa } from '@supabase/auth-ui-shared'
-
-const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+import { Auth } from "@supabase/auth-ui-react";
+import { useSession } from "./context/SessionContext";
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+);
 
 function App() {
-  const [session, setSession] = useState();
+  const { session } = useSession();
   const [instruments, setInstruments] = useState<any[]>([]);
   const [zoomValue, setZoomValue] = useState(100);
   const [showForm, setShowForm] = useState(false);
@@ -25,20 +27,6 @@ function App() {
   const idCounter = useRef(0);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //     supabase.auth.getSession().then(({ data: { session } }) => {
-  //       setSession(session)
-  //     })
-  //     const {
-  //       data: { subscription },
-  //     } = supabase.auth.onAuthStateChange((_event, session) => {
-  //       setSession(session)
-  //     })
-  //     return () => subscription.unsubscribe()
-  //   }, [])
-
-  
-   
   async function getInstruments() {
     const { data } = await supabase.from("instruments").select();
     setInstruments(data ?? []);
@@ -79,7 +67,7 @@ function App() {
 
   const togglePencil = () => {
     setTool(tool === "pencil" ? "select" : "pencil");
-  }
+  };
 
   const toggleEraser = () => {
     setTool(tool === "eraser" ? "select" : "eraser");
@@ -87,7 +75,7 @@ function App() {
 
   const toggleSelect = () => {
     setTool("select");
-  }
+  };
 
   const clearCanvas = () => {
     setRects([]);
@@ -98,12 +86,26 @@ function App() {
   //   return <Auth supabase={supabase} appearance={{ theme: ThemeSupa }}></Auth>
   // }
 
+  const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+  };
+  console.log(session);
   return (
     <>
       <div className="relative w-full h-screen overflow-hidden">
         <div className="account-buttons absolute flex flex-row top-1.5 right-0 gap-2 m-4 z-51">
-          <SecondButton title="Sign In" onClick={() => navigate("/signin")} />
-          <MainButton title="Create Account" onClick={() => navigate("/create-acc")} />
+          <SecondButton
+            title={session ? "Sign Out" : "Sign In"}
+            onClick={async () => {
+              if (session) await signOut();
+              else navigate("/signin");
+            }}
+          />
+          {!session &&
+          (<MainButton
+            title="Create Account"
+            onClick={() => navigate("/create-acc")}
+          />)}
         </div>
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-md/15 shadow-gray-600">
           <BottomNav

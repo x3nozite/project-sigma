@@ -2,11 +2,25 @@ import { useNavigate } from "react-router-dom";
 import { SecondButton } from "./ui/buttons";
 import { useState } from "react";
 import { supabase } from "../App";
+import { useSession } from "../context/SessionContext";
 
 function SignIn() {
+  const session = useSession();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleOAuthSignIn = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+
+    if (error) console.error("Error signing in with Google:", error);
+    else console.log("Redirecting to Google login...");
+  };
 
   const handleSignIn = async () => {
     try {
@@ -27,6 +41,7 @@ function SignIn() {
       alert("Something went wrong!");
     }
   };
+  console.log(session);
   return (
     <div className="">
       <div className="flex min-h-screen items-center justify-center bg-gray-100">
@@ -64,6 +79,18 @@ function SignIn() {
                 placeholder="Enter your password"
                 onChange={(e) => setPassword(e.target.value)}
               />
+            </div>
+            <div className="flex justify-center">
+              <button
+                onClick={handleOAuthSignIn}
+                className="flex justify-center gap-2 border rounded-lg px-4 py-2 hover:bg-gray-100"
+              >
+                <img
+                  src="https://developers.google.com/identity/images/g-logo.png"
+                  alt="Google logo"
+                  className="w-5 h-5"
+                />
+              </button>
             </div>
             <div className="flex justify-center">
               <SecondButton

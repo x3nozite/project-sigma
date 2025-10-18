@@ -103,7 +103,6 @@ function BottomNav({
             "#34c759",
             "#0a84ff",
             "#5856d6",
-            "#ff2d55",
           ].map((c) => (
             <button
               key={c}

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { SecondButton } from "./ui/buttons";
 import { useState } from "react";
-import { supabase } from "../App";
+import { supabase } from "../supabase-client";
 import { useSession } from "../context/SessionContext";
 
 function SignIn() {
@@ -13,9 +13,6 @@ function SignIn() {
   const handleOAuthSignIn = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: {
-        redirectTo: window.location.origin,
-      },
     });
 
     if (error) console.error("Error signing in with Google:", error);

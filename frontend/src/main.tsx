@@ -4,6 +4,7 @@ import './index.css'
 import { router } from './router.tsx'
 import { RouterProvider } from 'react-router-dom'
 import { SessionProvider } from './context/SessionContext.tsx'
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <SessionProvider>

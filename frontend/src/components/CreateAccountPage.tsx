@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { SecondButton } from "./ui/buttons";
 import { useState } from "react";
-import { supabase } from "../App";
+import { supabase } from "../supabase-client";
 
 function CreateAccount() {
   const navigate = useNavigate();

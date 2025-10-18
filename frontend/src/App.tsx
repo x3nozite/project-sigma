@@ -10,10 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
 import { Auth } from "@supabase/auth-ui-react";
 import { useSession } from "./context/SessionContext";
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
-);
+import { supabase } from "./supabase-client";
 
 function App() {
   const { session } = useSession();
@@ -26,6 +23,8 @@ function App() {
   const [strokeColor, setStrokeColor] = useState<string>("#000000");
   const idCounter = useRef(0);
   const navigate = useNavigate();
+
+  
 
   async function getInstruments() {
     const { data } = await supabase.from("instruments").select();

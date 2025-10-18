@@ -218,7 +218,11 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, se
     setDrawLines((prev) => {
       if (prev.length === 0) return prev;
       const last = prev[prev.length - 1];
+
+      /* LINES ARE REPRESENTED AS POINTS, POINTS[0, 2, 4, 6, etc] = Xi, POINTS[1, 3, 5, 7] = Yi */
       const updatedLast = { ...last, points: [...last.points, pos.x, pos.y] };
+      
+
       return [...prev.slice(0, -1), updatedLast];
     });
   };

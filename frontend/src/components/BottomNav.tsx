@@ -2,7 +2,7 @@ interface Props {
   onEraserClick: () => void;
   onShapeClick: () => void;
   onClearClick: () => void;
-  onAnnotateClick: () => void;
+  onDrawClick: () => void;
   onColorSelect?: (color: string) => void;
   isActive: boolean;
 }
@@ -10,7 +10,7 @@ interface Props {
 function BottomNav({
   onClearClick,
   onShapeClick,
-  onAnnotateClick,
+  onDrawClick,
   onColorSelect,
   onTextClick,
   onEraserClick,
@@ -70,7 +70,7 @@ function BottomNav({
       </button>
       <div className="relative group">
         <button
-          onClick={onAnnotateClick}
+          onClick={onDrawClick}
           className="draw-canvas flex flex-col justify-center items-center rounded-l-sm border-none w-10 h-10 p-1 duration-50 text-gray-700 transition-colors hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"
         >
           <svg

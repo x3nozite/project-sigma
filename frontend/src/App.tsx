@@ -94,7 +94,7 @@ function App() {
             onShapeClick={openForm}
             onEraserClick={toggleEraser}
             onClearClick={clearCanvas}
-            onAnnotateClick={togglePencil}
+            onDrawClick={togglePencil}
             onColorSelect={setStrokeColor}
             isActive={tool === "eraser" || tool === "pencil"}
           />

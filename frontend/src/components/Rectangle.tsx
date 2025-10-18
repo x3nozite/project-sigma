@@ -9,8 +9,9 @@ interface Props {
   onDragStart: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragMove: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
+  onShapeClick: () => void;
   tool: ToolType;
-  handleClick: (rectId: string) => void;
+  handleEraserClick: (rectId: string) => void;
 }
 
 const Rectangle = ({
@@ -21,7 +22,8 @@ const Rectangle = ({
   onDragEnd,
   tool,
   collapseChild,
-  handleClick
+  handleEraserClick,
+  onShapeClick
 }: Props) => {
 
   return (
@@ -34,7 +36,10 @@ const Rectangle = ({
       onDragStart={onDragStart}
       onDragMove={onDragMove}
       onDragEnd={onDragEnd}
-      onClick={() => handleClick(rect.id)}
+      onClick={() => {
+        handleEraserClick(rect.id);
+        onShapeClick();
+      }}
     >
       <Group
         visible={!rect.isCollapsed}

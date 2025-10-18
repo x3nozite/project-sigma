@@ -1,6 +1,6 @@
 import Konva from "konva";
 import type { Vector2d } from "konva/lib/types";
-import type { Ref, RefObject } from "react";
+import type { RefObject } from "react";
 
 export function handleDragStart(e: Konva.KonvaEventObject<DragEvent>, tool: string, tempLayer: RefObject<Konva.Layer | null>) {
   if (tool === "eraser") return;

@@ -11,6 +11,7 @@ import { createClient } from "@supabase/supabase-js";
 import { Auth } from "@supabase/auth-ui-react";
 import { useSession } from "./context/SessionContext";
 import { supabase } from "./supabase-client";
+import DescriptionForm from "./components/forms/DescriptionForm";
 
 function App() {
   const { session } = useSession();
@@ -23,8 +24,9 @@ function App() {
   const [strokeColor, setStrokeColor] = useState<string>("#000000");
   const idCounter = useRef(0);
   const navigate = useNavigate();
+  const [showDescription, setShowDescription] = useState(false);
 
-  
+
 
   async function getInstruments() {
     const { data } = await supabase.from("instruments").select();
@@ -101,10 +103,10 @@ function App() {
             }}
           />
           {!session &&
-          (<MainButton
-            title="Create Account"
-            onClick={() => navigate("/create-acc")}
-          />)}
+            (<MainButton
+              title="Create Account"
+              onClick={() => navigate("/create-acc")}
+            />)}
         </div>
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-md/15 shadow-gray-600">
           <BottomNav
@@ -140,6 +142,7 @@ function App() {
           </button>
         </div>
         {showForm && <TaskForm onAddTask={addRect} onCloseForm={closeForm} />}
+        {showDescription && <DescriptionForm onclick={() => setShowDescription(false)} />}
         <ShapeCanvas
           rects={rects}
           setRects={setRects}
@@ -149,6 +152,7 @@ function App() {
           connectors={connectors}
           setConnectors={setConnectors}
           strokeColor={strokeColor}
+          onShapeClick={() => setShowDescription(true)}
         />
       </div>
 

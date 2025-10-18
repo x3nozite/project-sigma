@@ -25,9 +25,10 @@ interface Props {
   zoom: number;
   setZoomValue: React.Dispatch<React.SetStateAction<number>>;
   strokeColor?: string;
+  onShapeClick: () => void;
 }
 
-const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, setConnectors, strokeColor="#000"}: Props) => {
+const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, setConnectors, strokeColor = "#000", onShapeClick }: Props) => {
   const mainLayer = useRef<Konva.Layer | null>(null!);
   const prevShape = useRef<Konva.Shape | null>(null!);
   const tempLayer = useRef<Konva.Layer | null>(null!);
@@ -221,7 +222,7 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, se
 
       /* LINES ARE REPRESENTED AS POINTS, POINTS[0, 2, 4, 6, etc] = Xi, POINTS[1, 3, 5, 7] = Yi */
       const updatedLast = { ...last, points: [...last.points, pos.x, pos.y] };
-      
+
 
       return [...prev.slice(0, -1), updatedLast];
     });
@@ -233,7 +234,7 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, se
 
   // TODO
   // Change cursor based on tool
-  const handleClick = (rectId: string) => {
+  const handleEraserClick = (rectId: string) => {
     if (tool === "eraser") {
       connectors.forEach((connector) => {
         if (connector.to === "group-" + rectId || connector.from === "group-" + rectId) {
@@ -288,7 +289,8 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, se
             }}
             tool={tool}
             collapseChild={collapseChild}
-            handleClick={handleClick}
+            handleEraserClick={handleEraserClick}
+            onShapeClick={onShapeClick}
           />
         </Layer>
         <Layer ref={tempLayer}>

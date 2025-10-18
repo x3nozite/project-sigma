@@ -10,10 +10,11 @@ interface Props {
   onDragMove: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   tool: ToolType;
-  handleClick: (rectId: string) => void;
+  handleEraserClick: (rectId: string) => void;
+  onShapeClick: () => void;
 }
 
-const RectLayer = ({ rects, setRects, onDragStart, onDragMove, onDragEnd, tool, collapseChild, handleClick }: Props) => {
+const RectLayer = ({ rects, setRects, onDragStart, onDragMove, onDragEnd, tool, collapseChild, handleEraserClick, onShapeClick }: Props) => {
 
   return (
     <>
@@ -27,7 +28,8 @@ const RectLayer = ({ rects, setRects, onDragStart, onDragMove, onDragEnd, tool, 
           onDragEnd={onDragEnd}
           tool={tool}
           collapseChild={collapseChild}
-          handleClick={handleClick}
+          handleEraserClick={handleEraserClick}
+          onShapeClick={onShapeClick}
         />
       ))}
     </>

@@ -163,7 +163,7 @@ function BottomNav({
       </button>
       <button
         onClick={onEraserClick}
-        className={`add-shape group flex flex-col justify-center items-center rounded-l-sm border-none w-10 h-10 p-1 transition-colors duration-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 ${
+        className={`add-shape group flex flex-col justify-center items-center rounded-l-sm border-none w-10 h-10 p-1 transition-colors duration-50 hover:text-red-500 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 ${
                     isActive ? "bg-red-100 text-red-500" : "text-gray-700 hover:bg-red-50"}`}
       >
         <svg

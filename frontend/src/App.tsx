@@ -8,10 +8,13 @@ import TaskForm from "./components/forms/TaskForm";
 import type { taskFields } from "./components/forms/TaskForm";
 import { useNavigate } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
+import { Auth } from '@supabase/auth-ui-react'
+import { ThemeSupa } from '@supabase/auth-ui-shared'
 
 const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
 
 function App() {
+  const [session, setSession] = useState();
   const [instruments, setInstruments] = useState<any[]>([]);
   const [zoomValue, setZoomValue] = useState(100);
   const [showForm, setShowForm] = useState(false);
@@ -22,10 +25,20 @@ function App() {
   const idCounter = useRef(0);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    getInstruments();
-  }, []);
+  // useEffect(() => {
+  //     supabase.auth.getSession().then(({ data: { session } }) => {
+  //       setSession(session)
+  //     })
+  //     const {
+  //       data: { subscription },
+  //     } = supabase.auth.onAuthStateChange((_event, session) => {
+  //       setSession(session)
+  //     })
+  //     return () => subscription.unsubscribe()
+  //   }, [])
 
+  
+   
   async function getInstruments() {
     const { data } = await supabase.from("instruments").select();
     setInstruments(data ?? []);
@@ -81,6 +94,9 @@ function App() {
     setConnectors([]);
     idCounter.current = 0;
   };
+  // if (!session) {
+  //   return <Auth supabase={supabase} appearance={{ theme: ThemeSupa }}></Auth>
+  // }
 
   return (
     <>

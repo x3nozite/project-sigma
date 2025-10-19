@@ -1,17 +1,20 @@
-export type RectType = {
+export type ShapeType = {
   x: number;
   y: number;
+  id: string;
+  color: string;
+  children: string[];
+  parents: string;
+  isCollapsed: boolean;
+}
+
+export type RectType = ShapeType & {
   width: number;
   height: number;
-  color: string;
-  id: string;
   title: string;
   description: string;
   dueDate: string;
   status: string;
-  isCollapsed: boolean;
-  children: string[];
-  parents: string;
 };
 
 export type TextType = {

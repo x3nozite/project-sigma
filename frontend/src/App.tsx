@@ -100,6 +100,7 @@ function App() {
     <>
       <div className="relative w-full h-screen overflow-hidden">
         <div className="account-buttons absolute flex flex-row top-1.5 right-0 gap-2 m-4 z-51">
+          {session && <p>{session?.user?.email}</p>}
           <SecondButton
             title={session ? "Sign Out" : "Sign In"}
             onClick={async () => {

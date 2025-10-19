@@ -2,7 +2,12 @@ import "./App.css";
 import BottomNav from "./components/BottomNav";
 import { useRef, useState, useEffect } from "react";
 import ShapeCanvas from "./components/ShapeCanvas";
-import type { RectType, ArrowType, ToolType, ShapeType } from "./components/types";
+import type {
+  RectType,
+  ArrowType,
+  ToolType,
+  ShapeType,
+} from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
 import TaskForm from "./components/forms/TaskForm";
 import type { taskFields } from "./components/forms/TaskForm";
@@ -12,6 +17,12 @@ import { Auth } from "@supabase/auth-ui-react";
 import { useSession } from "./context/SessionContext";
 import { supabase } from "./supabase-client";
 import DescriptionForm from "./components/forms/DescriptionForm";
+import {
+  HiMenu,
+  HiUserCircle,
+  HiOutlineZoomIn,
+  HiOutlineZoomOut,
+} from "react-icons/hi";
 
 function App() {
   const { session } = useSession();
@@ -26,7 +37,6 @@ function App() {
   const navigate = useNavigate();
   const [showDescription, setShowDescription] = useState(false);
   const [selectedShape, setSelectedShape] = useState<ShapeType | null>(null);
-
 
   async function getInstruments() {
     const { data } = await supabase.from("instruments").select();
@@ -44,7 +54,7 @@ function App() {
   const openDescription = (shape: ShapeType | null) => {
     setSelectedShape(shape);
     setShowDescription(true);
-  }
+  };
 
   const addRect = (newTask: taskFields) => {
     const newId = idCounter.current;
@@ -98,23 +108,48 @@ function App() {
   console.log(session);
   return (
     <>
-      <div className="relative w-full h-screen overflow-hidden">
-        <div className="account-buttons absolute flex flex-row top-1.5 right-0 gap-2 m-4 z-51">
-          {session && <p>{session?.user?.email}</p>}
-          <SecondButton
-            title={session ? "Sign Out" : "Sign In"}
-            onClick={async () => {
-              if (session) await signOut();
-              else navigate("/signin");
-            }}
-          />
-          {!session &&
-            (<MainButton
-              title="Create Account"
-              onClick={() => navigate("/create-acc")}
-            />)}
-        </div>
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-md/15 shadow-gray-600">
+      <div className="relative w-full h-screen overflow-hidden ">
+        <nav className="top-nav absolute w-full z-50 flex flex-wrap justify-between items-center p-5">
+          <div className="more-options ">
+            <button className="p-2.5 hover:cursor-pointer hover:bg-purple-100 bg-purple-200 rounded-lg  ">
+              <HiMenu />
+            </button>
+          </div>
+          <div className="tool-bar-tab absolute left-1/2 transform -translate-x-1/2 hidden sm:flex">
+            <BottomNav
+              onShapeClick={openForm}
+              onEraserClick={toggleEraser}
+              onClearClick={clearCanvas}
+              onDrawClick={togglePencil}
+              onColorSelect={setStrokeColor}
+              isActive={tool === "eraser" || tool === "pencil"}
+            />
+          </div>
+          <div className="user-account">
+            <div className="big-buttons hidden gap-2 lg:flex">
+              {session && <p>{session?.user?.email}</p>}
+              <SecondButton
+                title={session ? "Sign Out" : "Sign In"}
+                onClick={async () => {
+                  if (session) await signOut();
+                  else navigate("/signin");
+                }}
+              />
+              {!session && (
+                <MainButton
+                  title="Create Account"
+                  onClick={() => navigate("/create-acc")}
+                />
+              )}
+            </div>
+            <div className="hidden sm:max-lg:flex">
+              <button className="p-2.5 bg-purple-200 rounded-lg hover:bg-purple-100 hover:cursor-pointer">
+                <HiUserCircle />
+              </button>
+            </div>
+          </div>
+        </nav>
+        <div className="absolute toolbar-mob flex sm:hidden z-100 w-full justify-center p-2 bottom-4">
           <BottomNav
             onShapeClick={openForm}
             onEraserClick={toggleEraser}
@@ -124,12 +159,14 @@ function App() {
             isActive={tool === "eraser" || tool === "pencil"}
           />
         </div>
-        <div className="absolute bottom-4 left-4 inline-flex items-center z-100 bg-purple-100 rounded-xl w-fit">
+        <div className="account-buttons absolute flex flex-row top-1.5 right-0 gap-2 m-4 z-51"></div>
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-md/15 shadow-gray-600"></div>
+        <div className="absolute bottom-4 left-4  items-center z-10 bg-purple-100 rounded-xl w-fit hidden sm:inline-flex">
           <button
             className="hover:bg-purple-200 hover:cursor-pointer px-4 py-2 rounded-l-lg"
             onClick={() => setZoomValue(Math.max(zoomValue - 10, 50))}
           >
-            -
+            <HiOutlineZoomOut />
           </button>
           <button
             onClick={() => setZoomValue(100)}
@@ -141,14 +178,19 @@ function App() {
             </span>
           </button>
           <button
-            className="hover:bg-purple-200 hover:cursor-pointer px-4 py-2 rounded-r-lg"
+            className="hover:bg-purple-200 hover:cursor-pointer px-4 py-2 rounded-r-lg h-full"
             onClick={() => setZoomValue(Math.min(zoomValue + 10, 200))}
           >
-            +
+            <HiOutlineZoomIn />
           </button>
         </div>
         {showForm && <TaskForm onAddTask={addRect} onCloseForm={closeForm} />}
-        {showDescription && <DescriptionForm onclick={() => setShowDescription(false)} shape={selectedShape} />}
+        {showDescription && (
+          <DescriptionForm
+            onclick={() => setShowDescription(false)}
+            shape={selectedShape}
+          />
+        )}
         <ShapeCanvas
           rects={rects}
           setRects={setRects}

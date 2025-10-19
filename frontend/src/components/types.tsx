@@ -6,15 +6,15 @@ export type ShapeType = {
   children: string[];
   parents: string;
   isCollapsed: boolean;
+  title: string;
+  description: string;
+  dueDate: string;
+  status: string;
 }
 
 export type RectType = ShapeType & {
   width: number;
   height: number;
-  title: string;
-  description: string;
-  dueDate: string;
-  status: string;
 };
 
 export type TextType = {

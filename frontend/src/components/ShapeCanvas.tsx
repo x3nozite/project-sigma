@@ -1,6 +1,6 @@
 import { Stage, Layer, Line } from "react-konva";
 import { useEffect, useRef, useState } from "react";
-import type { RectType, ArrowType, ToolType } from "./types";
+import type { RectType, ArrowType, ToolType, ShapeType } from "./types";
 import type { DragEventWithSource } from "./eventTypes";
 import ArrowShape from "./ArrowShape";
 import {
@@ -25,7 +25,7 @@ interface Props {
   zoom: number;
   setZoomValue: React.Dispatch<React.SetStateAction<number>>;
   strokeColor?: string;
-  onShapeClick: () => void;
+  onShapeClick: (shape: ShapeType | null) => void;
 }
 
 const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, setConnectors, strokeColor = "#000", onShapeClick }: Props) => {

@@ -1,5 +1,5 @@
 import Konva from "konva";
-import type { RectType, ToolType } from "./types";
+import type { RectType, ShapeType, ToolType } from "./types";
 import Rectangle from "./Rectangle";
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
   onDragEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   tool: ToolType;
   handleEraserClick: (rectId: string) => void;
-  onShapeClick: () => void;
+  onShapeClick: (shape: ShapeType | null) => void;
 }
 
 const RectLayer = ({ rects, setRects, onDragStart, onDragMove, onDragEnd, tool, collapseChild, handleEraserClick, onShapeClick }: Props) => {

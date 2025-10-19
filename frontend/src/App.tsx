@@ -2,7 +2,7 @@ import "./App.css";
 import BottomNav from "./components/BottomNav";
 import { useRef, useState, useEffect } from "react";
 import ShapeCanvas from "./components/ShapeCanvas";
-import type { RectType, ArrowType, ToolType } from "./components/types";
+import type { RectType, ArrowType, ToolType, ShapeType } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
 import TaskForm from "./components/forms/TaskForm";
 import type { taskFields } from "./components/forms/TaskForm";
@@ -25,7 +25,7 @@ function App() {
   const idCounter = useRef(0);
   const navigate = useNavigate();
   const [showDescription, setShowDescription] = useState(false);
-
+  const [selectedShape, setSelectedShape] = useState<ShapeType | null>(null);
 
 
   async function getInstruments() {
@@ -40,6 +40,11 @@ function App() {
   const closeForm = () => {
     setShowForm(false);
   };
+
+  const openDescription = (shape: ShapeType | null) => {
+    setSelectedShape(shape);
+    setShowDescription(true);
+  }
 
   const addRect = (newTask: taskFields) => {
     const newId = idCounter.current;
@@ -142,7 +147,7 @@ function App() {
           </button>
         </div>
         {showForm && <TaskForm onAddTask={addRect} onCloseForm={closeForm} />}
-        {showDescription && <DescriptionForm onclick={() => setShowDescription(false)} />}
+        {showDescription && <DescriptionForm onclick={() => setShowDescription(false)} shape={selectedShape} />}
         <ShapeCanvas
           rects={rects}
           setRects={setRects}
@@ -152,7 +157,7 @@ function App() {
           connectors={connectors}
           setConnectors={setConnectors}
           strokeColor={strokeColor}
-          onShapeClick={() => setShowDescription(true)}
+          onShapeClick={openDescription}
         />
       </div>
 

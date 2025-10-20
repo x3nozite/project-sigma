@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { z } from "zod";
+import type { ShapeType } from "../types";
 
 const schema = z.object({
   title: z
@@ -23,21 +24,28 @@ export type taskFields = z.infer<typeof schema>;
 interface Props {
   onAddTask: (task: taskFields) => void;
   onCloseForm: () => void;
+  initialData: ShapeType | null;
 }
 
-export default function TaskForm({ onAddTask, onCloseForm }: Props) {
+export default function TaskForm({
+  onAddTask,
+  onCloseForm,
+  initialData,
+}: Props) {
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
   } = useForm<taskFields>({
-    defaultValues: {
-      title: "My New Subject",
-      // description: "abcedfghijkl",
-      date: "2025-10-11",
-      time: "06:07",
-    },
+    defaultValues: initialData
+      ? initialData
+      : {
+          title: "My New Subject",
+          // description: "abcedfghijkl",
+          date: "2025-10-11",
+          time: "06:07",
+        },
     resolver: zodResolver(schema),
   });
 

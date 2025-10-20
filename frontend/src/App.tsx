@@ -184,7 +184,13 @@ function App() {
             <HiOutlineZoomIn />
           </button>
         </div>
-        {showForm && <TaskForm onAddTask={addRect} onCloseForm={closeForm} />}
+        {showForm && (
+          <TaskForm
+            onAddTask={addRect}
+            onCloseForm={closeForm}
+            initialData={null}
+          />
+        )}
         {showDescription && (
           <DescriptionForm
             onclick={() => setShowDescription(false)}

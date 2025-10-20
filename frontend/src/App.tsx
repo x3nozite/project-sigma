@@ -22,7 +22,11 @@ import {
   HiUserCircle,
   HiOutlineZoomIn,
   HiOutlineZoomOut,
+  HiOutlineFolder,
+  HiOutlineDocument,
+  HiOutlineTrash,
 } from "react-icons/hi";
+import { DropdownMenu } from "radix-ui";
 
 function App() {
   const { session } = useSession();
@@ -111,9 +115,50 @@ function App() {
       <div className="relative w-full h-screen overflow-hidden ">
         <nav className="top-nav absolute w-full z-50 flex flex-wrap justify-between items-center p-5">
           <div className="more-options ">
-            <button className="p-2.5 hover:cursor-pointer hover:bg-purple-100 bg-purple-200 rounded-lg  ">
-              <HiMenu />
-            </button>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <button className="p-2.5 bg-purple-200 rounded-lg hover:cursor-pointer">
+                  <HiMenu />
+                </button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content
+                  sideOffset={5}
+                  align="start"
+                  alignOffset={5}
+                  className="min-w-56 rounded-lg shadow-lg p-5 text-violet-700 hover:cursor-default hover:border-none bg-white"
+                >
+                  <DropdownMenu.Item className="group py-1 pl-2 hover:bg-violet-200 rounded-lg hover:text-gray-700 flex items-center">
+                    <div className="flex items-center gap-2">
+                      <HiOutlineFolder />
+                      Save
+                    </div>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-violet-200 rounded-lg hover:text-gray-700">
+                    <div className="flex items-center gap-2">
+                      <HiOutlineDocument />
+                      Export PDF
+                    </div>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-violet-200 rounded-lg hover:text-gray-700">
+                    <button
+                      onClick={clearCanvas}
+                      className="flex items-center gap-2"
+                    >
+                      <HiOutlineTrash />
+                      Clear Canvas
+                    </button>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Separator className="h-[2px] my-2 bg-gray-500" />
+                  <DropdownMenu.Label className="py-0.5 pl-2 text-sm text-gray-400">
+                    Canvas Theme
+                  </DropdownMenu.Label>
+                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-violet-200 rounded-lg hover:text-gray-700">
+                    Change Color Here
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
           </div>
           <div className="tool-bar-tab absolute left-1/2 transform -translate-x-1/2 hidden sm:flex">
             <BottomNav

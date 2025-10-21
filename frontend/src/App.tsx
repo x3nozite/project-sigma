@@ -68,23 +68,47 @@ function App() {
     setRects([
       ...rects,
       {
-        x: 100,
-        y: 100,
-        width: 300,
-        height: 200,
-        color: newTask.color,
-        id: "rect-" + newId,
-        title: newTask.title + " #" + newId,
-        description: newTask.description,
-        dueDate: newTask.date,
-        status: "In Progress",
-        isCollapsed: false,
-        children: [],
-        parents: "",
+      x: 100,
+      y: 100,
+      width: 300,
+      height: 200,
+      color: newTask.color,
+      id: "rect-" + newId,
+      title: newTask.title,
+      description: newTask.description,
+      dueDate: newTask.date,
+      status: "In Progress",
+      isCollapsed: false,
+      children: [],
+      parents: "",
       },
     ]);
   };
 
+  //   try {
+  //     const { data, error } = await supabase.from(" ").insert({
+  //       x: newRect.x,
+  //       y: newRect.y,
+  //       width: newRect.width,
+  //       height: newRect.height,
+  //       color: newRect.color,
+  //       rect_id: newRect.id,
+  //       title: newRect.title,
+  //       description: newRect.description,
+  //       due_date: newRect.dueDate,
+  //       status: newRect.status,
+  //       is_collapsed: newRect.isCollapsed
+  //       });
+  //       if (data) {
+  //         // a
+  //       }
+  //     } catch (error) {
+  //     console.error("Error:", error);
+  //     alert("Failed saving task");
+  //     return;
+  //   }
+  // };
+  
   const togglePencil = () => {
     setTool(tool === "pencil" ? "select" : "pencil");
   };

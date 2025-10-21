@@ -26,7 +26,8 @@ import {
   HiOutlineDocument,
   HiOutlineTrash,
 } from "react-icons/hi";
-import { DropdownMenu } from "radix-ui";
+import { DropdownMenu, AlertDialog } from "radix-ui";
+import AppToolbar from "./components/ui/buttons/tools/AppToolbar";
 
 function App() {
   const { session } = useSession();
@@ -164,14 +165,45 @@ function App() {
                       Export PDF
                     </div>
                   </DropdownMenu.Item>
-                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-violet-200 rounded-lg hover:text-gray-700">
-                    <button
-                      onClick={clearCanvas}
-                      className="flex items-center gap-2"
-                    >
-                      <HiOutlineTrash />
-                      Clear Canvas
-                    </button>
+                  <DropdownMenu.Item
+                    onSelect={(event: Event) => event.preventDefault()}
+                    className="py-1 pl-2  hover:bg-violet-200 rounded-lg hover:text-gray-700"
+                  >
+                    <AlertDialog.Root>
+                      <AlertDialog.Trigger asChild>
+                        <button className="flex items-center gap-2">
+                          <HiOutlineTrash />
+                          Clear Canvas
+                        </button>
+                      </AlertDialog.Trigger>
+                      <AlertDialog.Portal>
+                        <AlertDialog.Overlay className="fixed bg-black opacity-50 inset-0" />
+                        <AlertDialog.Content className="bg-white min-w-md max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 rounded-lg">
+                          <AlertDialog.Title className="text-xl font-bold mb-2">
+                            Are you sure?
+                          </AlertDialog.Title>
+                          <AlertDialog.Description className="my-3 text-gray-700">
+                            This action cannot be undone. This will permanently
+                            clear the canvas.
+                          </AlertDialog.Description>
+                          <div className="flex justify-end gap-4">
+                            <AlertDialog.Cancel asChild>
+                              <button className="hover:underline decoration-1 hover:cursor-pointer">
+                                Cancel
+                              </button>
+                            </AlertDialog.Cancel>
+                            <AlertDialog.Action asChild>
+                              <button
+                                className="bg-red-300 text-red-500 px-2.5 py-1 rounded-lg hover:cursor-pointer hover:bg-red-500 hover:text-white"
+                                onClick={clearCanvas}
+                              >
+                                Yes, clear canvas
+                              </button>
+                            </AlertDialog.Action>
+                          </div>
+                        </AlertDialog.Content>
+                      </AlertDialog.Portal>
+                    </AlertDialog.Root>
                   </DropdownMenu.Item>
                   <DropdownMenu.Separator className="h-[2px] my-2 bg-gray-500" />
                   <DropdownMenu.Label className="py-0.5 pl-2 text-sm text-gray-400">
@@ -185,7 +217,15 @@ function App() {
             </DropdownMenu.Root>
           </div>
           <div className="tool-bar-tab absolute left-1/2 transform -translate-x-1/2 hidden sm:flex">
-            <BottomNav
+            {/* <BottomNav
+              onShapeClick={openForm}
+              onEraserClick={toggleEraser}
+              onClearClick={clearCanvas}
+              onDrawClick={togglePencil}
+              onColorSelect={setStrokeColor}
+              isActive={tool === "eraser" || tool === "pencil"}
+            /> */}
+            <AppToolbar
               onShapeClick={openForm}
               onEraserClick={toggleEraser}
               onClearClick={clearCanvas}

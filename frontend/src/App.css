@@ -4,6 +4,10 @@
   padding: 15px;
 }
 
+.ToolbarToggleItem[data-state="on"] {
+  background-color: blue;
+}
+
 .canvas {
   z-index: 1;
 }

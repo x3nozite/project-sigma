@@ -23,12 +23,14 @@ export type taskFields = z.infer<typeof schema>;
 
 interface Props {
   onAddTask: (task: taskFields) => void;
+  onUpdateTask: (shape: ShapeType, newData: taskFields) => void;
   onCloseForm: () => void;
   initialData: ShapeType | null;
 }
 
 export default function TaskForm({
   onAddTask,
+  onUpdateTask,
   onCloseForm,
   initialData,
 }: Props) {
@@ -39,13 +41,18 @@ export default function TaskForm({
     formState: { errors, isSubmitting },
   } = useForm<taskFields>({
     defaultValues: initialData
-      ? initialData
+      ? {
+        title: initialData.title,
+        description: initialData.description,
+        date: initialData.dueDate,
+        time: "09:11",
+      }
       : {
-          title: "My New Subject",
-          // description: "abcedfghijkl",
-          date: "2025-10-11",
-          time: "06:07",
-        },
+        title: "My New Subject",
+        // description: "abcedfghijkl",
+        date: "2025-10-11",
+        time: "06:07",
+      },
     resolver: zodResolver(schema),
   });
 
@@ -54,7 +61,8 @@ export default function TaskForm({
   const onSubmit: SubmitHandler<taskFields> = async (data) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      onAddTask(data);
+      if (initialData) onUpdateTask(initialData, data);
+      else onAddTask(data);
       onCloseForm();
     } catch (error) {
       setError("root", {

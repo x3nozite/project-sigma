@@ -8,10 +8,11 @@ import {
   HiOutlineTrash,
 } from "react-icons/hi";
 import { BsEraser } from "react-icons/bs";
+import type { ShapeType } from "./types";
 
 interface Props {
   onEraserClick: () => void;
-  onShapeClick: () => void;
+  onShapeClick: (shape: ShapeType | null) => void;
   onClearClick: () => void;
   onDrawClick: () => void;
   onColorSelect?: (color: string) => void;
@@ -30,7 +31,7 @@ function BottomNav({
   return (
     <div className="grid grid-cols-8 px-2 py-2 border-gray-200 justify-center items-center bg-white rounded-lg shadow-lg">
       <button
-        onClick={onShapeClick}
+        onClick={() => onShapeClick(null)}
         className="add-shape group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"
       >
         <HiOutlineCube className="text-xl" />
@@ -95,9 +96,8 @@ function BottomNav({
       </button>
       <button
         onClick={onEraserClick}
-        className={`add-shape group flex flex-col justify-center items-center rounded-sm border-none w-10 h-10 p-1 transition-colors duration-50 hover:text-red-500 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 ${
-          isActive ? "bg-red-100 text-red-500" : "text-gray-700 hover:bg-red-50"
-        }`}
+        className={`add-shape group flex flex-col justify-center items-center rounded-sm border-none w-10 h-10 p-1 transition-colors duration-50 hover:text-red-500 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 ${isActive ? "bg-red-100 text-red-500" : "text-gray-700 hover:bg-red-50"
+          }`}
       >
         <BsEraser className="text-xl" style={{ strokeWidth: 0.5 }} />
         <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">

@@ -1,6 +1,6 @@
 import "./App.css";
 import BottomNav from "./components/BottomNav";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import ShapeCanvas from "./components/ShapeCanvas";
 import type {
   RectType,
@@ -12,11 +12,8 @@ import { MainButton, SecondButton } from "./components/ui/buttons";
 import TaskForm from "./components/forms/TaskForm";
 import type { taskFields } from "./components/forms/TaskForm";
 import { useNavigate } from "react-router-dom";
-import { createClient } from "@supabase/supabase-js";
-import { Auth } from "@supabase/auth-ui-react";
 import { useSession } from "./context/SessionContext";
 import { supabase } from "./supabase-client";
-import DescriptionForm from "./components/forms/DescriptionForm";
 import {
   HiMenu,
   HiUserCircle,
@@ -40,7 +37,6 @@ function App() {
   const [strokeColor, setStrokeColor] = useState<string>("#000000");
   const idCounter = useRef(0);
   const navigate = useNavigate();
-  const [showDescription, setShowDescription] = useState(false);
   const [selectedShape, setSelectedShape] = useState<ShapeType | null>(null);
 
   async function getInstruments() {
@@ -48,18 +44,16 @@ function App() {
     setInstruments(data ?? []);
   }
 
-  const openForm = () => {
+  const openForm = (shape: ShapeType | null) => {
+    setSelectedShape(shape);
     setShowForm(true);
   };
 
   const closeForm = () => {
+    setSelectedShape(null);
     setShowForm(false);
   };
 
-  const openDescription = (shape: ShapeType | null) => {
-    setSelectedShape(shape);
-    setShowDescription(true);
-  };
 
   const addRect = (newTask: taskFields) => {
     const newId = idCounter.current;
@@ -69,22 +63,30 @@ function App() {
     setRects([
       ...rects,
       {
-      x: 100,
-      y: 100,
-      width: 300,
-      height: 200,
-      color: newTask.color,
-      id: "rect-" + newId,
-      title: newTask.title + " #" + newId,
-      description: newTask.description,
-      dueDate: newTask.date,
-      status: "In Progress",
-      isCollapsed: false,
-      children: [],
-      parents: "",
+        x: 100,
+        y: 100,
+        width: 300,
+        height: 200,
+        color: newTask.color,
+        id: "rect-" + newId,
+        title: newTask.title + " #" + newId,
+        description: newTask.description,
+        dueDate: newTask.date,
+        status: "In Progress",
+        isCollapsed: false,
+        children: [],
+        parents: "",
       },
     ]);
   };
+
+  const updateRect = (shape: ShapeType, newData: taskFields) => {
+    setRects((prev) =>
+      prev.map((r) =>
+        r.id === shape.id ? { ...r, title: newData.title, description: newData.description, color: newData.color, dueDate: newData.date } : r
+      )
+    )
+  }
 
   //   try {
   //     const { data, error } = await supabase.from(" ").insert({
@@ -109,17 +111,13 @@ function App() {
   //     return;
   //   }
   // };
-  
+
   const togglePencil = () => {
     setTool(tool === "pencil" ? "select" : "pencil");
   };
 
   const toggleEraser = () => {
     setTool(tool === "eraser" ? "select" : "eraser");
-  };
-
-  const toggleSelect = () => {
-    setTool("select");
   };
 
   const clearCanvas = () => {
@@ -226,7 +224,7 @@ function App() {
               isActive={tool === "eraser" || tool === "pencil"}
             /> */}
             <AppToolbar
-              onShapeClick={openForm}
+              onShapeClick={() => openForm(null)}
               onEraserClick={toggleEraser}
               onClearClick={clearCanvas}
               onDrawClick={togglePencil}
@@ -296,14 +294,9 @@ function App() {
         {showForm && (
           <TaskForm
             onAddTask={addRect}
+            onUpdateTask={updateRect}
             onCloseForm={closeForm}
-            initialData={null}
-          />
-        )}
-        {showDescription && (
-          <DescriptionForm
-            onclick={() => setShowDescription(false)}
-            shape={selectedShape}
+            initialData={selectedShape}
           />
         )}
         <ShapeCanvas
@@ -315,7 +308,7 @@ function App() {
           connectors={connectors}
           setConnectors={setConnectors}
           strokeColor={strokeColor}
-          onShapeClick={openDescription}
+          onShapeClick={openForm}
         />
       </div>
 

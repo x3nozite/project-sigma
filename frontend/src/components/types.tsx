@@ -30,3 +30,8 @@ export type ArrowType = {
 };
 
 export type ToolType = "select" | "eraser" | "pencil";
+
+export type TodoType = ShapeType & {
+  width: number;
+  height: number;
+}

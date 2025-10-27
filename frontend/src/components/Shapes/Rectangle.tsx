@@ -1,5 +1,5 @@
 import { Group, Rect, Text } from "react-konva";
-import type { RectType, ShapeType, ToolType } from "./types";
+import type { RectType, ShapeType, ToolType } from "../types";
 import Konva from "konva";
 
 interface Props {

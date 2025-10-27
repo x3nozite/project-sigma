@@ -1,6 +1,6 @@
 import Konva from "konva";
 import type { RectType, ShapeType, ToolType } from "./types";
-import Rectangle from "./Rectangle";
+import Rectangle from "./Shapes/Rectangle";
 
 interface Props {
   rects: RectType[];

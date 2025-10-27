@@ -1,6 +1,6 @@
 import { Stage, Layer, Line } from "react-konva";
 import { useEffect, useRef, useState } from "react";
-import type { RectType, ArrowType, ToolType, ShapeType } from "./types";
+import type { RectType, ArrowType, ToolType, ShapeType, TodoType } from "./types";
 import type { DragEventWithSource } from "./eventTypes";
 import ArrowShape from "./ArrowShape";
 import {
@@ -15,10 +15,13 @@ import RectLayer from "./RectLayer";
 import Konva from "konva";
 import { handleZoomWithScroll } from "./utilities/zoom.ts";
 import { changeCursor } from "./utilities/ChangeCursor.ts";
+import TodoLayer from "./TodoLayer.tsx";
 
 interface Props {
   rects: RectType[];
   setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
+  todos: TodoType[];
+  setTodos: React.Dispatch<React.SetStateAction<TodoType[]>>;
   connectors: ArrowType[];
   setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>;
   tool: ToolType;
@@ -28,7 +31,7 @@ interface Props {
   onShapeClick: (shape: ShapeType | null) => void;
 }
 
-const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, setConnectors, strokeColor = "#000", onShapeClick }: Props) => {
+const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoom, connectors, setConnectors, strokeColor = "#000", onShapeClick }: Props) => {
   const mainLayer = useRef<Konva.Layer | null>(null!);
   const prevShape = useRef<Konva.Shape | null>(null!);
   const tempLayer = useRef<Konva.Layer | null>(null!);
@@ -291,6 +294,10 @@ const ShapeCanvas = ({ rects, setRects, tool, setZoomValue, zoom, connectors, se
             collapseChild={collapseChild}
             handleEraserClick={handleEraserClick}
             onShapeClick={onShapeClick}
+          />
+          <TodoLayer
+            todos={todos}
+            setTodos={setTodos}
           />
         </Layer>
         <Layer ref={tempLayer}>

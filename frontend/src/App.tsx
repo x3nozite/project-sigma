@@ -32,6 +32,7 @@ function App() {
   const [zoomValue, setZoomValue] = useState(100);
   const [showForm, setShowForm] = useState(false);
   const [rects, setRects] = useState<RectType[]>([]);
+  const [todos, setTodos] = useState<TodoType[]>([]);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
   const [tool, setTool] = useState<ToolType>("select");
   const [strokeColor, setStrokeColor] = useState<string>("#000000");
@@ -302,6 +303,8 @@ function App() {
         <ShapeCanvas
           rects={rects}
           setRects={setRects}
+          todos={todos}
+          setTodos={setTodos}
           tool={tool}
           setZoomValue={setZoomValue}
           zoom={zoomValue}

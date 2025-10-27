@@ -1,6 +1,5 @@
 import { Group, Rect, Text } from "react-konva";
 import type { TodoType } from "../types";
-import Konva from "konva";
 
 interface Props {
   todo: TodoType;
@@ -8,11 +7,6 @@ interface Props {
 }
 
 const Todo = ({ todo, setTodos }: Props) => {
-  const handleClick = (rectId: string) => {
-    if (tool === "eraser") {
-      setRects((prev) => prev.filter((r) => r.id !== rectId));
-    }
-  };
 
   return (
     <Group

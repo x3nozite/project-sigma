@@ -26,6 +26,7 @@ import {
 } from "react-icons/hi";
 import { DropdownMenu, AlertDialog } from "radix-ui";
 import AppToolbar from "./components/ui/buttons/tools/AppToolbar";
+import { saveCanvas } from './services/DBFunction';
 
 function App() {
   const { session } = useSession();
@@ -57,6 +58,7 @@ function App() {
     setSelectedShape(null);
     setShowForm(false);
   };
+
 
 
   const addRect = (newTask: taskFields) => {
@@ -92,30 +94,6 @@ function App() {
     )
   }
 
-  //   try {
-  //     const { data, error } = await supabase.from(" ").insert({
-  //       x: newRect.x,
-  //       y: newRect.y,
-  //       width: newRect.width,
-  //       height: newRect.height,
-  //       color: newRect.color,
-  //       rect_id: newRect.id,
-  //       title: newRect.title,
-  //       description: newRect.description,
-  //       due_date: newRect.dueDate,
-  //       status: newRect.status,
-  //       is_collapsed: newRect.isCollapsed
-  //       });
-  //       if (data) {
-  //         // a
-  //       }
-  //     } catch (error) {
-  //     console.error("Error:", error);
-  //     alert("Failed saving task");
-  //     return;
-  //   }
-  // };
-
   const togglePencil = () => {
     setTool(tool === "pencil" ? "select" : "pencil");
   };
@@ -136,6 +114,10 @@ function App() {
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
   };
+
+  const handleSave = async () => {
+    await saveCanvas({ rects });
+  }
   console.log(session);
   return (
     <>
@@ -156,7 +138,9 @@ function App() {
                   className="min-w-56 rounded-lg shadow-lg p-5 text-violet-700 hover:cursor-default hover:border-none bg-white"
                 >
                   <DropdownMenu.Item className="group py-1 pl-2 hover:bg-violet-200 rounded-lg hover:text-gray-700 flex items-center">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2"
+                         onClick={handleSave}
+                         >
                       <HiOutlineFolder />
                       Save
                     </div>

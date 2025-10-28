@@ -35,3 +35,10 @@ export type TodoType = ShapeType & {
   width: number;
   height: number;
 }
+
+export type LineType = {
+  id: string;
+  points: number[];
+  stroke?: string;
+  strokeWidth?: number;
+};

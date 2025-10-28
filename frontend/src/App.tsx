@@ -7,6 +7,7 @@ import type {
   ArrowType,
   ToolType,
   ShapeType,
+  LineType
 } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
 import TaskForm from "./components/forms/TaskForm";
@@ -33,6 +34,8 @@ function App() {
   const [showForm, setShowForm] = useState(false);
   const [rects, setRects] = useState<RectType[]>([]);
   const [todos, setTodos] = useState<TodoType[]>([]);
+  const [lines, setLines] = useState<LineType[]>([]);
+  const [isDrawing, setIsDrawing] = useState<boolean>(false);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
   const [tool, setTool] = useState<ToolType>("select");
   const [strokeColor, setStrokeColor] = useState<string>("#000000");
@@ -305,6 +308,10 @@ function App() {
           setRects={setRects}
           todos={todos}
           setTodos={setTodos}
+          lines={lines}
+          setLines={setLines}
+          isDrawing={isDrawing}
+          setIsDrawing={setIsDrawing}
           tool={tool}
           setZoomValue={setZoomValue}
           zoom={zoomValue}

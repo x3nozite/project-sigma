@@ -1,6 +1,6 @@
 import { Stage, Layer, Line } from "react-konva";
 import { useEffect, useRef, useState } from "react";
-import type { RectType, ArrowType, ToolType, ShapeType, TodoType } from "./types";
+import type { RectType, ArrowType, ToolType, ShapeType, TodoType, LineType } from "./types";
 import type { DragEventWithSource } from "./eventTypes";
 import ArrowShape from "./ArrowShape";
 import {
@@ -24,6 +24,10 @@ interface Props {
   setTodos: React.Dispatch<React.SetStateAction<TodoType[]>>;
   connectors: ArrowType[];
   setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>;
+  lines: LineType[];
+  setLines: React.Dispatch<React.SetStateAction<LineType[]>>;
+  isDrawing: boolean;
+  setIsDrawing: React.Dispatch<React.SetStateAction<boolean>>;
   tool: ToolType;
   zoom: number;
   setZoomValue: React.Dispatch<React.SetStateAction<number>>;
@@ -31,14 +35,12 @@ interface Props {
   onShapeClick: (shape: ShapeType | null) => void;
 }
 
-const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoom, connectors, setConnectors, strokeColor = "#000", onShapeClick }: Props) => {
+const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoom, connectors, setConnectors, lines, setLines, isDrawing, setIsDrawing, strokeColor = "#000", onShapeClick }: Props) => {
   const mainLayer = useRef<Konva.Layer | null>(null!);
   const prevShape = useRef<Konva.Shape | null>(null!);
   const tempLayer = useRef<Konva.Layer | null>(null!);
   const arrowLayer = useRef<Konva.Layer | null>(null!);
   const stageRef = useRef<Konva.Stage | null>(null!);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [drawLines, setDrawLines] = useState<{ id: string; points: number[]; stroke?: string; strokeWidth?: number }[]>([]);
 
   const addConnector = (from: Konva.Node, to: Konva.Node) => {
     setConnectors([
@@ -206,20 +208,20 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
     const pos = getRelativePointerPosition(stageRef.current);
     if (!pos) return;
     setIsDrawing(true);
-    const newLine = {
-      id: "line-" + drawLines.length,
+    const newLine: LineType = {
+      id: "line-" + lines.length,
       points: [pos.x, pos.y],
       stroke: strokeColor,
       strokeWidth: 2,
     };
-    setDrawLines((prev) => [...prev, newLine]);
+    setLines((prev) => [...prev, newLine]);
   };
 
   const handleStageMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
     if (!isDrawing || tool !== "pencil") return;
     const pos = getRelativePointerPosition(stageRef.current);
     if (!pos) return;
-    setDrawLines((prev) => {
+    setLines((prev) => {
       if (prev.length === 0) return prev;
       const last = prev[prev.length - 1];
 
@@ -301,7 +303,7 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
           />
         </Layer>
         <Layer ref={tempLayer}>
-          {drawLines.map((ln) => (
+          {lines.map((ln) => (
             <Line
               key={ln.id}
               points={ln.points}

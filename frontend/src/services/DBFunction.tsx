@@ -8,34 +8,40 @@ export interface CanvasData {
 export async function saveCanvas(
   data: CanvasData
 ): Promise<{ success: boolean; error?: string }> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try{
+        const {
+            data: { user },
+        } = await supabase.auth.getUser();
 
-  if (!user) {
-    return { success: false, error: "User not authenticated" };
-  }
+        if (!user) {
+            return { success: false, error: "User not authenticated" };
+        }
 
-  if (data.rects.length > 0) {
-    await supabase.from("rects").insert(
-      data.rects.map((rect) => ({
-        user_id: user.id,
-        rect_id: rect.id,
-        title: rect.title,
-        description: rect.description,
-        x: rect.x,
-        y: rect.y,
-        width: rect.width,
-        height: rect.height,
-        color: rect.color,
-        due_date: rect.dueDate,
-        status: rect.status,
-        is_collapsed: rect.isCollapsed,
-        children: rect.children,
-        parents: rect.parents,
-      }))
-    );
-  }
+        if (data.rects.length > 0) {
+            await supabase.from("rects").insert(
+                data.rects.map((rect) => ({
+                    user_id: user.id,
+                    rect_id: rect.id,
+                    title: rect.title,
+                    description: rect.description,
+                    x: rect.x,
+                    y: rect.y,
+                    width: rect.width,
+                    height: rect.height,
+                    color: rect.color,
+                    due_date: rect.dueDate,
+                    status: rect.status,
+                    is_collapsed: rect.isCollapsed,
+                    children: rect.children,
+                    parents: rect.parents,
+                }))
+            );
+        }
 
-  return { success: true };
+        return { success: true };
+    }   catch (error) {
+        console.error("Error saving:", error);
+        return { success: false} 
+    }
+  
 }

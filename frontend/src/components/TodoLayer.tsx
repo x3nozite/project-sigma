@@ -11,7 +11,8 @@ const TodoLayer = ({ todos, setTodos }: Props) => {
     <>
       {todos.map(todo => (
         <Todo
-        // Settings here
+          todo={todo}
+          setTodos={setTodos}
         />
       ))}
     </>

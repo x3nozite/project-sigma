@@ -16,6 +16,7 @@ import Konva from "konva";
 import { handleZoomWithScroll } from "./utilities/zoom.ts";
 import { changeCursor } from "./utilities/ChangeCursor.ts";
 import TodoLayer from "./TodoLayer.tsx";
+import { handleStageMouseDown, handleStageMouseMove, handleStageMouseUp } from "./canvas_tools/drawTool.tsx";
 
 interface Props {
   rects: RectType[];
@@ -26,8 +27,6 @@ interface Props {
   setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>;
   lines: LineType[];
   setLines: React.Dispatch<React.SetStateAction<LineType[]>>;
-  isDrawing: boolean;
-  setIsDrawing: React.Dispatch<React.SetStateAction<boolean>>;
   tool: ToolType;
   zoom: number;
   setZoomValue: React.Dispatch<React.SetStateAction<number>>;
@@ -35,12 +34,16 @@ interface Props {
   onShapeClick: (shape: ShapeType | null) => void;
 }
 
-const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoom, connectors, setConnectors, lines, setLines, isDrawing, setIsDrawing, strokeColor = "#000", onShapeClick }: Props) => {
+const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoom, connectors, setConnectors, lines, setLines, strokeColor = "#000", onShapeClick }: Props) => {
   const mainLayer = useRef<Konva.Layer | null>(null!);
   const prevShape = useRef<Konva.Shape | null>(null!);
   const tempLayer = useRef<Konva.Layer | null>(null!);
   const arrowLayer = useRef<Konva.Layer | null>(null!);
+  const drawLayer = useRef<Konva.Layer | null>(null);
   const stageRef = useRef<Konva.Stage | null>(null!);
+
+  const [isDrawing, setIsDrawing] = useState<boolean>(false);
+  const idCounter = useRef(1);
 
   const addConnector = (from: Konva.Node, to: Konva.Node) => {
     setConnectors([
@@ -62,9 +65,7 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
 
       rectGroup.on("dragenter", (e) => {
         const sourceRect = (e as DragEventWithSource).source;
-        if (!sourceRect) return;
-        if (rectGroup === sourceRect) return;
-        if (rect.fill() === "green") return;
+        if (!sourceRect || rectGroup === sourceRect || rect.fill() === "green") return;
 
         if (
           r.children.includes(sourceRect.id()) ||
@@ -80,11 +81,7 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
 
       rectGroup.on("dragmove", (e) => {
         const sourceRect = (e as DragEventWithSource).source;
-        if (
-          !sourceRect ||
-          rectGroup === sourceRect ||
-          rect.fill() === "#b9f8cf"
-        )
+        if (!sourceRect || rectGroup === sourceRect || rect.fill() === "#b9f8cf")
           return;
 
         rect.fill("#b9f8cf");
@@ -97,14 +94,8 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
       });
 
       rectGroup.on("drop", (e) => {
-        console.log(connectors.length);
         const sourceRect = (e as DragEventWithSource).source;
-        if (!sourceRect) return;
-        if (
-          r.children.includes(sourceRect.id()) ||
-          r.parents.includes(sourceRect.id())
-        )
-          return;
+        if (!sourceRect || r.children.includes(sourceRect.id()) || r.parents.includes(sourceRect.id())) return;
         const sourceRectInArray = rects.find(rectToFind => ("group-" + rectToFind.id === sourceRect.id()));
         if (sourceRectInArray?.parents !== "") return;
 
@@ -193,52 +184,6 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
     })
   }
 
-  const getRelativePointerPosition = (stage: Konva.Stage | null) => {
-    if (!stage) return null;
-    const pointer = stage.getPointerPosition();
-    if (!pointer) return null;
-
-    //convert cursor coordinates to stage coordinates 
-    const transform = stage.getAbsoluteTransform().copy().invert();
-    return transform.point(pointer);
-  }
-
-  const handleStageMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    if (tool !== "pencil") return;
-    const pos = getRelativePointerPosition(stageRef.current);
-    if (!pos) return;
-    setIsDrawing(true);
-    const newLine: LineType = {
-      id: "line-" + lines.length,
-      points: [pos.x, pos.y],
-      stroke: strokeColor,
-      strokeWidth: 2,
-    };
-    setLines((prev) => [...prev, newLine]);
-  };
-
-  const handleStageMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    if (!isDrawing || tool !== "pencil") return;
-    const pos = getRelativePointerPosition(stageRef.current);
-    if (!pos) return;
-    setLines((prev) => {
-      if (prev.length === 0) return prev;
-      const last = prev[prev.length - 1];
-
-      /* LINES ARE REPRESENTED AS POINTS, POINTS[0, 2, 4, 6, etc] = Xi, POINTS[1, 3, 5, 7] = Yi */
-      const updatedLast = { ...last, points: [...last.points, pos.x, pos.y] };
-
-
-      return [...prev.slice(0, -1), updatedLast];
-    });
-  };
-
-  const handleStageMouseUp = () => {
-    if (isDrawing) setIsDrawing(false);
-  };
-
-  // TODO
-  // Change cursor based on tool
   const handleEraserClick = (rectId: string) => {
     if (tool === "eraser") {
       connectors.forEach((connector) => {
@@ -261,15 +206,29 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
         onDragStart={(e) => handleStageDragStart(e, mainLayer, arrowLayer)}
         onDragEnd={(e) => handleStageDragEnd(e, mainLayer, arrowLayer)}
         onWheel={(e) => handleZoomWithScroll(stageRef, e, setZoomValue)}
-        onMouseDown={handleStageMouseDown}
-        onMouseMove={handleStageMouseMove}
-        onMouseUp={handleStageMouseUp}
+        onMouseDown={() => handleStageMouseDown(stageRef.current, tool, strokeColor, setLines, setIsDrawing, idCounter)}
+        onMouseMove={() => handleStageMouseMove(stageRef.current, tool, setLines, isDrawing)}
+        onMouseUp={() => handleStageMouseUp(isDrawing, setIsDrawing)}
         scaleX={zoom / 100}
         scaleY={zoom / 100}
         style={{ cursor: changeCursor(tool) }}
       >
         <Layer ref={arrowLayer}>
           <ArrowShape connectors={connectors} mainLayer={mainLayer} />
+        </Layer>
+
+        <Layer ref={drawLayer}>
+          {lines.map((ln) => (
+            <Line
+              key={ln.id}
+              points={ln.points}
+              stroke={ln.stroke}
+              strokeWidth={ln.strokeWidth}
+              lineCap="round"
+              lineJoin="round"
+              globalCompositeOperation="source-over"
+            />
+          ))}
         </Layer>
 
         <Layer ref={mainLayer}>
@@ -289,7 +248,6 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
                     : rect
                 )
               );
-
               handleDragEnd(e, mainLayer, tool, prevShape);
             }}
             tool={tool}
@@ -303,17 +261,6 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
           />
         </Layer>
         <Layer ref={tempLayer}>
-          {lines.map((ln) => (
-            <Line
-              key={ln.id}
-              points={ln.points}
-              stroke={ln.stroke}
-              strokeWidth={ln.strokeWidth}
-              lineCap="round"
-              lineJoin="round"
-              globalCompositeOperation="source-over"
-            />
-          ))}
         </Layer>
       </Stage>
     </>

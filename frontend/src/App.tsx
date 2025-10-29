@@ -36,7 +36,6 @@ function App() {
   const [rects, setRects] = useState<RectType[]>([]);
   const [todos, setTodos] = useState<TodoType[]>([]);
   const [lines, setLines] = useState<LineType[]>([]);
-  const [isDrawing, setIsDrawing] = useState<boolean>(false);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
   const [tool, setTool] = useState<ToolType>("select");
   const [strokeColor, setStrokeColor] = useState<string>("#000000");
@@ -127,7 +126,7 @@ function App() {
     setLines([]);
 
     const response = await deleteCanvas();
-    if (!response.success){
+    if (!response.success) {
       console.error("Failed to delete canvas from supabase", response.error);
     }
 
@@ -165,8 +164,8 @@ function App() {
                 >
                   <DropdownMenu.Item className="group py-1 pl-2 hover:bg-violet-200 rounded-lg hover:text-gray-700 flex items-center">
                     <div className="flex items-center gap-2"
-                         onClick={handleSave}
-                         >
+                      onClick={handleSave}
+                    >
                       <HiOutlineFolder />
                       Save
                     </div>
@@ -320,8 +319,6 @@ function App() {
           setTodos={setTodos}
           lines={lines}
           setLines={setLines}
-          isDrawing={isDrawing}
-          setIsDrawing={setIsDrawing}
           tool={tool}
           setZoomValue={setZoomValue}
           zoom={zoomValue}

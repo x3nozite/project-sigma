@@ -1,6 +1,6 @@
 import "./App.css";
 import BottomNav from "./components/BottomNav";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ShapeCanvas from "./components/ShapeCanvas";
 import type {
   RectType,
@@ -26,7 +26,7 @@ import {
 } from "react-icons/hi";
 import { DropdownMenu, AlertDialog } from "radix-ui";
 import AppToolbar from "./components/ui/buttons/tools/AppToolbar";
-import { saveCanvas } from './services/DBFunction';
+import { loadCanvas, saveCanvas } from './services/DBFunction';
 
 function App() {
   const { session } = useSession();
@@ -44,6 +44,23 @@ function App() {
   const navigate = useNavigate();
   const [selectedShape, setSelectedShape] = useState<ShapeType | null>(null);
 
+  useEffect(() => {
+    if (!session) return;
+    let mounted = true;
+    (async () => {
+      const response = await loadCanvas();
+      if (!mounted) return;
+      if (response.success) {
+        setRects(response.data.rects);
+      } else {
+        console.error("Failed to load canvas:", response.error);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [session]);
+
   async function getInstruments() {
     const { data } = await supabase.from("instruments").select();
     setInstruments(data ?? []);
@@ -58,6 +75,8 @@ function App() {
     setSelectedShape(null);
     setShowForm(false);
   };
+
+
 
 
 
@@ -105,6 +124,7 @@ function App() {
   const clearCanvas = () => {
     setRects([]);
     setConnectors([]);
+    setLines([]);
     idCounter.current = 0;
   };
   // if (!session) {

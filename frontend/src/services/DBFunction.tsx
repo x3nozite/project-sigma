@@ -3,6 +3,7 @@ import type { RectType } from "../components/types";
 
 export interface CanvasData {
   rects: RectType[];
+  // add others later
 }
 
 export async function saveCanvas(
@@ -41,7 +42,49 @@ export async function saveCanvas(
         return { success: true };
     }   catch (error) {
         console.error("Error saving:", error);
-        return { success: false} 
+        return { success: false } 
     }
   
+}
+
+export async function loadCanvas(): Promise<
+    { success: true; data: CanvasData } | { success: false; error: string }
+> {
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (!user) {
+            return { success: false, error: "User not authenticated" };
+        }
+
+        const { data, error } = await supabase
+            .from("rects") //add others later
+            .select("*")
+            .eq("user_id", user.id);
+
+        if (error) {
+            return { success: false, error: error.message };
+        }
+
+        const rects: RectType[] = (data ?? []).map((r: any) => ({
+            id: r.rect_id,
+            title: r.title ?? "",
+            description: r.description ?? "",
+            x: r.x,
+            y: r.y,
+            width: r.width,
+            height: r.height,
+            color: r.color ?? "#ffffff",
+            dueDate: r.due_date ?? "",
+            status: r.status ?? "",
+            isCollapsed: r.is_collapsed ?? false,
+            children: r.children ?? [],
+            parents: r.parents ?? "",
+        }));
+
+        return { success: true, data: { rects }};
+    } catch (error: any) {
+        console.error("loadCanvas error:", error);
+        return { success: false, error: String(error) };
+    }
 }

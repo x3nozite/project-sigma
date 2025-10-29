@@ -26,7 +26,7 @@ import {
 } from "react-icons/hi";
 import { DropdownMenu, AlertDialog } from "radix-ui";
 import AppToolbar from "./components/ui/buttons/tools/AppToolbar";
-import { loadCanvas, saveCanvas } from './services/DBFunction';
+import { deleteCanvas, loadCanvas, saveCanvas } from './services/DBFunction';
 
 function App() {
   const { session } = useSession();
@@ -121,10 +121,16 @@ function App() {
     setTool(tool === "eraser" ? "select" : "eraser");
   };
 
-  const clearCanvas = () => {
+  const clearCanvas = async () => {
     setRects([]);
     setConnectors([]);
     setLines([]);
+
+    const response = await deleteCanvas();
+    if (!response.success){
+      console.error("Failed to delete canvas from supabase", response.error);
+    }
+
     idCounter.current = 0;
   };
   // if (!session) {

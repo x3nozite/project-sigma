@@ -19,7 +19,7 @@ export async function saveCanvas(
     }
 
     if (data.rects.length > 0) {
-      await supabase.from("rects").insert(
+      await supabase.from("rects").upsert(
         data.rects.map((rect) => ({
           user_id: user.id,
           rect_id: rect.id,

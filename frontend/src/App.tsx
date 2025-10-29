@@ -94,7 +94,7 @@ function App() {
         height: 200,
         color: newTask.color,
         id: "rect-" + newId,
-        title: newTask.title + " #" + newId,
+        title: newTask.title,
         description: newTask.description,
         dueDate: newTask.date,
         status: "In Progress",

@@ -38,7 +38,9 @@ const Rectangle = ({
       onDragEnd={onDragEnd}
       onClick={() => {
         handleEraserClick(rect.id);
-        onShapeClick(rect);
+        if (tool != "eraser") {
+          onShapeClick(rect);
+        }
       }}
     >
       <Group

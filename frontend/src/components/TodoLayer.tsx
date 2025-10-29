@@ -1,3 +1,4 @@
+import Todo from "./Shapes/Todo";
 import type { TodoType } from "./types"
 
 interface Props {
@@ -7,7 +8,13 @@ interface Props {
 
 const TodoLayer = ({ todos, setTodos }: Props) => {
   return (
-    <div></div>
+    <>
+      {todos.map(todo => (
+        <Todo
+        // Settings here
+        />
+      ))}
+    </>
   )
 }
 

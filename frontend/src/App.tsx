@@ -8,7 +8,7 @@ import type {
   ToolType,
   ShapeType,
   LineType,
-  TodoType
+  TodoType,
 } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
 import TaskForm from "./components/forms/TaskForm";
@@ -27,7 +27,7 @@ import {
 } from "react-icons/hi";
 import { DropdownMenu, AlertDialog } from "radix-ui";
 import AppToolbar from "./components/ui/buttons/tools/AppToolbar";
-import { deleteCanvas, loadCanvas, saveCanvas } from './services/DBFunction';
+import { deleteCanvas, loadCanvas, saveCanvas } from "./services/DBFunction";
 
 function App() {
   const { session } = useSession();
@@ -104,10 +104,18 @@ function App() {
   const updateRect = (shape: ShapeType, newData: taskFields) => {
     setRects((prev) =>
       prev.map((r) =>
-        r.id === shape.id ? { ...r, title: newData.title, description: newData.description, color: newData.color, dueDate: newData.date } : r
+        r.id === shape.id
+          ? {
+              ...r,
+              title: newData.title,
+              description: newData.description,
+              color: newData.color,
+              dueDate: newData.date,
+            }
+          : r
       )
-    )
-  }
+    );
+  };
 
   const togglePencil = () => {
     setTool(tool === "draw" ? "select" : "draw");
@@ -115,7 +123,7 @@ function App() {
 
   const toggleEraser = () => {
     setTool(tool === "eraser" ? "select" : "eraser");
-    console.log('aa');
+    console.log("aa");
   };
 
   const clearCanvas = async () => {
@@ -140,7 +148,7 @@ function App() {
 
   const handleSave = async () => {
     await saveCanvas({ rects });
-  }
+  };
   return (
     <>
       <div className="relative w-full h-screen overflow-hidden ">
@@ -148,7 +156,7 @@ function App() {
           <div className="more-options ">
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
-                <button className="p-2.5 bg-purple-200 rounded-lg hover:cursor-pointer">
+                <button className="p-2.5 bg-blue-200 rounded-lg hover:cursor-pointer">
                   <HiMenu />
                 </button>
               </DropdownMenu.Trigger>
@@ -157,17 +165,18 @@ function App() {
                   sideOffset={5}
                   align="start"
                   alignOffset={5}
-                  className="min-w-56 rounded-lg shadow-lg p-5 text-violet-700 hover:cursor-default hover:border-none bg-white"
+                  className="min-w-56 rounded-lg shadow-lg p-5 text-blue-700 hover:cursor-default hover:border-none bg-white"
                 >
-                  <DropdownMenu.Item className="group py-1 pl-2 hover:bg-violet-200 rounded-lg hover:text-gray-700 flex items-center">
-                    <div className="flex items-center gap-2"
+                  <DropdownMenu.Item className="group py-1 pl-2 hover:bg-sky-200 rounded-lg hover:text-blue-700 flex items-center">
+                    <div
+                      className="flex items-center gap-2"
                       onClick={handleSave}
                     >
                       <HiOutlineFolder />
                       Save
                     </div>
                   </DropdownMenu.Item>
-                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-violet-200 rounded-lg hover:text-gray-700">
+                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700">
                     <div className="flex items-center gap-2">
                       <HiOutlineDocument />
                       Export PDF
@@ -175,7 +184,7 @@ function App() {
                   </DropdownMenu.Item>
                   <DropdownMenu.Item
                     onSelect={(event: Event) => event.preventDefault()}
-                    className="py-1 pl-2  hover:bg-violet-200 rounded-lg hover:text-gray-700"
+                    className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700"
                   >
                     <AlertDialog.Root>
                       <AlertDialog.Trigger asChild>
@@ -218,7 +227,7 @@ function App() {
                   <DropdownMenu.Label className="py-0.5 pl-2 text-sm text-gray-400">
                     Canvas Theme
                   </DropdownMenu.Label>
-                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-violet-200 rounded-lg hover:text-gray-700">
+                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700">
                     Change Color Here
                   </DropdownMenu.Item>
                 </DropdownMenu.Content>
@@ -281,9 +290,9 @@ function App() {
         </div>
         <div className="account-buttons absolute flex flex-row top-1.5 right-0 gap-2 m-4 z-51"></div>
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-md/15 shadow-gray-600"></div>
-        <div className="absolute bottom-4 left-4  items-center z-10 bg-purple-100 rounded-xl w-fit hidden sm:inline-flex">
+        <div className="absolute bottom-4 left-4  items-center z-10 bg-amber-100 rounded-xl w-fit hidden sm:inline-flex">
           <button
-            className="hover:bg-purple-200 hover:cursor-pointer px-4 py-2 rounded-l-lg"
+            className="hover:bg-orange-200 hover:cursor-pointer px-4 py-2 rounded-l-lg"
             onClick={() => setZoomValue(Math.max(zoomValue - 10, 50))}
           >
             <HiOutlineZoomOut />
@@ -298,7 +307,7 @@ function App() {
             </span>
           </button>
           <button
-            className="hover:bg-purple-200 hover:cursor-pointer px-4 py-2 rounded-r-lg h-full"
+            className="hover:bg-orange-200 hover:cursor-pointer px-4 py-2 rounded-r-lg h-full"
             onClick={() => setZoomValue(Math.min(zoomValue + 10, 200))}
           >
             <HiOutlineZoomIn />

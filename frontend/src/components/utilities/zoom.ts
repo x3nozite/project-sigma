@@ -17,7 +17,7 @@ export function handleZoomWithScroll(stageRef: RefObject<Konva.Stage | null>, e:
   const direction = e.evt.deltaY > 0 ? -1 : 1;
 
   const scaleBy = 1.05;
-  const newScale = direction > 0 ? Math.min(oldScale * scaleBy, 2) : Math.max(oldScale / scaleBy, 0.5);
+  const newScale = direction > 0 ? Math.min(oldScale * scaleBy, 5) : Math.max(oldScale / scaleBy, 0.1);
 
   stage.scale({ x: newScale, y: newScale });
 

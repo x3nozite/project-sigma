@@ -106,12 +106,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-              ...r,
-              title: newData.title,
-              description: newData.description,
-              color: newData.color,
-              dueDate: newData.date,
-            }
+            ...r,
+            title: newData.title,
+            description: newData.description,
+            color: newData.color,
+            dueDate: newData.date,
+          }
           : r
       )
     );
@@ -293,7 +293,7 @@ function App() {
         <div className="absolute bottom-4 left-4  items-center z-10 bg-amber-100 rounded-xl w-fit hidden sm:inline-flex">
           <button
             className="hover:bg-orange-200 hover:cursor-pointer px-4 py-2 rounded-l-lg"
-            onClick={() => setZoomValue(Math.max(zoomValue - 10, 50))}
+            onClick={() => setZoomValue(Math.max(zoomValue - 10, 10))}
           >
             <HiOutlineZoomOut />
           </button>
@@ -308,7 +308,7 @@ function App() {
           </button>
           <button
             className="hover:bg-orange-200 hover:cursor-pointer px-4 py-2 rounded-r-lg h-full"
-            onClick={() => setZoomValue(Math.min(zoomValue + 10, 200))}
+            onClick={() => setZoomValue(Math.min(zoomValue + 10, 500))}
           >
             <HiOutlineZoomIn />
           </button>

@@ -29,7 +29,7 @@ export type ArrowType = {
   to: string;
 };
 
-export type ToolType = "select" | "eraser" | "draw";
+export type ToolType = "hand" | "eraser" | "draw";
 
 export type TodoType = ShapeType & {
   width: number;

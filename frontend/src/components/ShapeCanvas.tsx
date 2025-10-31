@@ -204,7 +204,7 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
         width={window.innerWidth}
         height={window.innerHeight}
         ref={stageRef}
-        draggable={tool === "select"}
+        draggable={tool === "hand"}
         onDragStart={(e) => handleStageDragStart(e, mainLayer, arrowLayer)}
         onDragEnd={(e) => handleStageDragEnd(e, mainLayer, arrowLayer)}
         onWheel={(e) => handleZoomWithScroll(stageRef, e, setZoomValue)}

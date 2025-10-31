@@ -38,7 +38,7 @@ function App() {
   const [todos, setTodos] = useState<TodoType[]>([]);
   const [lines, setLines] = useState<LineType[]>([]);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
-  const [tool, setTool] = useState<ToolType>("select");
+  const [tool, setTool] = useState<ToolType>("hand");
   const [strokeColor, setStrokeColor] = useState<string>("#000000");
   const idCounter = useRef(0);
   const navigate = useNavigate();
@@ -80,7 +80,7 @@ function App() {
     const newId = idCounter.current;
     idCounter.current += 1;
 
-    setTool("select");
+    setTool("hand");
     setRects([
       ...rects,
       {
@@ -118,11 +118,11 @@ function App() {
   };
 
   const togglePencil = () => {
-    setTool(tool === "draw" ? "select" : "draw");
+    setTool(tool === "draw" ? "hand" : "draw");
   };
 
   const toggleEraser = () => {
-    setTool(tool === "eraser" ? "select" : "eraser");
+    setTool(tool === "eraser" ? "hand" : "eraser");
     console.log("aa");
   };
 

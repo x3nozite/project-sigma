@@ -21,7 +21,7 @@ const RectLayer = ({ rects, setRects, onDragStart, onDragMove, onDragEnd, tool, 
       {rects.map((rect) => (
         <Rectangle
           rect={rect}
-          key={"ket-" + rect.id}
+          key={"key-" + rect.id}
           setRects={setRects}
           onDragStart={onDragStart}
           onDragMove={onDragMove}

@@ -76,10 +76,6 @@ function App() {
     setShowForm(false);
   };
 
-
-
-
-
   const addRect = (newTask: taskFields) => {
     const newId = idCounter.current;
     idCounter.current += 1;
@@ -114,7 +110,7 @@ function App() {
   }
 
   const togglePencil = () => {
-    setTool(tool === "pencil" ? "select" : "pencil");
+    setTool(tool === "draw" ? "select" : "draw");
   };
 
   const toggleEraser = () => {
@@ -204,6 +200,7 @@ function App() {
                                 Cancel
                               </button>
                             </AlertDialog.Cancel>
+
                             <AlertDialog.Action asChild>
                               <button
                                 className="bg-red-300 text-red-500 px-2.5 py-1 rounded-lg hover:cursor-pointer hover:bg-red-500 hover:text-white"
@@ -235,7 +232,7 @@ function App() {
               onClearClick={clearCanvas}
               onDrawClick={togglePencil}
               onColorSelect={setStrokeColor}
-              isActive={tool === "eraser" || tool === "pencil"}
+              isActive={tool === "eraser" || tool === "draw"}
             /> */}
             <AppToolbar
               onShapeClick={() => openForm(null)}
@@ -243,7 +240,9 @@ function App() {
               onClearClick={clearCanvas}
               onDrawClick={togglePencil}
               onColorSelect={setStrokeColor}
-              isActive={tool === "eraser" || tool === "pencil"}
+              isActive={tool === "eraser" || tool === "draw"}
+              tool={tool}
+              setTool={setTool}
             />
           </div>
           <div className="user-account">
@@ -277,7 +276,7 @@ function App() {
             onClearClick={clearCanvas}
             onDrawClick={togglePencil}
             onColorSelect={setStrokeColor}
-            isActive={tool === "eraser" || tool === "pencil"}
+            isActive={tool === "eraser" || tool === "draw"}
           />
         </div>
         <div className="account-buttons absolute flex flex-row top-1.5 right-0 gap-2 m-4 z-51"></div>

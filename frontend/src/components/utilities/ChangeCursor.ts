@@ -4,7 +4,7 @@ export function changeCursor(tool: string) {
       return "default";
     case "eraser":
       return "pointer";
-    case "pencil":
+    case "draw":
       return "crosshair";
     default:
       return "default";

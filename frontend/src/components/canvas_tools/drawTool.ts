@@ -12,7 +12,7 @@ export function getRelativePointerPosition(stage: Konva.Stage | null) {
 }
 
 export function handleStageMouseDown(stage: Konva.Stage | null, tool: ToolType, strokeColor: string, setLines: React.Dispatch<React.SetStateAction<LineType[]>>, setIsDrawing: React.Dispatch<React.SetStateAction<boolean>>, idCounter: RefObject<number>) {
-  if (tool !== "pencil") return;
+  if (tool !== "draw") return;
   const pos = getRelativePointerPosition(stage);
   if (!pos) return;
   setIsDrawing(true);
@@ -28,7 +28,7 @@ export function handleStageMouseDown(stage: Konva.Stage | null, tool: ToolType, 
 }
 
 export function handleStageMouseMove(stage: Konva.Stage | null, tool: ToolType, setLines: React.Dispatch<React.SetStateAction<LineType[]>>, isDrawing: boolean) {
-  if (!isDrawing || tool !== "pencil") return;
+  if (!isDrawing || tool !== "draw") return;
   const pos = getRelativePointerPosition(stage);
   if (!pos) return;
 

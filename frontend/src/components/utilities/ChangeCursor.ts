@@ -3,7 +3,7 @@ export function changeCursor(tool: string) {
     case "select":
       return "default";
     case "eraser":
-      return "pointer";
+      return "url('../../../public/cursor/Bootstrap-Bootstrap-Bootstrap-eraser.svg') 16 16, auto";
     case "draw":
       return "crosshair";
     default:

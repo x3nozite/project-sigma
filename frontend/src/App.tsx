@@ -38,7 +38,7 @@ function App() {
   const [todos, setTodos] = useState<TodoType[]>([]);
   const [lines, setLines] = useState<LineType[]>([]);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
-  const [tool, setTool] = useState<ToolType>("hand");
+  const [tool, setTool] = useState<ToolType>("select");
   const [strokeColor, setStrokeColor] = useState<string>("#000000");
   const idCounter = useRef(0);
   const navigate = useNavigate();
@@ -97,6 +97,7 @@ function App() {
         isCollapsed: false,
         children: [],
         parents: "",
+        name: "shape"
       },
     ]);
   };
@@ -125,6 +126,10 @@ function App() {
     setTool(tool === "eraser" ? "hand" : "eraser");
     console.log("aa");
   };
+
+  const toggleSelect = () => {
+    setTool(tool === "select" ? "hand" : "select");
+  }
 
   const clearCanvas = async () => {
     setRects([]);
@@ -248,6 +253,7 @@ function App() {
               onEraserClick={toggleEraser}
               onClearClick={clearCanvas}
               onDrawClick={togglePencil}
+              onSelectClick={toggleSelect}
               onColorSelect={setStrokeColor}
               isActive={tool === "eraser" || tool === "draw"}
               tool={tool}

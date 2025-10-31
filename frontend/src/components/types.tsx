@@ -10,6 +10,7 @@ export type ShapeType = {
   description: string;
   dueDate: string;
   status: string;
+  name: string;
 }
 
 export type RectType = ShapeType & {
@@ -29,7 +30,7 @@ export type ArrowType = {
   to: string;
 };
 
-export type ToolType = "hand" | "eraser" | "draw";
+export type ToolType = "hand" | "eraser" | "draw" | "select";
 
 export type TodoType = ShapeType & {
   width: number;

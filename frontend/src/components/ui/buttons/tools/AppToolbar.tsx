@@ -16,6 +16,7 @@ interface Props {
   onShapeClick: () => void;
   onClearClick: () => void;
   onDrawClick: () => void;
+  onSelectClick: () => void;
   onColorSelect?: (color: string) => void;
   isActive: boolean;
   tool: ToolType;
@@ -26,6 +27,7 @@ function AppToolbar({
   onClearClick,
   onShapeClick,
   onDrawClick,
+  onSelectClick,
   onColorSelect,
   onTextClick,
   onEraserClick,
@@ -69,7 +71,7 @@ function AppToolbar({
           if (value) setTool(value as ToolType);
         }}
       >
-        <Toolbar.ToggleItem value="pan">
+        <Toolbar.ToggleItem value="select" onClick={onSelectClick}>
           <div className="pan-canvas group flex flex-col justify-center items-center  rounded-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50">
             <HiOutlineHand className="-rotate-[45deg] text-xl" />
             <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">

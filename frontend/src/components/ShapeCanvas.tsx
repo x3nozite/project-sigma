@@ -16,7 +16,7 @@ import Konva from "konva";
 import { handleZoomWithScroll } from "./utilities/zoom.ts";
 import { changeCursor } from "./utilities/ChangeCursor.ts";
 import TodoLayer from "./TodoLayer.tsx";
-import { handleStageMouseDown, handleStageMouseMove, handleStageMouseUp } from "./canvas_tools/drawTool.tsx";
+import { handleStageMouseDown, handleStageMouseMove, handleStageMouseUp } from "./canvas_tools/drawTool.ts";
 
 interface Props {
   rects: RectType[];
@@ -178,7 +178,6 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
 
     rectInArray?.children.forEach(child => {
       const childInArray = rects.find(r => "group-" + r.id === child);
-      console.log(childInArray);
       if (!childInArray) return;
       childInArray.parents = "";
     })

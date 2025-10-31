@@ -7,7 +7,8 @@ import type {
   ArrowType,
   ToolType,
   ShapeType,
-  LineType
+  LineType,
+  TodoType
 } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
 import TaskForm from "./components/forms/TaskForm";
@@ -118,6 +119,7 @@ function App() {
 
   const toggleEraser = () => {
     setTool(tool === "eraser" ? "select" : "eraser");
+    console.log('aa');
   };
 
   const clearCanvas = async () => {
@@ -143,7 +145,6 @@ function App() {
   const handleSave = async () => {
     await saveCanvas({ rects });
   }
-  console.log(session);
   return (
     <>
       <div className="relative w-full h-screen overflow-hidden ">

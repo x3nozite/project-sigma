@@ -1,4 +1,4 @@
-import { Stage, Layer, Line } from "react-konva";
+import { Stage, Layer } from "react-konva";
 import { useEffect, useRef, useState } from "react";
 import type { RectType, ArrowType, ToolType, ShapeType, TodoType, LineType } from "./types";
 import type { DragEventWithSource } from "./eventTypes";
@@ -17,6 +17,9 @@ import { handleZoomWithScroll } from "./utilities/zoom.ts";
 import { changeCursor } from "./utilities/ChangeCursor.ts";
 import TodoLayer from "./TodoLayer.tsx";
 import { handleStageMouseDown, handleStageMouseMove, handleStageMouseUp } from "./canvas_tools/drawTool.ts";
+import LineLayer from "./LineLayer.tsx";
+import { set } from "zod/v3";
+import { handleEraseLinesMouseMove, handleEraseLinesMouseDown, handleEraseLinesMouseUp } from "./canvas_tools/eraseTool.ts";
 
 interface Props {
   rects: RectType[];
@@ -39,10 +42,10 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
   const prevShape = useRef<Konva.Shape | null>(null!);
   const tempLayer = useRef<Konva.Layer | null>(null!);
   const arrowLayer = useRef<Konva.Layer | null>(null!);
-  const drawLayer = useRef<Konva.Layer | null>(null);
+  const lineLayer = useRef<Konva.Layer | null>(null);
   const stageRef = useRef<Konva.Stage | null>(null!);
 
-  const [isDrawing, setIsDrawing] = useState<boolean>(false);
+  const [mouseHeldDown, setMouseHeldDown] = useState<boolean>(false);
   const idCounter = useRef(1);
 
   const addConnector = (from: Konva.Node, to: Konva.Node) => {
@@ -201,13 +204,22 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
         width={window.innerWidth}
         height={window.innerHeight}
         ref={stageRef}
-        draggable={tool !== "draw"}
+        draggable={tool === "select"}
         onDragStart={(e) => handleStageDragStart(e, mainLayer, arrowLayer)}
         onDragEnd={(e) => handleStageDragEnd(e, mainLayer, arrowLayer)}
         onWheel={(e) => handleZoomWithScroll(stageRef, e, setZoomValue)}
-        onMouseDown={() => handleStageMouseDown(stageRef.current, tool, strokeColor, setLines, setIsDrawing, idCounter)}
-        onMouseMove={() => handleStageMouseMove(stageRef.current, tool, setLines, isDrawing)}
-        onMouseUp={() => handleStageMouseUp(isDrawing, setIsDrawing)}
+        onMouseDown={() => {
+          if (tool === "draw") handleStageMouseDown(stageRef.current, tool, strokeColor, setLines, setMouseHeldDown, idCounter);
+          if (tool === "eraser") handleEraseLinesMouseDown(setMouseHeldDown);
+        }}
+        onMouseMove={() => {
+          if (tool === "draw") handleStageMouseMove(stageRef.current, tool, setLines, mouseHeldDown);
+          if (tool === "eraser") handleEraseLinesMouseMove(stageRef, tool, lineLayer, setLines, mouseHeldDown);
+        }}
+        onMouseUp={() => {
+          if (tool === "draw") handleStageMouseUp(mouseHeldDown, setMouseHeldDown);
+          if (tool === "eraser") handleEraseLinesMouseUp(setMouseHeldDown);
+        }}
         scaleX={zoom / 100}
         scaleY={zoom / 100}
         style={{ cursor: changeCursor(tool) }}
@@ -216,19 +228,10 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
           <ArrowShape connectors={connectors} mainLayer={mainLayer} />
         </Layer>
 
-        <Layer ref={drawLayer}>
-          {lines.map((ln) => (
-            <Line
-              key={ln.id}
-              points={ln.points}
-              stroke={ln.stroke}
-              strokeWidth={ln.strokeWidth}
-              lineCap="round"
-              lineJoin="round"
-              globalCompositeOperation="source-over"
-            />
-          ))}
-        </Layer>
+        <LineLayer
+          lines={lines}
+          ref={lineLayer}
+        />
 
         <Layer ref={mainLayer}>
           <RectLayer

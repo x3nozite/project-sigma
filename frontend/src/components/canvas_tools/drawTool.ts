@@ -21,7 +21,7 @@ export function handleStageMouseDown(stage: Konva.Stage | null, tool: ToolType, 
     id: "line-" + idCounter.current,
     points: [pos.x, pos.y],
     stroke: strokeColor,
-    strokeWidth: 2
+    strokeWidth: 4
   };
   idCounter.current++;
   setLines((prev) => [...prev, newLine]);

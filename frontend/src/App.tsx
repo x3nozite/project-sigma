@@ -24,10 +24,14 @@ import {
   HiOutlineFolder,
   HiOutlineDocument,
   HiOutlineTrash,
+  HiOutlineChevronDown,
+  HiOutlineLogout,
+  HiOutlineLogin,
 } from "react-icons/hi";
 import { DropdownMenu, AlertDialog } from "radix-ui";
 import AppToolbar from "./components/ui/buttons/tools/AppToolbar";
 import { deleteCanvas, loadCanvas, saveCanvas } from "./services/DBFunction";
+import { router } from "./router";
 
 function App() {
   const { session } = useSession();
@@ -43,9 +47,12 @@ function App() {
   const idCounter = useRef(0);
   const navigate = useNavigate();
   const [selectedShape, setSelectedShape] = useState<ShapeType | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!session) return;
+    console.log("This session: ");
+    console.log(session);
     let mounted = true;
     (async () => {
       const response = await loadCanvas();
@@ -97,7 +104,7 @@ function App() {
         isCollapsed: false,
         children: [],
         parents: "",
-        name: "shape"
+        name: "shape",
       },
     ]);
   };
@@ -107,12 +114,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-            ...r,
-            title: newData.title,
-            description: newData.description,
-            color: newData.color,
-            dueDate: newData.date,
-          }
+              ...r,
+              title: newData.title,
+              description: newData.description,
+              color: newData.color,
+              dueDate: newData.date,
+            }
           : r
       )
     );
@@ -129,7 +136,7 @@ function App() {
 
   const toggleSelect = () => {
     setTool(tool === "select" ? "hand" : "select");
-  }
+  };
 
   const clearCanvas = async () => {
     setRects([]);
@@ -148,11 +155,26 @@ function App() {
   // }
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
+    setIsLoading(true);
+    try {
+      await supabase.auth.signOut();
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSave = async () => {
-    await saveCanvas({ rects });
+    setIsLoading(true);
+    try {
+      await saveCanvas({ rects });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <>
@@ -199,8 +221,8 @@ function App() {
                         </button>
                       </AlertDialog.Trigger>
                       <AlertDialog.Portal>
-                        <AlertDialog.Overlay className="fixed bg-black opacity-50 inset-0" />
-                        <AlertDialog.Content className="bg-white min-w-md max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 rounded-lg">
+                        <AlertDialog.Overlay className="fixed bg-black opacity-50 inset-0 z-100" />
+                        <AlertDialog.Content className="bg-white min-w-md max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 rounded-lg z-101">
                           <AlertDialog.Title className="text-xl font-bold mb-2">
                             Are you sure?
                           </AlertDialog.Title>
@@ -262,14 +284,127 @@ function App() {
           </div>
           <div className="user-account">
             <div className="big-buttons hidden gap-2 lg:flex">
-              {session && <p>{session?.user?.email}</p>}
-              <SecondButton
-                title={session ? "Sign Out" : "Sign In"}
-                onClick={async () => {
-                  if (session) await signOut();
-                  else navigate("/signin");
-                }}
-              />
+              {/* <p>{session?.user?.email}</p> */}
+              {session && (
+                <div>
+                  <DropdownMenu.Root>
+                    <DropdownMenu.Trigger asChild>
+                      <button>
+                        <div className="inline-flex text-center items-center justify-center px-5 py-2.5 gap-2 text-black font-medium bg-purple-100 rounded-lg">
+                          <HiUserCircle className="text-lg" />
+                          <div className="inline-flex gap-1 text-center items-center justify-center">
+                            <span className="text-xs">Manage Account</span>
+                            <HiOutlineChevronDown className="text-xs" />
+                          </div>
+                        </div>
+                      </button>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Portal>
+                      <DropdownMenu.Content
+                        sideOffset={10}
+                        align="center"
+                        className="min-w-56 rounded-lg shadow-lg p-5 text-black hover:cursor-default hover:border-none bg-purple-100"
+                      >
+                        <div className="flex flex-col items-center justify-center gap-2">
+                          <div>
+                            {/* <img
+                              src={session?.user?.user_metadata.picture}
+                              alt="user_profile"
+                            /> */}
+                            <HiUserCircle className="text-3xl text-blue-500" />
+                          </div>
+                          <div className="flex flex-col items-center justify-center">
+                            <span className="text-sm font-medium">
+                              {session?.user?.user_metadata.name}
+                            </span>
+                            <span className="text-xs font-light">
+                              {session?.user?.email}
+                            </span>
+                          </div>
+                        </div>
+                        <DropdownMenu.Separator className="h-[2px] my-2 bg-gray-500" />
+                        <DropdownMenu.Item
+                          onSelect={(event: Event) => event.preventDefault()}
+                        >
+                          <AlertDialog.Root>
+                            <AlertDialog.Trigger asChild>
+                              <div className="inline-flex gap-2 items-center text-center justify-start text-sm hover:border-none hover:bg-purple-300 w-full h-full px-2 py-1 rounded-lg">
+                                <HiOutlineLogout />
+                                <span>Sign Out</span>
+                              </div>
+                            </AlertDialog.Trigger>
+                            <AlertDialog.Portal>
+                              <AlertDialog.Overlay className="fixed bg-black opacity-50 inset-0 z-100" />
+                              <AlertDialog.Content className="bg-white min-w-md max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 rounded-lg z-101">
+                                <AlertDialog.Title className="text-xl font-bold mb-2">
+                                  Oh no! You're Leaving!
+                                </AlertDialog.Title>
+                                <AlertDialog.Description className="my-3 text-gray-700">
+                                  Are you sure? You will be logged out from this
+                                  session
+                                </AlertDialog.Description>
+                                <div className="flex justify-end gap-4">
+                                  <AlertDialog.Cancel asChild>
+                                    <button className="hover:underline decoration-1 hover:cursor-pointer">
+                                      Cancel
+                                    </button>
+                                  </AlertDialog.Cancel>
+
+                                  <AlertDialog.Action asChild>
+                                    <button
+                                      className="bg-red-300 text-red-500 px-2.5 py-1 rounded-lg hover:cursor-pointer hover:bg-red-500 hover:text-white inline-flex items-center justify-center text-center gap-1"
+                                      onClick={async () => {
+                                        await signOut();
+                                      }}
+                                    >
+                                      <HiOutlineLogout />
+                                      Sign Out
+                                    </button>
+                                  </AlertDialog.Action>
+                                </div>
+                              </AlertDialog.Content>
+                            </AlertDialog.Portal>
+                          </AlertDialog.Root>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Arrow className="fill-purple-100" />
+                      </DropdownMenu.Content>
+                    </DropdownMenu.Portal>
+                  </DropdownMenu.Root>
+                </div>
+              )}
+              {isLoading && (
+                <div>
+                  <div className="flex items-center justify-center w-screen h-screen bg-black dark:bg-gray-800 dark:border-gray-700 absolute z-9999 inset-0 opacity-40">
+                    <div role="status">
+                      <svg
+                        aria-hidden="true"
+                        className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                        viewBox="0 0 100 101"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                          fill="currentColor"
+                        />
+                        <path
+                          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                          fill="currentFill"
+                        />
+                      </svg>
+                      <span className="sr-only">Loading...</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {!session && (
+                <SecondButton
+                  title="Sign In"
+                  onClick={async () => {
+                    navigate("/signin");
+                  }}
+                />
+              )}
               {!session && (
                 <MainButton
                   title="Create Account"
@@ -277,10 +412,102 @@ function App() {
                 />
               )}
             </div>
-            <div className="hidden sm:max-lg:flex">
-              <button className="p-2.5 bg-purple-200 rounded-lg hover:bg-purple-100 hover:cursor-pointer">
-                <HiUserCircle />
-              </button>
+            <div className="account-mobile flex lg:hidden">
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                  <button className="p-2.5 bg-purple-200 rounded-lg hover:bg-purple-100 hover:cursor-pointer">
+                    <HiUserCircle />
+                  </button>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Portal>
+                  <DropdownMenu.Content
+                    sideOffset={10}
+                    align="center"
+                    className="min-w-56 rounded-lg shadow-lg p-5 text-black hover:cursor-default hover:border-none bg-purple-100"
+                  >
+                    {!session && (
+                      <div>
+                        <DropdownMenu.Item>
+                          <div
+                            onClick={async () => {
+                              navigate("/signin");
+                            }}
+                            className="inline-flex w-full items-center justify-start gap-2"
+                          >
+                            <HiOutlineLogin />
+                            <span>Sign In</span>
+                          </div>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item>
+                          <div
+                            onClick={() => navigate("/create-acc")}
+                            className="inline-flex w-full items-center justify-start gap-2"
+                          >
+                            <HiUserCircle />
+                            <span>Create Account</span>
+                          </div>
+                        </DropdownMenu.Item>
+                      </div>
+                    )}
+                    {session && (
+                      <div>
+                        <div className="mob-user-info flex flex-col items-start justify-center">
+                          <div className="text-2xl pb-2">
+                            <HiUserCircle />
+                          </div>
+                          <div className="flex flex-col items-start justify-start text-center">
+                            <span className="text-xs font-semibold">
+                              {session?.user?.user_metadata.name}
+                            </span>
+                            <span className="text-xs font-light">
+                              {session?.user?.email}
+                            </span>
+                          </div>
+                        </div>
+                        <DropdownMenu.Separator className="h-px my-2 bg-gray-500" />
+                        <DropdownMenu.Item>
+                          <div
+                            onClick={async () => {
+                              await signOut();
+                            }}
+                            className="inline-flex items-center justify-start gap-2 "
+                          >
+                            <HiOutlineLogout className="text-sm font-semibold" />
+                            <span className="text-sm font-semibold">
+                              Sign Out
+                            </span>
+                          </div>
+                        </DropdownMenu.Item>
+                      </div>
+                    )}
+                  </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+              </DropdownMenu.Root>
+              {isLoading && (
+                <div>
+                  <div className="flex items-center justify-center w-screen h-screen bg-black dark:bg-gray-800 dark:border-gray-700 absolute z-9999 inset-0 opacity-40">
+                    <div role="status">
+                      <svg
+                        aria-hidden="true"
+                        className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                        viewBox="0 0 100 101"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                          fill="currentColor"
+                        />
+                        <path
+                          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                          fill="currentFill"
+                        />
+                      </svg>
+                      <span className="sr-only">Loading...</span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </nav>

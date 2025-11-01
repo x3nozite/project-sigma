@@ -37,9 +37,16 @@ export type TodoType = ShapeType & {
   height: number;
 }
 
-export type LineType = {
-  id: string;
+export type LineType = ShapeType & {
   points: number[];
   stroke?: string;
   strokeWidth?: number;
 };
+
+export type SelectionRectType = {
+  visible: boolean,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+}

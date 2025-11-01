@@ -1,15 +1,10 @@
 import { Stage, Layer, Rect, Transformer } from "react-konva";
 import { useEffect, useRef, useState } from "react";
-import type { RectType, ArrowType, ToolType, ShapeType, TodoType, LineType } from "./types";
+import type { RectType, ArrowType, ToolType, ShapeType, TodoType, LineType, SelectionRectType } from "./types";
 import type { DragEventWithSource } from "./eventTypes";
 import ArrowShape from "./ArrowShape";
-import {
-  handleDragStart,
-  handleDragMove,
-  handleDragEnd,
-  handleStageDragStart,
-  handleStageDragEnd,
-} from "./utilities/DragHandler";
+import { handleDragStart, handleDragMove, handleDragEnd, handleStageDragStart, handleStageDragEnd }
+  from "./utilities/DragHandler";
 import { arrowMovement } from "./utilities/ArrowFunction.ts";
 import RectLayer from "./RectLayer";
 import Konva from "konva";
@@ -19,7 +14,7 @@ import TodoLayer from "./TodoLayer.tsx";
 import { handleStageMouseDown, handleStageMouseMove, handleStageMouseUp } from "./canvas_tools/drawTool.ts";
 import LineLayer from "./LineLayer.tsx";
 import { handleEraseLinesMouseMove, handleEraseLinesMouseDown, handleEraseLinesMouseUp } from "./canvas_tools/eraseTool.ts";
-import { getCorner } from "./canvas_tools/selectTool.ts";
+import { handleSelectMouseDown, handleSelectMouseMove, handleSelectMouseUp } from "./canvas_tools/selectTool.ts";
 
 interface Props {
   rects: RectType[];
@@ -49,12 +44,8 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
   const idCounter = useRef(1);
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [selectionRectangle, setSelectionRectangle] = useState({
-    visible: false,
-    x1: 0,
-    y1: 0,
-    x2: 0,
-    y2: 0
+  const [selectionRectangle, setSelectionRectangle] = useState<SelectionRectType>({
+    visible: false, x1: 0, x2: 0, y1: 0, y2: 0
   })
   const isSelecting = useRef(false);
   const transformerRef = useRef<Konva.Transformer>(null);
@@ -217,108 +208,6 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
     }
   };
 
-  const degToRad = (angle: number) => (angle / 180) * Math.PI;
-
-  const getClientRect = (shape: RectType) => {
-    const x = shape.x; const y = shape.y;
-    const width = shape.width; const height = shape.height;
-    const rotation = 0;
-    const rad = degToRad(rotation);
-
-    const p1 = getCorner(x, y, 0, 0, rad);
-    const p2 = getCorner(x, y, width, 0, rad);
-    const p3 = getCorner(x, y, width, height, rad);
-    const p4 = getCorner(x, y, 0, height, rad);
-
-    const minX = Math.min(p1.x, p2.x, p3.x, p4.x);
-    const minY = Math.min(p1.y, p2.y, p3.y, p4.y);
-    const maxX = Math.max(p1.x, p2.x, p3.x, p4.x);
-    const maxY = Math.max(p1.y, p2.y, p3.y, p4.y);
-
-    return {
-      x: minX,
-      y: minY,
-      width: maxX - minX,
-      height: maxY - minY,
-    };
-  }
-
-  const handleStageSelectClick = (e) => {
-    if (selectionRectangle.visible) return;
-
-    //if clicked on empty area
-    if (e.target === e.target.getStage()) {
-      setSelectedIds([]);
-      return;
-    }
-
-    // if clicked not our rectangle
-    if (!e.target.hasName("shape")) return;
-
-    const clickedId = e.target.id();
-    if (!clickedId) return;
-
-    // is shift or ctrl pressed
-    const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
-    const isSelected = selectedIds.includes(clickedId);
-
-    if (!metaPressed && !isSelected) setSelectedIds([clickedId]);
-    else if (metaPressed && isSelected) setSelectedIds(selectedIds.filter(id => id !== clickedId));
-    else if (metaPressed && !isSelected) setSelectedIds([...selectedIds, clickedId]);
-  };
-
-  const handleSelectMouseDown = (e) => {
-    if (e.target !== e.target.getStage()) return;
-
-    isSelecting.current = true;
-    const pos = stageRef.current?.getPointerPosition();
-    if (!pos) return;
-    setSelectionRectangle({
-      visible: true,
-      x1: pos.x,
-      y1: pos.y,
-      x2: pos.x,
-      y2: pos.y,
-    })
-  };
-
-  const handleSelectMouseMove = (e) => {
-    if (!isSelecting.current) return;
-
-    const pos = stageRef.current?.getPointerPosition();
-    if (!pos) return;
-    setSelectionRectangle({
-      ...selectionRectangle,
-      x2: pos.x,
-      y2: pos.y
-    })
-  };
-
-  const handleSelectMouseUp = (e) => {
-    if (!isSelecting.current) return;
-    isSelecting.current = false;
-
-    // update visibility timeout
-    setTimeout(() => {
-      setSelectionRectangle({
-        ...selectionRectangle, visible: false
-      });
-    });
-
-    const selBox = {
-      x: Math.min(selectionRectangle.x1, selectionRectangle.x2),
-      y: Math.min(selectionRectangle.y1, selectionRectangle.y2),
-      width: Math.abs(selectionRectangle.x2 - selectionRectangle.x1),
-      height: Math.abs(selectionRectangle.y2 - selectionRectangle.y1),
-    };
-
-    const selected = rects.filter(rect => {
-      return Konva.Util.haveIntersection(selBox, getClientRect(rect));
-    });
-
-    setSelectedIds(selected.map(r => r.id));
-  }
-
   return (
     <>
       <Stage
@@ -332,17 +221,17 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
         onMouseDown={(e) => {
           if (tool === "draw") handleStageMouseDown(stageRef.current, tool, strokeColor, setLines, setMouseHeldDown, idCounter);
           if (tool === "eraser") handleEraseLinesMouseDown(setMouseHeldDown);
-          if (tool === "select") handleSelectMouseDown(e);
+          if (tool === "select") handleSelectMouseDown(e, stageRef, isSelecting, setSelectionRectangle);
         }}
-        onMouseMove={(e) => {
+        onMouseMove={() => {
           if (tool === "draw") handleStageMouseMove(stageRef.current, tool, setLines, mouseHeldDown);
           if (tool === "eraser") handleEraseLinesMouseMove(stageRef, tool, lineLayer, setLines, mouseHeldDown);
-          if (tool === "select") handleSelectMouseMove(e);
+          if (tool === "select") handleSelectMouseMove(stageRef, isSelecting, selectionRectangle, setSelectionRectangle);
         }}
-        onMouseUp={(e) => {
+        onMouseUp={() => {
           if (tool === "draw") handleStageMouseUp(mouseHeldDown, setMouseHeldDown);
           if (tool === "eraser") handleEraseLinesMouseUp(setMouseHeldDown);
-          if (tool === "select") handleSelectMouseUp(e);
+          if (tool === "select") handleSelectMouseUp(isSelecting, selectionRectangle, setSelectionRectangle, setSelectedIds, rects);
         }}
         scaleX={zoom / 100}
         scaleY={zoom / 100}
@@ -388,7 +277,6 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
           <Transformer
             ref={transformerRef}
             boundBoxFunc={(oldBox, newBox) => {
-              // Limit resize
               if (newBox.width < 5 || newBox.height < 5) {
                 return oldBox;
               }
@@ -398,14 +286,15 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
           />
         </Layer>
         <Layer ref={tempLayer}>
-          {/* Selection rectangle */}
           {selectionRectangle.visible && (
             <Rect
               x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
               y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
               width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
               height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
-              fill="rgba(0,0,255,0.5)"
+              fill="rgba(0,0,255,0.15)"
+              stroke={"rgba(70,70,120,0.2)"}
+              strokeWidth={2}
             />
           )}
         </Layer>

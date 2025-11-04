@@ -14,7 +14,7 @@ import TodoLayer from "./TodoLayer.tsx";
 import { handleStageMouseDown, handleStageMouseMove, handleStageMouseUp } from "./canvas_tools/drawTool.ts";
 import LineLayer from "./LineLayer.tsx";
 import { handleEraseLinesMouseMove, handleEraseLinesMouseDown, handleEraseLinesMouseUp } from "./canvas_tools/eraseTool.ts";
-import { handleSelectMouseDown, handleSelectMouseMove, handleSelectMouseUp } from "./canvas_tools/selectTool.ts";
+import { handleSelectMouseDown, handleSelectMouseMove, handleSelectMouseUp, handleStageSelectClick } from "./canvas_tools/selectTool.ts";
 
 interface Props {
   rects: RectType[];
@@ -49,7 +49,6 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
   })
   const isSelecting = useRef(false);
   const transformerRef = useRef<Konva.Transformer>(null);
-  const rectRefs = useRef(new Map());
 
   const addConnector = (from: Konva.Node, to: Konva.Node) => {
     setConnectors([
@@ -145,7 +144,7 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
 
     //update transformer when selection changes
     if (selectedIds.length && transformerRef.current) {
-      const nodes = selectedIds.map(id => rectRefs.current.get(id)).filter(node => node);
+      const nodes = selectedIds.map(id => stageRef.current?.findOne<Konva.Shape>(`#group-${id}`)).filter(Boolean) as Konva.Rect[];
 
       transformerRef.current.nodes(nodes);
     } else if (transformerRef.current) transformerRef.current.nodes([]);
@@ -233,6 +232,9 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
           if (tool === "eraser") handleEraseLinesMouseUp(setMouseHeldDown);
           if (tool === "select") handleSelectMouseUp(isSelecting, selectionRectangle, setSelectionRectangle, setSelectedIds, rects);
         }}
+        onClick={(e) => {
+          if (tool === "select") handleStageSelectClick(e, selectionRectangle, selectedIds, setSelectedIds);
+        }}
         scaleX={zoom / 100}
         scaleY={zoom / 100}
         style={{ cursor: changeCursor(tool) }}
@@ -274,6 +276,10 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
             todos={todos}
             setTodos={setTodos}
           />
+        </Layer>
+        <Layer ref={tempLayer}>
+        </Layer>
+        <Layer>
           <Transformer
             ref={transformerRef}
             boundBoxFunc={(oldBox, newBox) => {
@@ -282,10 +288,7 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
               }
               return newBox;
             }}
-
           />
-        </Layer>
-        <Layer ref={tempLayer}>
           {selectionRectangle.visible && (
             <Rect
               x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}

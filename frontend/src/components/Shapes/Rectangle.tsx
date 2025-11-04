@@ -38,7 +38,7 @@ const Rectangle = ({
       onDragEnd={onDragEnd}
       onClick={() => {
         handleEraserClick(rect.id);
-        if (tool != "eraser") {
+        if (tool === "hand") {
           onShapeClick(rect);
         }
       }}
@@ -47,6 +47,8 @@ const Rectangle = ({
         visible={!rect.isCollapsed}
       >
         <Rect
+          name="shape"
+          className="mainRect"
           id={rect.id}
           width={Math.round(rect.width)}
           height={Math.round(rect.height)}
@@ -70,7 +72,7 @@ const Rectangle = ({
           lineHeight={1.25}
           padding={10}
           width={rect.width}
-          height={rect.height}
+          height={rect.height * 0.7}
           listening={false}
         />
         <Text
@@ -78,7 +80,7 @@ const Rectangle = ({
           x={0}
           y={rect.height - 35}
           width={rect.width}
-          height={rect.height}
+          height={16}
           fontFamily="Inter"
           fontSize={12}
           fontStyle="light"
@@ -127,6 +129,7 @@ const Rectangle = ({
         <Rect
           x={0}
           y={0}
+          name="shape"
           width={rect.width}
           height={rect.height * 0.25}
           cornerRadius={[16, 4, 4, 4]}

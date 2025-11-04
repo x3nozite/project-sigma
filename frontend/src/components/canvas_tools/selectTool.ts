@@ -88,6 +88,8 @@ export const handleSelectMouseUp = (isSelecting: RefObject<boolean>, selectionRe
     return Konva.Util.haveIntersection(selBox, getClientRect(rect));
   });
 
+  console.log(selected);
+
   setSelectedIds(selected.map(r => r.id));
 }
 

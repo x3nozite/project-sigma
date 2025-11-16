@@ -4,7 +4,7 @@ import Konva from "konva";
 
 interface Props {
   rect: RectType;
-  setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
+  setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>;
   collapseChild: (rect: RectType, currentlyCollapsed: boolean) => void;
   onDragStart: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragMove: (e: Konva.KonvaEventObject<DragEvent>) => void;
@@ -16,7 +16,7 @@ interface Props {
 
 const Rectangle = ({
   rect,
-  setRects,
+  setShapes,
   onDragStart,
   onDragMove,
   onDragEnd,
@@ -162,9 +162,9 @@ const Rectangle = ({
               }
 
               e.cancelBubble = true;
-              setRects((prev) => {
+              setShapes((prev) => {
                 return prev.map((r) => {
-                  if (r.id === rect.id) {
+                  if (r.shape === "rect" && r.id === rect.id) {
                     return { ...r, isCollapsed: !r.isCollapsed };
                   } else {
                     return r;

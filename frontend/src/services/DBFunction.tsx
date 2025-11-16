@@ -1,8 +1,8 @@
 import { supabase } from "../supabase-client";
-import type { RectType } from "../components/types";
+import type { RectType, ShapeType } from "../components/types";
 
 export interface CanvasData {
-  rects: RectType[];
+  shapes: ShapeType[];
   // add others later
 }
 
@@ -18,9 +18,9 @@ export async function saveCanvas(
       return { success: false, error: "User not authenticated" };
     }
 
-    if (data.rects.length > 0) {
-      await supabase.from("rects").upsert(
-        data.rects.map((rect) => ({
+    if (data.shapes.length > 0) {
+      await supabase.from("shapes").upsert(
+        data.shapes.filter((s): s is RectType => s.type === "rect").map((rect) => ({
           user_id: user.id,
           rect_id: rect.id,
           title: rect.title,

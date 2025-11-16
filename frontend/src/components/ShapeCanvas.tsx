@@ -17,14 +17,10 @@ import { handleEraseLinesMouseMove, handleEraseLinesMouseDown, handleEraseLinesM
 import { handleSelectMouseDown, handleSelectMouseMove, handleSelectMouseUp, handleStageSelectClick } from "./canvas_tools/selectTool.ts";
 
 interface Props {
-  rects: RectType[];
-  setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
-  todos: TodoType[];
-  setTodos: React.Dispatch<React.SetStateAction<TodoType[]>>;
+  shapes: ShapeType[];
+  setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>;
   connectors: ArrowType[];
   setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>;
-  lines: LineType[];
-  setLines: React.Dispatch<React.SetStateAction<LineType[]>>;
   tool: ToolType;
   zoom: number;
   setZoomValue: React.Dispatch<React.SetStateAction<number>>;
@@ -32,7 +28,7 @@ interface Props {
   onShapeClick: (shape: ShapeType | null) => void;
 }
 
-const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoom, connectors, setConnectors, lines, setLines, strokeColor = "#000", onShapeClick }: Props) => {
+const ShapeCanvas = ({ shapes, setShapes, tool, setZoomValue, zoom, connectors, setConnectors, strokeColor = "#000", onShapeClick }: Props) => {
   const mainLayer = useRef<Konva.Layer | null>(null!);
   const prevShape = useRef<Konva.Shape | null>(null!);
   const tempLayer = useRef<Konva.Layer | null>(null!);
@@ -59,86 +55,84 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
   useEffect(() => {
     if (!mainLayer.current) return;
 
-    rects.forEach((r) => {
-      const rectGroup = mainLayer.current?.findOne(`#group-${r.id}`);
-      const rect = mainLayer.current?.findOne(`#${r.id}`) as Konva.Rect;
-      if (!rectGroup || !rect) return;
+    shapes.forEach((s) => {
+      if (s.behavior !== "node") return;
+      const shapeGroup = mainLayer.current?.findOne(`#group-${s.id}`);
+      const shape = mainLayer.current?.findOne(`#${s.id}`) as Konva.Shape;
+      if (!shapeGroup || !shape) return;
 
-      rectGroup.off("drop");
-      rectGroup.off("dragenter");
-      rectGroup.off("dragleave");
+      shapeGroup.off("drop");
+      shapeGroup.off("dragenter");
+      shapeGroup.off("dragleave");
 
-      rectGroup.on("dragenter", (e) => {
-        const sourceRect = (e as DragEventWithSource).source;
-        if (!sourceRect || rectGroup === sourceRect || rect.fill() === "green") return;
+      shapeGroup.on("dragenter", (e) => {
+        const sourceShape = (e as DragEventWithSource).source;
+        if (!sourceShape || shapeGroup === sourceShape || shape.fill() === "green") return;
 
         if (
-          r.children.includes(sourceRect.id()) ||
-          r.parents.includes(sourceRect.id())
+          s.children.includes(sourceShape.id()) ||
+          s.parents.includes(sourceShape.id())
         )
           return;
 
-        const sourceRectInArray = rects.find(rectToFind => ("group-" + rectToFind.id === sourceRect.id()));
-        if (sourceRectInArray?.parents !== "") return;
+        const sourceShapeInArray = shapes.find(rectToFind => ("group-" + rectToFind.id === sourceShape.id()));
+        if (sourceShapeInArray?.behavior !== "node" || sourceShapeInArray?.parents !== "") return;
 
-        rect.fill("#b9f8cf");
+        shape.fill("#b9f8cf");
       });
 
-      rectGroup.on("dragmove", (e) => {
-        const sourceRect = (e as DragEventWithSource).source;
-        if (!sourceRect || rectGroup === sourceRect || rect.fill() === "#b9f8cf")
+      shapeGroup.on("dragmove", (e) => {
+        const sourceShape = (e as DragEventWithSource).source;
+        if (!sourceShape || shapeGroup === sourceShape || shape.fill() === "#b9f8cf")
           return;
 
-        rect.fill("#b9f8cf");
+        shape.fill("#b9f8cf");
       });
 
-      rectGroup.on("dragleave", (e) => {
-        const sourceRect = (e as DragEventWithSource).source;
-        if (rectGroup === sourceRect) return;
-        rect.fill("white");
+      shapeGroup.on("dragleave", (e) => {
+        const sourceShape = (e as DragEventWithSource).source;
+        if (shapeGroup === sourceShape) return;
+        shape.fill("white");
       });
 
-      rectGroup.on("drop", (e) => {
-        const sourceRect = (e as DragEventWithSource).source;
-        if (!sourceRect || r.children.includes(sourceRect.id()) || r.parents.includes(sourceRect.id())) return;
-        const sourceRectInArray = rects.find(rectToFind => ("group-" + rectToFind.id === sourceRect.id()));
-        if (sourceRectInArray?.parents !== "") return;
+      shapeGroup.on("drop", (e) => {
+        const sourceShape = (e as DragEventWithSource).source;
+        if (!sourceShape || s.children.includes(sourceShape.id()) || s.parents.includes(sourceShape.id())) return;
+        const sourceShapeInArray = shapes.find(rectToFind => ("group-" + rectToFind.id === sourceShape.id()));
+        if (sourceShapeInArray?.behavior !== "node" || sourceShapeInArray?.parents !== "") return;
 
-        rect.fill("white");
+        shape.fill("white");
 
-        const dx = rectGroup.x() - sourceRect.x();
-        const dy = rectGroup.y() - sourceRect.y();
+        const dx = shapeGroup.x() - sourceShape.x();
+        const dy = shapeGroup.y() - sourceShape.y();
         const dist = Math.sqrt(dx * dx + dy * dy);
         const vectorX = dx / dist;
         const vectorY = dy / dist;
         const offset = 100;
 
-        setRects((prev) => {
-          return prev.map((rectangle) => {
-            if (
-              "group-" + rectangle.id ===
-              (e as DragEventWithSource).source.id()
-            ) {
+        setShapes((prev: ShapeType[]) => {
+          return prev.map((shape) => {
+            if (shape.behavior === "node" && "group-" + shape.id === (e as DragEventWithSource).source.id()) {
               return {
-                ...rectangle,
-                parents: rectGroup.id(),
-                x: rectangle.x + -offset * vectorX,
-                y: rectangle.y + -offset * vectorY,
+                ...shape,
+                parents: shapeGroup.id(),
+                x: shape.x + -offset * vectorX,
+                y: shape.y + -offset * vectorY,
               };
             }
-            if ("group-" + rectangle.id === rectGroup.id()) {
+            if (shape.behavior === "node" && "group-" + shape.id === shapeGroup.id()) {
               return {
-                ...rectangle,
+                ...shape,
                 children: [
-                  ...rectangle.children,
+                  ...shape.children,
                   (e as DragEventWithSource).source.id(),
                 ],
               };
             }
-            return rectangle;
+            return shape;
           });
         });
-        addConnector((e as DragEventWithSource).source, rectGroup);
+        addConnector((e as DragEventWithSource).source, shapeGroup);
       });
     });
 
@@ -150,24 +144,27 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
     } else if (transformerRef.current) transformerRef.current.nodes([]);
   });
 
-  const checkParentVisible = (rect: RectType) => {
+  const checkParentVisible = (shape: ShapeType) => {
+    if (shape.behavior !== "node") return;
     //find parent
-    const parentInArray = rects.find(r => ("group-" + r.id) === rect.parents);
-    const parentNode = mainLayer.current?.findOne(`#${rect.parents}`);
+    const parentInArray = shapes.find(s => ("group-" + s.id) === shape.parents);
+    const parentNode = mainLayer.current?.findOne(`#${shape.parents}`);
     if (!parentNode || !parentInArray) return false;
 
     return ((parentNode as Konva.Group).getChildren()[0].visible());
   }
 
-  const collapseChild = (rect: RectType, currentlyCollapsed: boolean) => {
-    if (rect.children.length === 0) return;
-    rect.children.forEach((child) => {
-      const childInArray = rects.find(r => ("group-" + r.id) === child);
+  const collapseChild = (shape: ShapeType, currentlyCollapsed: boolean) => {
+    if (shape.behavior !== "node") return;
+
+    if (shape.children.length === 0) return;
+    shape.children.forEach((child) => {
+      const childInArray = shapes.find(s => ("group-" + s.id) === child);
       if (!childInArray) return;
 
-      const rectGroup = mainLayer.current?.findOne(`#${child}`);
-      if (!rectGroup) return;
-      rectGroup.visible(currentlyCollapsed);
+      const shapeGroup = mainLayer.current?.findOne(`#${child}`);
+      if (!shapeGroup) return;
+      shapeGroup.visible(currentlyCollapsed);
 
       // set arrow's visibility
       const connectorReact = connectors.find(connector => {
@@ -185,25 +182,27 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
     })
   }
 
-  const changeChildToOrphan = (rectId: string) => {
-    const rectInArray = rects.find(r => r.id === rectId);
+  const changeChildToOrphan = (shapeId: string) => {
+    const shapeInArray = shapes.find(s => s.id === shapeId);
 
-    rectInArray?.children.forEach(child => {
-      const childInArray = rects.find(r => "group-" + r.id === child);
-      if (!childInArray) return;
+    if (shapeInArray?.behavior !== "node") return;
+
+    shapeInArray?.children.forEach(child => {
+      const childInArray = shapes.find(r => "group-" + r.id === child);
+      if (!childInArray || childInArray.behavior !== "node") return;
       childInArray.parents = "";
     })
   }
 
-  const handleEraserClick = (rectId: string) => {
+  const handleEraserClick = (shapeId: string) => {
     if (tool === "eraser") {
       connectors.forEach((connector) => {
-        if (connector.to === "group-" + rectId || connector.from === "group-" + rectId) {
+        if (connector.to === "group-" + shapeId || connector.from === "group-" + shapeId) {
           setConnectors((prev) => prev.filter(c => c.id !== connector.id));
         }
       })
-      changeChildToOrphan(rectId);
-      setRects((prev) => prev.filter((r) => r.id !== rectId))
+      changeChildToOrphan(shapeId);
+      setShapes((prev: ShapeType[]) => prev.filter((r) => r.id !== shapeId))
     }
   };
 
@@ -218,19 +217,19 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
         onDragEnd={(e) => handleStageDragEnd(e, mainLayer, arrowLayer)}
         onWheel={(e) => handleZoomWithScroll(stageRef, e, setZoomValue)}
         onMouseDown={(e) => {
-          if (tool === "draw") handleStageMouseDown(stageRef.current, tool, strokeColor, setLines, setMouseHeldDown, idCounter);
+          if (tool === "draw") handleStageMouseDown(stageRef.current, tool, strokeColor, setShapes, setMouseHeldDown, idCounter);
           if (tool === "eraser") handleEraseLinesMouseDown(setMouseHeldDown);
           if (tool === "select") handleSelectMouseDown(e, stageRef, isSelecting, setSelectionRectangle);
         }}
         onMouseMove={() => {
-          if (tool === "draw") handleStageMouseMove(stageRef.current, tool, setLines, mouseHeldDown);
-          if (tool === "eraser") handleEraseLinesMouseMove(stageRef, tool, lineLayer, setLines, mouseHeldDown);
+          if (tool === "draw") handleStageMouseMove(stageRef.current, tool, setShapes, mouseHeldDown);
+          if (tool === "eraser") handleEraseLinesMouseMove(stageRef, tool, lineLayer, setShapes, mouseHeldDown);
           if (tool === "select") handleSelectMouseMove(stageRef, isSelecting, selectionRectangle, setSelectionRectangle);
         }}
         onMouseUp={() => {
           if (tool === "draw") handleStageMouseUp(mouseHeldDown, setMouseHeldDown);
           if (tool === "eraser") handleEraseLinesMouseUp(setMouseHeldDown);
-          if (tool === "select") handleSelectMouseUp(isSelecting, selectionRectangle, setSelectionRectangle, setSelectedIds, rects);
+          if (tool === "select") handleSelectMouseUp(isSelecting, selectionRectangle, setSelectionRectangle, setSelectedIds, shapes);
         }}
         onClick={(e) => {
           if (tool === "select") handleStageSelectClick(e, selectionRectangle, selectedIds, setSelectedIds);
@@ -244,25 +243,25 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
         </Layer>
 
         <LineLayer
-          lines={lines}
+          lines={shapes.filter((s: ShapeType): s is LineType => s.shape === "line")}
           ref={lineLayer}
         />
 
         <Layer ref={mainLayer}>
           <RectLayer
-            rects={rects}
-            setRects={setRects}
+            shapes={shapes.filter((s: ShapeType): s is RectType => s.shape === "rect")}
+            setShapes={setShapes}
             onDragStart={(e) => handleDragStart(e, tool, tempLayer)}
             onDragMove={(e) => {
               handleDragMove(e, mainLayer, prevShape, tool);
               arrowMovement(connectors, mainLayer, tempLayer, arrowLayer);
             }}
             onDragEnd={(e) => {
-              setRects(
-                rects.map((rect) =>
-                  "group-" + rect.id === e.target.id()
-                    ? { ...rect, x: e.target.x(), y: e.target.y() }
-                    : rect
+              setShapes(
+                shapes.map((shape) =>
+                  "group-" + shape.id === e.target.id()
+                    ? { ...shape, x: e.target.x(), y: e.target.y() }
+                    : shape
                 )
               );
               handleDragEnd(e, mainLayer, tool, prevShape);
@@ -273,8 +272,8 @@ const ShapeCanvas = ({ rects, setRects, todos, setTodos, tool, setZoomValue, zoo
             onShapeClick={onShapeClick}
           />
           <TodoLayer
-            todos={todos}
-            setTodos={setTodos}
+            todos={shapes.filter((s: ShapeType): s is TodoType => s.shape === "todo")}
+            setShapes={setShapes}
           />
         </Layer>
         <Layer ref={tempLayer}>

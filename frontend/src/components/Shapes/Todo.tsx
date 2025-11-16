@@ -1,12 +1,12 @@
 import { Group, Rect, Text } from "react-konva";
-import type { TodoType } from "../types";
+import type { ShapeType, TodoType } from "../types";
 
 interface Props {
   todo: TodoType;
-  setTodos: React.Dispatch<React.SetStateAction<TodoType[]>>;
+  setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>;
 }
 
-const Todo = ({ todo, setTodos }: Props) => {
+const Todo = ({ todo, setShapes }: Props) => {
 
   return (
     <Group

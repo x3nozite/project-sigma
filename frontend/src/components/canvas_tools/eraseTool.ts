@@ -1,5 +1,5 @@
 import Konva from "konva";
-import type { LineType, ToolType } from "../types";
+import type { ShapeType, ToolType } from "../types";
 import type { RefObject } from "react";
 import type { Vector2d } from "konva/lib/types";
 import { getRelativePointerPosition } from "./drawTool";
@@ -32,15 +32,16 @@ function pointToSegmentDistance(px: number, py: number, x1: number, y1: number, 
   return Math.hypot(px - projX, py - projY);
 }
 
-export function handleEraseLinesMouseMove(stage: RefObject<Konva.Stage | null>, tool: ToolType, layer: RefObject<Konva.Layer | null>, setLines: React.Dispatch<React.SetStateAction<LineType[]>>, isDeleting: boolean) {
+export function handleEraseLinesMouseMove(stage: RefObject<Konva.Stage | null>, tool: ToolType, layer: RefObject<Konva.Layer | null>, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, isDeleting: boolean) {
   if (tool !== "eraser" || !isDeleting) return;
 
   //find lines in intersection with mouse, then remove it
   const pos = getRelativePointerPosition(stage.current);
   if (!pos) return;
 
-  setLines(prev => prev.filter(ln => {
-    return !isLineNearPointer(ln.points, pos, ERASE_RADIUS)
+  setShapes(prev => prev.filter(ln => {
+    if (ln.shape === "line") return !isLineNearPointer(ln.points, pos, ERASE_RADIUS);
+    return true;
   }))
 }
 

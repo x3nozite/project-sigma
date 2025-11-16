@@ -1,27 +1,24 @@
-export type ShapeType = {
+export type BaseShape = {
+  id: string;
   x: number;
   y: number;
-  id: string;
+  shape: "rect" | "todo" | "circle";
+  behavior: "node" | "edge" | "decor";
   color: string;
-  children: string[];
-  parents: string;
   isCollapsed: boolean;
+}
+
+export type RectType = BaseShape & {
+  shape: "rect";
+  behavior: "node";
+  width: number;
+  height: number;
   title: string;
   description: string;
   dueDate: string;
   status: string;
-  name: string;
-}
-
-export type RectType = ShapeType & {
-  width: number;
-  height: number;
-};
-
-export type TextType = {
-  id: string;
-  value: string;
-  fontSize: number;
+  children: string[];
+  parents: string;
 };
 
 export type ArrowType = {
@@ -30,14 +27,24 @@ export type ArrowType = {
   to: string;
 };
 
-export type ToolType = "hand" | "eraser" | "draw" | "select";
-
-export type TodoType = ShapeType & {
+export type TodoType = BaseShape & {
+  shape: "todo";
+  behavior: "node";
   width: number;
   height: number;
+  title: string;
+  description: string;
+  dueDate: string;
+  status: string;
+  children: string[];
+  parents: string;
 }
 
-export type LineType = ShapeType & {
+export type LineType = {
+  shape: "line";
+  behavior: "decor";
+  id: string;
+  color: string;
   points: number[];
   stroke?: string;
   strokeWidth?: number;
@@ -50,3 +57,7 @@ export type SelectionRectType = {
   x2: number,
   y2: number
 }
+
+export type ToolType = "hand" | "eraser" | "draw" | "select";
+
+export type ShapeType = RectType | TodoType | LineType;

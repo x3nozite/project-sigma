@@ -1,5 +1,5 @@
 import Konva from "konva";
-import type { LineType, ToolType } from "../types";
+import type { LineType, ShapeType, ToolType } from "../types";
 import type { RefObject, SetStateAction } from "react";
 
 export function getRelativePointerPosition(stage: Konva.Stage | null) {
@@ -11,30 +11,35 @@ export function getRelativePointerPosition(stage: Konva.Stage | null) {
   return transform.point(pointer);
 }
 
-export function handleStageMouseDown(stage: Konva.Stage | null, tool: ToolType, strokeColor: string, setLines: React.Dispatch<React.SetStateAction<LineType[]>>, setIsDrawing: React.Dispatch<React.SetStateAction<boolean>>, idCounter: RefObject<number>) {
+export function handleStageMouseDown(stage: Konva.Stage | null, tool: ToolType, strokeColor: string, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, setIsDrawing: React.Dispatch<React.SetStateAction<boolean>>, idCounter: RefObject<number>) {
   if (tool !== "draw") return;
   const pos = getRelativePointerPosition(stage);
   if (!pos) return;
   setIsDrawing(true);
 
   const newLine: LineType = {
+    shape: "line",
+    behavior: "decor",
+    color: "black",
     id: "line-" + idCounter.current,
     points: [pos.x, pos.y],
     stroke: strokeColor,
     strokeWidth: 4
   };
   idCounter.current++;
-  setLines((prev) => [...prev, newLine]);
+  setShapes((prev) => [...prev, newLine]);
 }
 
-export function handleStageMouseMove(stage: Konva.Stage | null, tool: ToolType, setLines: React.Dispatch<React.SetStateAction<LineType[]>>, isDrawing: boolean) {
+export function handleStageMouseMove(stage: Konva.Stage | null, tool: ToolType, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, isDrawing: boolean) {
   if (!isDrawing || tool !== "draw") return;
   const pos = getRelativePointerPosition(stage);
   if (!pos) return;
 
-  setLines((prev) => {
+  setShapes((prev) => {
     if (prev.length === 0) return prev;
     const last = prev[prev.length - 1];
+
+    if (last.behavior !== "decor") return prev;
 
     const updatedLast = { ...last, points: [...last.points, pos.x, pos.y] };
 

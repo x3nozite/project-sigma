@@ -7,8 +7,6 @@ import type {
   ArrowType,
   ToolType,
   ShapeType,
-  LineType,
-  TodoType,
 } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
 import TaskForm from "./components/forms/TaskForm";
@@ -31,16 +29,13 @@ import {
 import { DropdownMenu, AlertDialog } from "radix-ui";
 import AppToolbar from "./components/ui/buttons/tools/AppToolbar";
 import { deleteCanvas, loadCanvas, saveCanvas } from "./services/DBFunction";
-import { router } from "./router";
 
 function App() {
   const { session } = useSession();
   const [instruments, setInstruments] = useState<any[]>([]);
   const [zoomValue, setZoomValue] = useState(100);
   const [showForm, setShowForm] = useState(false);
-  const [rects, setRects] = useState<RectType[]>([]);
-  const [todos, setTodos] = useState<TodoType[]>([]);
-  const [lines, setLines] = useState<LineType[]>([]);
+  const [shapes, setShapes] = useState<ShapeType[]>([]);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
   const [tool, setTool] = useState<ToolType>("select");
   const [strokeColor, setStrokeColor] = useState<string>("#000000");
@@ -58,7 +53,7 @@ function App() {
       const response = await loadCanvas();
       if (!mounted) return;
       if (response.success) {
-        setRects(response.data.rects);
+        setShapes(response.data.shapes);
       } else {
         console.error("Failed to load canvas:", response.error);
       }
@@ -83,43 +78,44 @@ function App() {
     setShowForm(false);
   };
 
+  const newId = idCounter.current;
   const addRect = (newTask: taskFields) => {
-    const newId = idCounter.current;
     idCounter.current += 1;
 
     setTool("hand");
-    setRects([
-      ...rects,
-      {
-        x: 100,
-        y: 100,
-        width: 300,
-        height: 200,
-        color: newTask.color,
-        id: "rect-" + newId,
-        title: newTask.title,
-        description: newTask.description,
-        dueDate: newTask.date,
-        status: "In Progress",
-        isCollapsed: false,
-        children: [],
-        parents: "",
-        name: "shape",
-      },
-    ]);
+
+    const newRect: RectType = {
+      shape: "rect",
+      id: "rect-" + newId,
+      behavior: "node",
+      x: 100,
+      y: 100,
+      width: 300,
+      height: 200,
+      color: newTask.color,
+      title: newTask.title,
+      description: newTask.description,
+      dueDate: newTask.date,
+      status: "In Progress",
+      isCollapsed: false,
+      children: [],
+      parents: "",
+    }
+
+    setShapes([...shapes, newRect]);
   };
 
   const updateRect = (shape: ShapeType, newData: taskFields) => {
-    setRects((prev) =>
+    setShapes((prev) =>
       prev.map((r) =>
         r.id === shape.id
           ? {
-              ...r,
-              title: newData.title,
-              description: newData.description,
-              color: newData.color,
-              dueDate: newData.date,
-            }
+            ...r,
+            title: newData.title,
+            description: newData.description,
+            color: newData.color,
+            dueDate: newData.date,
+          }
           : r
       )
     );
@@ -139,10 +135,7 @@ function App() {
   };
 
   const clearCanvas = async () => {
-    setRects([]);
-    setConnectors([]);
-    setLines([]);
-
+    setShapes([]);
     const response = await deleteCanvas();
     if (!response.success) {
       console.error("Failed to delete canvas from supabase", response.error);
@@ -169,7 +162,7 @@ function App() {
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      await saveCanvas({ rects });
+      await saveCanvas({ shapes });
     } catch (error) {
       console.log(error);
     } finally {
@@ -555,12 +548,8 @@ function App() {
           />
         )}
         <ShapeCanvas
-          rects={rects}
-          setRects={setRects}
-          todos={todos}
-          setTodos={setTodos}
-          lines={lines}
-          setLines={setLines}
+          shapes={shapes}
+          setShapes={setShapes}
           tool={tool}
           setZoomValue={setZoomValue}
           zoom={zoomValue}

@@ -3,8 +3,8 @@ import type { RectType, ShapeType, ToolType } from "./types";
 import Rectangle from "./Shapes/Rectangle";
 
 interface Props {
-  rects: RectType[];
-  setRects: React.Dispatch<React.SetStateAction<RectType[]>>;
+  shapes: RectType[];
+  setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>;
   collapseChild: (rect: RectType, currentlyCollapsed: boolean) => void;
   onDragStart: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragMove: (e: Konva.KonvaEventObject<DragEvent>) => void;
@@ -14,15 +14,14 @@ interface Props {
   onShapeClick: (shape: ShapeType | null) => void;
 }
 
-const RectLayer = ({ rects, setRects, onDragStart, onDragMove, onDragEnd, tool, collapseChild, handleEraserClick, onShapeClick }: Props) => {
-
+const RectLayer = ({ shapes, setShapes, onDragStart, onDragMove, onDragEnd, tool, collapseChild, handleEraserClick, onShapeClick }: Props) => {
   return (
     <>
-      {rects.map((rect) => (
+      {shapes.map((rect) => (
         <Rectangle
           rect={rect}
           key={"key-" + rect.id}
-          setRects={setRects}
+          setShapes={setShapes}
           onDragStart={onDragStart}
           onDragMove={onDragMove}
           onDragEnd={onDragEnd}

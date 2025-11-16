@@ -1,18 +1,18 @@
 import Todo from "./Shapes/Todo";
-import type { TodoType } from "./types"
+import type { ShapeType, TodoType } from "./types"
 
 interface Props {
   todos: TodoType[];
-  setTodos: React.Dispatch<React.SetStateAction<TodoType[]>>;
+  setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>;
 }
 
-const TodoLayer = ({ todos, setTodos }: Props) => {
+const TodoLayer = ({ todos, setShapes }: Props) => {
   return (
     <>
       {todos.map(todo => (
         <Todo
           todo={todo}
-          setTodos={setTodos}
+          setShapes={setShapes}
         />
       ))}
     </>

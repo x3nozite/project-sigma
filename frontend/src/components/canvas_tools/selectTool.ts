@@ -2,7 +2,7 @@ import type { KonvaEventObject } from "konva/lib/Node";
 import Konva from "konva";
 import type React from "react";
 import type { RefObject } from "react";
-import type { RectType, SelectionRectType } from "../types";
+import type { SelectionRectType, ShapeType } from "../types";
 import { getRelativePointerPosition } from "./drawTool";
 
 function getCorner(pivotX: number, pivotY: number, diffX: number, diffY: number, angle: number) {
@@ -15,7 +15,8 @@ function getCorner(pivotX: number, pivotY: number, diffX: number, diffY: number,
 
 const degToRad = (angle: number) => (angle / 180) * Math.PI;
 
-const getClientRect = (shape: RectType) => {
+const getClientRect = (shape: ShapeType) => {
+  if (shape.shape !== "rect") return;
   const x = shape.x; const y = shape.y;
   const width = shape.width; const height = shape.height;
   const rotation = 0;
@@ -66,7 +67,7 @@ export const handleSelectMouseMove = (stageRef: RefObject<Konva.Stage | null>, i
   })
 };
 
-export const handleSelectMouseUp = (isSelecting: RefObject<boolean>, selectionRectangle: SelectionRectType, setSelectionRectangle: React.Dispatch<React.SetStateAction<SelectionRectType>>, setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>, rects: RectType[]) => {
+export const handleSelectMouseUp = (isSelecting: RefObject<boolean>, selectionRectangle: SelectionRectType, setSelectionRectangle: React.Dispatch<React.SetStateAction<SelectionRectType>>, setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>, shapes: ShapeType[]) => {
   if (!isSelecting.current) return;
   isSelecting.current = false;
 
@@ -84,8 +85,10 @@ export const handleSelectMouseUp = (isSelecting: RefObject<boolean>, selectionRe
     height: Math.abs(selectionRectangle.y2 - selectionRectangle.y1),
   };
 
-  const selected = rects.filter(rect => {
-    return Konva.Util.haveIntersection(selBox, getClientRect(rect));
+  const selected = shapes.filter(shape => {
+    const s = getClientRect(shape);
+    if (!s) return;
+    return Konva.Util.haveIntersection(selBox, s);
   });
 
   console.log(selected);

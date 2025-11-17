@@ -22,13 +22,14 @@ interface Props {
   connectors: ArrowType[];
   setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>;
   tool: ToolType;
+  setTool: React.Dispatch<React.SetStateAction<ToolType>>;
   zoom: number;
   setZoomValue: React.Dispatch<React.SetStateAction<number>>;
   strokeColor?: string;
   onShapeClick: (shape: ShapeType | null) => void;
 }
 
-const ShapeCanvas = ({ shapes = [], setShapes, tool, setZoomValue, zoom, connectors = [], setConnectors, strokeColor = "#000", onShapeClick }: Props) => {
+const ShapeCanvas = ({ shapes = [], setShapes, tool, setTool, setZoomValue, zoom, connectors = [], setConnectors, strokeColor = "#000", onShapeClick }: Props) => {
   const mainLayer = useRef<Konva.Layer | null>(null!);
   const prevShape = useRef<Konva.Shape | null>(null!);
   const tempLayer = useRef<Konva.Layer | null>(null!);
@@ -142,6 +143,33 @@ const ShapeCanvas = ({ shapes = [], setShapes, tool, setZoomValue, zoom, connect
 
       transformerRef.current.nodes(nodes);
     } else if (transformerRef.current) transformerRef.current.nodes([]);
+
+    function handleKeyDown(e: KeyboardEvent) {
+      switch (e.key) {
+        case "1":
+          setTool("hand");
+          break;
+        case "2":
+          setTool((tool === "select") ? "hand" : "select");
+          break;
+        case "3":
+          setTool((tool === "draw") ? "hand" : "draw");
+          break;
+        case "4":
+          setTool((tool === "eraser") ? "hand" : "eraser");
+          break;
+        case "p":
+          setTool((tool === "draw") ? "hand" : "draw");
+          break;
+        default:
+          break;
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   });
 
   const checkParentVisible = (shape: ShapeType) => {

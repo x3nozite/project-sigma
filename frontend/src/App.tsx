@@ -551,6 +551,7 @@ function App() {
           shapes={shapes}
           setShapes={setShapes}
           tool={tool}
+          setTool={setTool}
           setZoomValue={setZoomValue}
           zoom={zoomValue}
           connectors={connectors}

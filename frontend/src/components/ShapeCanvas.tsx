@@ -28,7 +28,7 @@ interface Props {
   onShapeClick: (shape: ShapeType | null) => void;
 }
 
-const ShapeCanvas = ({ shapes, setShapes, tool, setZoomValue, zoom, connectors, setConnectors, strokeColor = "#000", onShapeClick }: Props) => {
+const ShapeCanvas = ({ shapes = [], setShapes, tool, setZoomValue, zoom, connectors = [], setConnectors, strokeColor = "#000", onShapeClick }: Props) => {
   const mainLayer = useRef<Konva.Layer | null>(null!);
   const prevShape = useRef<Konva.Shape | null>(null!);
   const tempLayer = useRef<Konva.Layer | null>(null!);

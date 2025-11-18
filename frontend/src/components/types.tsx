@@ -38,9 +38,9 @@ export type TodoType = BaseShape & {
   description: string;
   dueDate: string;
   status: string;
-  children: string[];
   parents: string;
   completed: boolean;
+  owner: string;
 };
 
 export type LineType = {

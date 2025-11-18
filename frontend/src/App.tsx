@@ -97,8 +97,8 @@ function App() {
       description: "Even more things",
       dueDate: Date.now().toString(),
       completed: false,
+      owner: session ? session.user.user_metadata.name : "Guest",
       status: "Something",
-      children: [],
       parents: "",
     };
     setShapes([...shapes, newTodo]);

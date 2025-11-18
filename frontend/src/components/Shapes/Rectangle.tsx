@@ -25,9 +25,8 @@ const Rectangle = ({
   collapseChild,
   handleEraserClick,
   onShapeClick,
-  onTransformEnd
+  onTransformEnd,
 }: Props) => {
-
   return (
     <Group
       key={"key-" + rect.id}
@@ -50,9 +49,7 @@ const Rectangle = ({
         }
       }}
     >
-      <Group
-        visible={!rect.isCollapsed}
-      >
+      <Group visible={!rect.isCollapsed}>
         <Rect
           name="shape"
           className="mainRect"
@@ -178,7 +175,6 @@ const Rectangle = ({
                   }
                 });
               });
-
             }
           }}
         ></Text>

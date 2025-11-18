@@ -8,6 +8,7 @@ import {
   HiOutlinePhotograph,
   HiOutlineTrash,
   HiSelector,
+  HiOutlineBookOpen,
 } from "react-icons/hi";
 import { BsEraser } from "react-icons/bs";
 import type { ToolType } from "../../../types";
@@ -39,19 +40,8 @@ function AppToolbar({
   setTool,
 }: Props) {
   return (
-    <Toolbar.Root className="flex w-fit max-w-xl rounded-lg bg-white shadow-lg p-2">
+    <Toolbar.Root className="flex w-100 max-w-100 rounded-lg bg-white shadow-lg p-2 justify-center">
       <Toolbar.ToggleGroup type="single">
-        <Toolbar.ToggleItem value="todo">
-          <div
-            className="add-shape group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"
-            onClick={onTodoClick}
-          >
-            <HiOutlineCube className="text-xl" />
-            <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
-              Add To-do
-            </span>
-          </div>
-        </Toolbar.ToggleItem>
         <Toolbar.ToggleItem value="task">
           <div
             className="add-shape group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"
@@ -63,6 +53,20 @@ function AppToolbar({
             </span>
           </div>
         </Toolbar.ToggleItem>
+        <Toolbar.ToggleItem value="todo">
+          <div
+            className="add-shape group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"
+            onClick={onTodoClick}
+          >
+            <HiOutlineBookOpen className="text-xl" />
+            <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+              Add To-do
+            </span>
+          </div>
+        </Toolbar.ToggleItem>
+      </Toolbar.ToggleGroup>
+      <Toolbar.Separator className="w-px my-3 mx-2 bg-black" />
+      <Toolbar.ToggleGroup type="single">
         <Toolbar.ToggleItem value="annotate">
           <div className="add-annotate group flex flex-col justify-center items-center  rounded-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50">
             <HiOutlineAnnotation className="text-xl" />

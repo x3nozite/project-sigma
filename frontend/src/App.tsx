@@ -7,6 +7,7 @@ import type {
   ArrowType,
   ToolType,
   ShapeType,
+  TodoType,
 } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
 import TaskForm from "./components/forms/TaskForm";
@@ -29,6 +30,7 @@ import {
 import { DropdownMenu, AlertDialog } from "radix-ui";
 import AppToolbar from "./components/ui/buttons/tools/AppToolbar";
 import { deleteCanvas, loadCanvas, saveCanvas } from "./services/DBFunction";
+import { date } from "zod";
 
 function App() {
   const { session } = useSession();
@@ -78,6 +80,30 @@ function App() {
     setShowForm(false);
   };
 
+  const addTodo = () => {
+    const newTodo: TodoType = {
+      id: Date.now().toString(),
+      x: 100,
+      y: 100,
+      color: "green",
+      isCollapsed: false,
+      scaleX: 1,
+      scaleY: 1,
+      shape: "todo",
+      behavior: "node",
+      width: 300,
+      height: 300,
+      title: "Something-something",
+      description: "Even more things",
+      dueDate: Date.now().toString(),
+      completed: false,
+      status: "Something",
+      children: [],
+      parents: "",
+    };
+    setShapes([...shapes, newTodo]);
+  };
+
   const newId = idCounter.current;
   const addRect = (newTask: taskFields) => {
     idCounter.current += 1;
@@ -101,8 +127,8 @@ function App() {
       children: [],
       parents: "",
       scaleX: 1,
-      scaleY: 1
-    }
+      scaleY: 1,
+    };
 
     setShapes([...shapes, newRect]);
   };
@@ -112,12 +138,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-            ...r,
-            title: newData.title,
-            description: newData.description,
-            color: newData.color,
-            dueDate: newData.date,
-          }
+              ...r,
+              title: newData.title,
+              description: newData.description,
+              color: newData.color,
+              dueDate: newData.date,
+            }
           : r
       )
     );
@@ -267,6 +293,7 @@ function App() {
             /> */}
             <AppToolbar
               onShapeClick={() => openForm(null)}
+              onTodoClick={addTodo}
               onEraserClick={toggleEraser}
               onClearClick={clearCanvas}
               onDrawClick={togglePencil}

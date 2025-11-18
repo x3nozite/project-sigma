@@ -7,7 +7,7 @@ import {
   HiOutlineAnnotation,
   HiOutlinePhotograph,
   HiOutlineTrash,
-  HiSelector
+  HiSelector,
 } from "react-icons/hi";
 import { BsEraser } from "react-icons/bs";
 import type { ToolType } from "../../../types";
@@ -15,6 +15,7 @@ import type { ToolType } from "../../../types";
 interface Props {
   onEraserClick: () => void;
   onShapeClick: () => void;
+  onTodoClick: () => void;
   onClearClick: () => void;
   onDrawClick: () => void;
   onSelectClick: () => void;
@@ -27,6 +28,7 @@ interface Props {
 function AppToolbar({
   onClearClick,
   onShapeClick,
+  onTodoClick,
   onDrawClick,
   onSelectClick,
   onColorSelect,
@@ -39,8 +41,22 @@ function AppToolbar({
   return (
     <Toolbar.Root className="flex w-fit max-w-xl rounded-lg bg-white shadow-lg p-2">
       <Toolbar.ToggleGroup type="single">
+        <Toolbar.ToggleItem value="todo">
+          <div
+            className="add-shape group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"
+            onClick={onTodoClick}
+          >
+            <HiOutlineCube className="text-xl" />
+            <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+              Add To-do
+            </span>
+          </div>
+        </Toolbar.ToggleItem>
         <Toolbar.ToggleItem value="task">
-          <div className="add-shape group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50" onClick={onShapeClick}>
+          <div
+            className="add-shape group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"
+            onClick={onShapeClick}
+          >
             <HiOutlineCube className="text-xl" />
             <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
               Add Task
@@ -88,7 +104,11 @@ function AppToolbar({
             </span>
           </div>
         </Toolbar.ToggleItem>
-        <Toolbar.ToggleItem value="draw" className="relative group" onClick={onDrawClick}>
+        <Toolbar.ToggleItem
+          value="draw"
+          className="relative group"
+          onClick={onDrawClick}
+        >
           <div className="draw-canvas flex flex-col justify-center items-center rounded-sm border-none w-10 h-10 p-1 duration-50 text-gray-700 transition-colors hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2  focus:ring-offset-white focus:outline-none [data-state=on]:bg-violet-200 [data-state=on]:text-purple-700 disabled:pointer-events-auto disabled:opacity-50">
             <HiOutlinePencil className="text-xl" />
             <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">

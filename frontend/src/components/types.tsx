@@ -8,7 +8,7 @@ export type BaseShape = {
   isCollapsed: boolean;
   scaleX: number;
   scaleY: number;
-}
+};
 
 export type RectType = BaseShape & {
   shape: "rect";
@@ -40,7 +40,8 @@ export type TodoType = BaseShape & {
   status: string;
   children: string[];
   parents: string;
-}
+  completed: boolean;
+};
 
 export type LineType = {
   shape: "line";
@@ -53,12 +54,12 @@ export type LineType = {
 };
 
 export type SelectionRectType = {
-  visible: boolean,
-  x1: number,
-  y1: number,
-  x2: number,
-  y2: number
-}
+  visible: boolean;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+};
 
 export type ToolType = "hand" | "eraser" | "draw" | "select";
 

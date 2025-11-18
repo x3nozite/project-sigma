@@ -26,6 +26,7 @@ import {
   HiOutlineChevronDown,
   HiOutlineLogout,
   HiOutlineLogin,
+  HiOutlineChatAlt2,
 } from "react-icons/hi";
 import { DropdownMenu, AlertDialog } from "radix-ui";
 import AppToolbar from "./components/ui/buttons/tools/AppToolbar";
@@ -568,6 +569,14 @@ function App() {
             <HiOutlineZoomIn />
           </button>
         </div>
+        <a href="https://forms.gle/5s7W6VNtgeGiRFyL8">
+          <button className="absolute bottom-4 right-4 items-center z-10 bg-red-100 rounded-xl w-fit p-2.5 hover:bg-red-200 hover:cursor-pointer group">
+            <HiOutlineChatAlt2 />
+            <span className="absolute right-12 -top-5 translate-x-1/2 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+              RectUp Form
+            </span>
+          </button>
+        </a>
         {showForm && (
           <TaskForm
             onAddTask={addRect}

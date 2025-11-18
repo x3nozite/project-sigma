@@ -1,5 +1,6 @@
-import { Group, Rect, Text } from "react-konva";
+import { Circle, Group, Rect, Text } from "react-konva";
 import type { RectType, ShapeType, ToolType } from "../types";
+import { useState } from "react";
 import Konva from "konva";
 
 interface Props {
@@ -27,6 +28,9 @@ const Rectangle = ({
   onShapeClick,
   onTransformEnd,
 }: Props) => {
+  // hover to show todo
+  const [isHovered, setisHovered] = useState(false);
+
   return (
     <Group
       key={"key-" + rect.id}
@@ -42,6 +46,8 @@ const Rectangle = ({
       onDragMove={onDragMove}
       onDragEnd={onDragEnd}
       onTransformEnd={onTransformEnd}
+      onMouseEnter={() => setisHovered(true)}
+      onMouseLeave={() => setisHovered(false)}
       onClick={() => {
         handleEraserClick(rect.id);
         if (tool === "hand") {
@@ -115,6 +121,11 @@ const Rectangle = ({
             padding={10}
           ></Text>
         </Group>
+        {isHovered && (
+          <Group x={rect.width + 5} y={rect.height / 2}>
+            <Circle radius={16} fill="blue" />
+          </Group>
+        )}
       </Group>
       <Group>
         <Rect

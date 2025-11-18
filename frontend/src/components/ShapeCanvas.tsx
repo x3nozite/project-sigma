@@ -14,7 +14,8 @@ import TodoLayer from "./TodoLayer.tsx";
 import { handleStageMouseDown, handleStageMouseMove, handleStageMouseUp } from "./canvas_tools/drawTool.ts";
 import LineLayer from "./LineLayer.tsx";
 import { handleEraseLinesMouseMove, handleEraseLinesMouseDown, handleEraseLinesMouseUp } from "./canvas_tools/eraseTool.ts";
-import { handleSelectMouseDown, handleSelectMouseMove, handleSelectMouseUp, handleStageSelectClick } from "./canvas_tools/selectTool.ts";
+import { handleSelectMouseDown, handleSelectMouseMove, handleSelectMouseUp, handleStageSelectClick, handleTransfromEnd } from "./canvas_tools/selectTool.ts";
+import type { KonvaEventObject } from "konva/lib/Node";
 
 interface Props {
   shapes: ShapeType[];
@@ -285,15 +286,9 @@ const ShapeCanvas = ({ shapes = [], setShapes, tool, setTool, setZoomValue, zoom
               arrowMovement(connectors, mainLayer, tempLayer, arrowLayer);
             }}
             onDragEnd={(e) => {
-              setShapes(
-                shapes.map((shape) =>
-                  "group-" + shape.id === e.target.id()
-                    ? { ...shape, x: e.target.x(), y: e.target.y() }
-                    : shape
-                )
-              );
-              handleDragEnd(e, mainLayer, tool, prevShape);
+              handleDragEnd(e, mainLayer, tool, prevShape, setShapes);
             }}
+            onTransformEnd={(e) => { handleTransfromEnd(e, setShapes) }}
             tool={tool}
             collapseChild={collapseChild}
             handleEraserClick={handleEraserClick}

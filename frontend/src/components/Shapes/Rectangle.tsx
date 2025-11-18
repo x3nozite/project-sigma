@@ -12,6 +12,7 @@ interface Props {
   onShapeClick: (shape: ShapeType | null) => void;
   tool: ToolType;
   handleEraserClick: (rectId: string) => void;
+  onTransformEnd: (e) => void;
 }
 
 const Rectangle = ({
@@ -23,7 +24,8 @@ const Rectangle = ({
   tool,
   collapseChild,
   handleEraserClick,
-  onShapeClick
+  onShapeClick,
+  onTransformEnd
 }: Props) => {
 
   return (
@@ -32,10 +34,15 @@ const Rectangle = ({
       id={"group-" + rect.id}
       x={rect.x}
       y={rect.y}
+      scalingX={rect.scaleX ?? 1}
+      scalingY={rect.scaleY ?? 1}
+      scaleX={rect.scaleX ?? 1}
+      scaleY={rect.scaleY ?? 1}
       draggable={tool !== "eraser"}
       onDragStart={onDragStart}
       onDragMove={onDragMove}
       onDragEnd={onDragEnd}
+      onTransformEnd={onTransformEnd}
       onClick={() => {
         handleEraserClick(rect.id);
         if (tool === "hand") {

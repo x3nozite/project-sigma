@@ -12,9 +12,10 @@ interface Props {
   tool: ToolType;
   handleEraserClick: (rectId: string) => void;
   onShapeClick: (shape: ShapeType | null) => void;
+  onTransformEnd: (e) => void;
 }
 
-const RectLayer = ({ shapes, setShapes, onDragStart, onDragMove, onDragEnd, tool, collapseChild, handleEraserClick, onShapeClick }: Props) => {
+const RectLayer = ({ shapes, setShapes, onDragStart, onDragMove, onDragEnd, tool, collapseChild, handleEraserClick, onShapeClick, onTransformEnd }: Props) => {
   return (
     <>
       {shapes.map((rect) => (
@@ -25,6 +26,7 @@ const RectLayer = ({ shapes, setShapes, onDragStart, onDragMove, onDragEnd, tool
           onDragStart={onDragStart}
           onDragMove={onDragMove}
           onDragEnd={onDragEnd}
+          onTransformEnd={onTransformEnd}
           tool={tool}
           collapseChild={collapseChild}
           handleEraserClick={handleEraserClick}

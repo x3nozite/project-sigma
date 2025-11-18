@@ -1,9 +1,10 @@
 import type { KonvaEventObject } from "konva/lib/Node";
 import Konva from "konva";
 import type React from "react";
-import type { RefObject } from "react";
+import type { RefObject, SetStateAction } from "react";
 import type { SelectionRectType, ShapeType } from "../types";
 import { getRelativePointerPosition } from "./drawTool";
+import { shapes } from "konva/lib/Shape";
 
 function getCorner(pivotX: number, pivotY: number, diffX: number, diffY: number, angle: number) {
   const distance = Math.sqrt(diffX * diffX + diffY * diffY);
@@ -18,7 +19,8 @@ const degToRad = (angle: number) => (angle / 180) * Math.PI;
 const getClientRect = (shape: ShapeType) => {
   if (shape.shape !== "rect") return;
   const x = shape.x; const y = shape.y;
-  const width = shape.width; const height = shape.height;
+  const width = shape.width * (shape.scaleX ?? 1); const height = shape.height * (shape.scaleY ?? 1);
+
   const rotation = 0;
   const rad = degToRad(rotation);
 
@@ -119,3 +121,25 @@ export const handleStageSelectClick = (e: KonvaEventObject<MouseEvent>, selectio
   else if (metaPressed && isSelected) setSelectedIds(selectedIds.filter(id => id !== clickedId));
   else if (metaPressed && !isSelected) setSelectedIds([...selectedIds, clickedId]);
 };
+
+export const handleTransfromEnd = (e, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>) => {
+  const id = e.target.id();
+  const node = e.target;
+
+  setShapes(prevShapes => {
+    const newShapes = [...prevShapes];
+
+    const index = newShapes.findIndex(r => "group-" + r.id === id);
+
+    if (index !== -1 && newShapes[index].behavior === "node") {
+      newShapes[index] = {
+        ...newShapes[index],
+        x: node.x(),
+        y: node.y(),
+        scaleX: node.scaleX(),
+        scaleY: node.scaleY(),
+      }
+    }
+    return newShapes;
+  })
+}

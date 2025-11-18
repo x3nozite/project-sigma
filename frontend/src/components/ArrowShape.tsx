@@ -16,12 +16,18 @@ const ArrowShape = ({ connectors, mainLayer }: Props) => {
     const vectorX = dx / dist;
     const vectorY = dy / dist;
     const offset = Math.min(30, dist / 5 - 1);
+
+    const fromWidth = fromShape.width() * (fromGroup.attrs.scalingX ?? 1);
+    const fromHeight = fromShape.height() * (fromGroup.attrs.scalingY ?? 1);
+    const toWidth = toShape.width() * (toGroup.attrs.scalingX ?? 1);
+    const toHeight = toShape.height() * (toGroup.attrs.scalingY ?? 1);
+
     return [
-      fromGroup.x() + fromShape.width() / 2 + vectorX * (fromShape.width() / 2 + offset),
-      fromGroup.y() + fromShape.height() / 2 + vectorY * (fromShape.height() / 2 + offset),
-      toGroup.x() + toShape.width() / 2 - vectorX * (toShape.width() / 2 + offset),
-      toGroup.y() + toShape.height() / 2 - vectorY * (toShape.height() / 2 + offset)
-    ]
+      fromGroup.x() + fromWidth / 2 + vectorX * (fromWidth / 2 + offset),
+      fromGroup.y() + fromHeight / 2 + vectorY * (fromHeight / 2 + offset),
+      toGroup.x() + toWidth / 2 - vectorX * (toWidth / 2 + offset),
+      toGroup.y() + toHeight / 2 - vectorY * (toHeight / 2 + offset)
+    ];
   };
 
   return (

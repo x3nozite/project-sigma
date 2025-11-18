@@ -39,7 +39,7 @@ export function handleDragMove(e: Konva.KonvaEventObject<DragEvent>, mainLayer: 
   }
 }
 
-export function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: RefObject<Konva.Layer | null>, tool: string, prevShape: RefObject<Konva.Shape | null>) {
+export function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: RefObject<Konva.Layer | null>, tool: string, prevShape: RefObject<Konva.Shape | null>, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>) {
   if (tool === "eraser") return;
   const shape = e.target;
   const stage = shape.getStage();
@@ -52,6 +52,19 @@ export function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: R
   shape.moveTo(mainLayer.current);
   prevShape.current = null;
 
+  const id = e.target.id();
+  setShapes(prevShapes => {
+    const newShapes = [...prevShapes];
+    const index = newShapes.findIndex(r => "group-" + r.id === id);
+    if (index !== -1 && newShapes[index].behavior === "node") {
+      newShapes[index] = {
+        ...newShapes[index],
+        x: e.target.x(),
+        y: e.target.y()
+      };
+    }
+    return newShapes;
+  })
 }
 
 export function handleStageDragStart(e: Konva.KonvaEventObject<DragEvent>, mainLayer: RefObject<Konva.Layer | null>, arrowLayer: RefObject<Konva.Layer | null>) {

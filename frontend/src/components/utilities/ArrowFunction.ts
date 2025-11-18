@@ -32,11 +32,17 @@ export function arrowMovement(connectors: ArrowType[], mainLayer: RefObject<Konv
     const vectorY = dy / dist;
     const offset = Math.min(30, dist / 5 - 1);
 
+    const fromWidth = fromShape.width() * (fromNode.attrs.scalingX ?? 1);
+    const fromHeight = fromShape.height() * (fromNode.attrs.scalingY ?? 1);
+
+    const toWidth = toShape.width() * (toNode.attrs.scalingX ?? 1);
+    const toHeight = toShape.height() * (toNode.attrs.scalingY ?? 1);
+
     arrowNode.points([
-      fromNode.x() + fromShape.width() / 2 + vectorX * (fromShape.width() / 2 + offset),
-      fromNode.y() + fromShape.height() / 2 + vectorY * (fromShape.height() / 2 + offset),
-      toNode.x() + toShape.width() / 2 - vectorX * (toShape.width() / 2 + offset),
-      toNode.y() + toShape.height() / 2 - vectorY * (toShape.height() / 2 + offset)
+      fromNode.x() + fromWidth / 2 + vectorX * (fromWidth / 2 + offset),
+      fromNode.y() + fromHeight / 2 + vectorY * (fromHeight / 2 + offset),
+      toNode.x() + toWidth / 2 - vectorX * (toWidth / 2 + offset),
+      toNode.y() + toHeight / 2 - vectorY * (toHeight / 2 + offset)
     ]);
   });
 }

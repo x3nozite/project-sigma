@@ -6,6 +6,8 @@ export type BaseShape = {
   behavior: "node" | "edge" | "decor";
   color: string;
   isCollapsed: boolean;
+  scaleX: number;
+  scaleY: number;
 }
 
 export type RectType = BaseShape & {

@@ -100,6 +100,8 @@ function App() {
       isCollapsed: false,
       children: [],
       parents: "",
+      scaleX: 1,
+      scaleY: 1
     }
 
     setShapes([...shapes, newRect]);

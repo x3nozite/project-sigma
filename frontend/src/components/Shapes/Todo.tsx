@@ -54,9 +54,11 @@ const Todo = ({
   return (
     <Group
       key={"todokey-" + todo.id}
-      id={"todogroup-" + todo.id}
+      id={"group-" + todo.id}
+      shapeId={todo.id}
       x={todo.x}
       y={todo.y}
+      name="shape"
       scaleX={todo.scaleX ?? 1}
       scaley={todo.scaleY ?? 1}
       onMouseEnter={() => setisHovered(true)}
@@ -74,8 +76,8 @@ const Todo = ({
         <Rect
           x={0}
           y={0}
-          width={400}
-          height={75}
+          width={todo.width}
+          height={todo.height}
           fill="white"
           shadowBlur={10}
           shadowOpacity={0.5}

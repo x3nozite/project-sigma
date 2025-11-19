@@ -297,6 +297,17 @@ const ShapeCanvas = ({ shapes = [], setShapes, tool, setTool, setZoomValue, zoom
           <TodoLayer
             todos={shapes.filter((s: ShapeType): s is TodoType => s.shape === "todo")}
             setShapes={setShapes}
+            tool={tool}
+            onDragStart={(e) => handleDragStart(e, tool, tempLayer)}
+            onDragMove={(e) => {
+              handleDragMove(e, mainLayer, prevShape, tool);
+              arrowMovement(connectors, mainLayer, tempLayer, arrowLayer);
+            }}
+            onDragEnd={(e) => {
+              handleDragEnd(e, mainLayer, tool, prevShape, setShapes);
+            }}
+            onTransformEnd={(e) => { handleTransfromEnd(e, setShapes) }}
+            handleEraserClick={handleEraserClick}
           />
         </Layer>
         <Layer ref={tempLayer}>

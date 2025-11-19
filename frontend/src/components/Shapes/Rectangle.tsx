@@ -35,8 +35,10 @@ const Rectangle = ({
     <Group
       key={"key-" + rect.id}
       id={"group-" + rect.id}
+      shapeId={rect.id}
       x={rect.x}
       y={rect.y}
+      name="shape"
       scalingX={rect.scaleX ?? 1}
       scalingY={rect.scaleY ?? 1}
       scaleX={rect.scaleX ?? 1}
@@ -57,7 +59,6 @@ const Rectangle = ({
     >
       <Group visible={!rect.isCollapsed}>
         <Rect
-          name="shape"
           className="mainRect"
           id={rect.id}
           width={Math.round(rect.width)}
@@ -144,7 +145,6 @@ const Rectangle = ({
         <Rect
           x={0}
           y={0}
-          name="shape"
           width={rect.width}
           height={rect.height * 0.25}
           cornerRadius={[16, 4, 4, 4]}

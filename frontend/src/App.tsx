@@ -92,8 +92,8 @@ function App() {
       scaleY: 1,
       shape: "todo",
       behavior: "node",
-      width: 300,
-      height: 300,
+      width: 400,
+      height: 75,
       title: "Something-something",
       description: "Even more things",
       dueDate: Date.now().toString(),
@@ -139,12 +139,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-              ...r,
-              title: newData.title,
-              description: newData.description,
-              color: newData.color,
-              dueDate: newData.date,
-            }
+            ...r,
+            title: newData.title,
+            description: newData.description,
+            color: newData.color,
+            dueDate: newData.date,
+          }
           : r
       )
     );

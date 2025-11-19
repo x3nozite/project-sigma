@@ -1,10 +1,9 @@
 import type { KonvaEventObject } from "konva/lib/Node";
 import Konva from "konva";
 import type React from "react";
-import type { RefObject, SetStateAction } from "react";
+import type { RefObject } from "react";
 import type { SelectionRectType, ShapeType } from "../types";
 import { getRelativePointerPosition } from "./drawTool";
-import { shapes } from "konva/lib/Shape";
 
 function getCorner(pivotX: number, pivotY: number, diffX: number, diffY: number, angle: number) {
   const distance = Math.sqrt(diffX * diffX + diffY * diffY);
@@ -17,7 +16,7 @@ function getCorner(pivotX: number, pivotY: number, diffX: number, diffY: number,
 const degToRad = (angle: number) => (angle / 180) * Math.PI;
 
 const getClientRect = (shape: ShapeType) => {
-  if (shape.shape !== "rect") return;
+  if (shape.behavior !== "node") return;
   const x = shape.x; const y = shape.y;
   const width = shape.width * (shape.scaleX ?? 1); const height = shape.height * (shape.scaleY ?? 1);
 
@@ -108,9 +107,11 @@ export const handleStageSelectClick = (e: KonvaEventObject<MouseEvent>, selectio
   }
 
   // if clicked not our rectangle
-  if (!e.target.hasName("shape")) return;
+  const group = e.target.findAncestor(".shape", true);
+  console.log(group.name());
+  if (!group || !group.hasName("shape")) return;
 
-  const clickedId = e.target.id();
+  const clickedId = group.attrs.shapeId;
   if (!clickedId) return;
 
   // is shift or ctrl pressed

@@ -61,7 +61,8 @@ const ShapeCanvas = ({ shapes = [], setShapes, tool, setTool, setZoomValue, zoom
       if (s.behavior !== "node") return;
       const shapeGroup = mainLayer.current?.findOne(`#group-${s.id}`);
       const shape = mainLayer.current?.findOne(`#${s.id}`) as Konva.Shape;
-      if (!shapeGroup || !shape) return;
+      const shapeInArray = shapes.find(s => s.id === shape.id());
+      if (!shapeGroup || !shape || !shapeInArray) return;
 
       shapeGroup.off("drop");
       shapeGroup.off("dragenter");
@@ -69,10 +70,11 @@ const ShapeCanvas = ({ shapes = [], setShapes, tool, setTool, setZoomValue, zoom
 
       shapeGroup.on("dragenter", (e) => {
         const sourceShape = (e as DragEventWithSource).source;
-        if (!sourceShape || shapeGroup === sourceShape || shape.fill() === "green") return;
+        if (!sourceShape || shapeGroup === sourceShape || shape.fill() === "green" || shapeInArray.shape === "todo") return;
 
+        console.log(sourceShape.id());
         if (
-          s.children.includes(sourceShape.id()) ||
+          (s.shape !== "todo" && s.children.includes(sourceShape.id())) ||
           s.parents.includes(sourceShape.id())
         )
           return;
@@ -99,7 +101,7 @@ const ShapeCanvas = ({ shapes = [], setShapes, tool, setTool, setZoomValue, zoom
 
       shapeGroup.on("drop", (e) => {
         const sourceShape = (e as DragEventWithSource).source;
-        if (!sourceShape || s.children.includes(sourceShape.id()) || s.parents.includes(sourceShape.id())) return;
+        if (s.behavior !== "node" || (s.shape !== "todo" && s.children.includes(sourceShape.id())) || !sourceShape || s.parents.includes(sourceShape.id())) return;
         const sourceShapeInArray = shapes.find(rectToFind => ("group-" + rectToFind.id === sourceShape.id()));
         if (sourceShapeInArray?.behavior !== "node" || sourceShapeInArray?.parents !== "") return;
 
@@ -122,7 +124,7 @@ const ShapeCanvas = ({ shapes = [], setShapes, tool, setTool, setZoomValue, zoom
                 y: shape.y + -offset * vectorY,
               };
             }
-            if (shape.behavior === "node" && "group-" + shape.id === shapeGroup.id()) {
+            if (shape.behavior === "node" && shape.shape != "todo" && "group-" + shape.id === shapeGroup.id()) {
               return {
                 ...shape,
                 children: [

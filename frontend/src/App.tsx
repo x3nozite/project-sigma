@@ -83,7 +83,7 @@ function App() {
 
   const addTodo = () => {
     const newTodo: TodoType = {
-      id: Date.now().toString(),
+      id: "todo-" + Date.now().toString(),
       x: 100,
       y: 100,
       color: "green",

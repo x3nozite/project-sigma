@@ -52,35 +52,39 @@ function App() {
   const [selectedShape, setSelectedShape] = useState<ShapeType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const sessionUserId = session?.user?.id;
+
+  console.log("App render - avatarUrl:", avatarUrl);
 
   useEffect(() => {
     if (!session) return;
-    console.log("This session: ");
-    console.log(session);
+
+    console.log("This session:", session);
     let mounted = true;
+
     (async () => {
-      const response = await loadCanvas();
+      const canvasRes = await loadCanvas();
       if (!mounted) return;
-      if (response.success) {
-        setShapes(response.data.shapes);
+
+      if (canvasRes.success) {
+        setShapes(canvasRes.data.shapes);
       } else {
-        console.error("Failed to load canvas:", response.error);
+        console.error("Failed to load canvas:", canvasRes.error);
       }
-      const profileResponse = await getUserProfile();
-      console.log("Profile Response:", profileResponse);
-      if (profileResponse.success) {
-        console.log("Avatar URL:", profileResponse.data.avatar_url);
-        setAvatarUrl(profileResponse.data.avatar_url);
-      } else {
-        console.error("Failed to load user profile:", profileResponse.error);
-      }
+
+      const profileRes = await getUserProfile();
       if (!mounted) return;
-      if (profileResponse.success) {
-        setAvatarUrl(profileResponse.data.avatar_url);
+
+      console.log("Profile Response:", profileRes);
+
+      if (profileRes.success) {
+        console.log("Avatar URL:", profileRes.data.avatar_url);
+        setAvatarUrl(profileRes.data.avatar_url);
       } else {
-        console.error("Failed to load user profile:", profileResponse.error);
+        console.error("Failed to load user profile:", profileRes.error);
       }
     })();
+
     return () => {
       mounted = false;
     };
@@ -353,7 +357,16 @@ function App() {
                               src={session?.user?.user_metadata.picture}
                               alt="user_profile"
                             /> */}
-                            <HiUserCircle className="text-3xl text-blue-500" />
+                            {avatarUrl ? (
+                                <img
+                                  src={avatarUrl}
+                                  alt="profile avatar"
+                                  className="w-10 h-10 rounded-full object-cover"
+                                />
+                              ) : (
+                                <HiUserCircle className="text-3xl text-blue-500" />
+                              )}
+
                           </div>
                           <div className="flex flex-col items-center justify-center">
                             <span className="text-sm font-medium">

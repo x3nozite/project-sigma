@@ -53,7 +53,7 @@ const Todo = ({
 
   return (
     <Group
-      key={"todokey-" + todo.id}
+      key={"key-" + todo.id}
       id={"group-" + todo.id}
       shapeId={todo.id}
       x={todo.x}
@@ -80,6 +80,7 @@ const Todo = ({
         <Rect
           x={0}
           y={0}
+          id={todo.id}
           width={todo.width}
           height={todo.height}
           fill="white"

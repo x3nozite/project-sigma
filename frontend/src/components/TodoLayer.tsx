@@ -19,6 +19,7 @@ const TodoLayer = ({ todos, setShapes, onDragStart, onDragMove, onDragEnd, tool,
       {todos.map(todo => (
         <Todo
           todo={todo}
+          key={"key-" + todo.id}
           setShapes={setShapes}
           onDragStart={onDragStart}
           onDragMove={onDragMove}

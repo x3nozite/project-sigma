@@ -139,12 +139,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-            ...r,
-            title: newData.title,
-            description: newData.description,
-            color: newData.color,
-            dueDate: newData.date,
-          }
+              ...r,
+              title: newData.title,
+              description: newData.description,
+              color: newData.color,
+              dueDate: newData.date,
+            }
           : r
       )
     );
@@ -204,7 +204,7 @@ function App() {
           <div className="more-options ">
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
-                <button className="p-2.5 bg-blue-200 rounded-lg hover:cursor-pointer">
+                <button className="p-2.5 bg-blue-200 border-blue-300 border-2 rounded-lg hover:cursor-pointer">
                   <HiMenu />
                 </button>
               </DropdownMenu.Trigger>
@@ -299,7 +299,7 @@ function App() {
               onDrawClick={togglePencil}
               onSelectClick={toggleSelect}
               onColorSelect={setStrokeColor}
-              isActive={tool === "eraser" || tool === "draw"}
+              isActive={to#d68585ol === "eraser" || tool === "draw"}
               tool={tool}
               setTool={setTool}
             />
@@ -545,7 +545,7 @@ function App() {
         </div>
         <div className="account-buttons absolute flex flex-row top-1.5 right-0 gap-2 m-4 z-51"></div>
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-md/15 shadow-gray-600"></div>
-        <div className="absolute bottom-4 left-4  items-center z-10 bg-amber-100 rounded-xl w-fit hidden sm:inline-flex">
+        <div className="absolute bottom-4 left-4  items-center z-10 bg-amber-100 border-2 border-amber-200 rounded-xl w-fit hidden sm:inline-flex">
           <button
             className="hover:bg-orange-200 hover:cursor-pointer px-4 py-2 rounded-l-lg"
             onClick={() => setZoomValue(Math.max(zoomValue - 10, 10))}
@@ -569,7 +569,7 @@ function App() {
           </button>
         </div>
         <a href="https://forms.gle/5s7W6VNtgeGiRFyL8">
-          <button className="absolute bottom-4 right-4 items-center z-10 bg-red-100 rounded-xl w-fit p-2.5 hover:bg-red-200 hover:cursor-pointer group">
+          <button className="absolute bottom-4 right-4 items-center z-10 bg-red-100 border-2 border-red-200 rounded-xl w-fit p-2.5 hover:bg-red-200 hover:cursor-pointer group">
             <HiOutlineChatAlt2 />
             <span className="absolute right-12 -top-5 translate-x-1/2 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
               RectUp Form

@@ -42,17 +42,17 @@ export default function TaskForm({
   } = useForm<taskFields>({
     defaultValues: initialData
       ? {
-        title: initialData.title,
-        description: initialData.description,
-        date: initialData.dueDate,
-        time: "09:11",
-      }
+          title: initialData.title,
+          description: initialData.description,
+          date: initialData.dueDate,
+          time: "09:11",
+        }
       : {
-        title: "My New Subject",
-        // description: "abcedfghijkl",
-        date: "2025-10-11",
-        time: "06:07",
-      },
+          title: "My New Subject",
+          // description: "abcedfghijkl",
+          date: "2025-10-11",
+          time: "06:07",
+        },
     resolver: zodResolver(schema),
   });
 

@@ -7,7 +7,7 @@ interface MainProps {
 
 export default function MainButton({ title, onClick }: MainProps) {
   return (
-    <div className="inline-flex gap-2 items-center text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 px-3 py-2.5 mb-2 rounded-lg text-center hover:cursor-pointer">
+    <div className="inline-flex gap-2 items-center text-white bg-purple-700 border-2 border-purple-700 hover:bg-purple-500 focus:ring-4 focus:ring-purple-300 px-3 py-2.5 mb-2 rounded-lg text-center hover:cursor-pointer">
       <span>
         <HiUser />
       </span>

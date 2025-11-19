@@ -14,8 +14,8 @@ export default function SecondButton({
 
   const variantStyle =
     variant === "invert"
-      ? "text-purple-100 bg-purple-700 hover:bg-purple-800 focus:ring-purple-300 hover:cursor-pointer"
-      : "text-purple-700 bg-purple-100 hover:bg-purple-200 focus:ring-purple-900 hover:cursor-pointer";
+      ? "text-purple-100 bg-purple-700 border-2 border-purple-200 hover:bg-purple-800 focus:ring-purple-300 hover:cursor-pointer"
+      : "text-purple-700 bg-purple-100 border-2 border-purple-200 hover:bg-purple-200 focus:ring-purple-900 hover:cursor-pointer";
 
   return (
     <button

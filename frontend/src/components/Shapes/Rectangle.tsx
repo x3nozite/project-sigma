@@ -31,6 +31,20 @@ const Rectangle = ({
   // hover to show todo
   const [isHovered, setisHovered] = useState(false);
 
+  // change border color
+  function getBorder(color: string) {
+    let border;
+
+    if (color === "#ff2056") border = "#f6339a"; // rose-400
+    else if (color === "#2b7fff") border = "#00a6f4"; // sky-500
+    else if (color === "#00bc7d") border = "#00c951"; // emerald-600
+    else if (color === "#ad46ff") border = "#8e51ff"; // violet-500
+    else if (color === "#ff6900") border = "#fd9a00"; // orange-600
+
+    return border;
+  }
+  const borderColor = getBorder(rect.color);
+
   return (
     <Group
       key={"key-" + rect.id}
@@ -68,11 +82,14 @@ const Rectangle = ({
           width={Math.round(rect.width)}
           height={Math.round(rect.height)}
           fill="white"
-          shadowBlur={10}
+          shadowBlur={6}
           shadowOpacity={0.5}
           shadowColor="black"
           shadowOffset={{ x: 0, y: 4 }}
-          cornerRadius={[16, 4, 4, 4]}
+          cornerRadius={[16, 8, 8, 8]}
+          stroke={borderColor}
+          strokeWidth={2.5}
+          shadowForStrokeEnabled={false}
         />
         <Text
           x={0}

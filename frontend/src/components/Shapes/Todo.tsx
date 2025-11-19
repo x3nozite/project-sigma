@@ -86,10 +86,13 @@ const Todo = ({
           width={todo.width}
           height={todo.height}
           fill="white"
-          shadowBlur={10}
+          shadowBlur={4}
           shadowOpacity={0.5}
           shadowColor="black"
           cornerRadius={[8, 8, 8, 8]}
+          stroke="black"
+          strokeWidth={1}
+          shadowForStrokeEnabled={false}
         />
         <Group>
           <Rect

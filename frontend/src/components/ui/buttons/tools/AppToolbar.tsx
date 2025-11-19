@@ -40,7 +40,7 @@ function AppToolbar({
   setTool,
 }: Props) {
   return (
-    <Toolbar.Root className="flex w-100 max-w-100 rounded-lg bg-white shadow-lg p-2 justify-center">
+    <Toolbar.Root className="flex w-100 max-w-100 rounded-lg bg-white border-2 border-zinc-300 shadow-sm p-2 justify-center">
       <Toolbar.ToggleGroup type="single">
         <Toolbar.ToggleItem value="task">
           <div

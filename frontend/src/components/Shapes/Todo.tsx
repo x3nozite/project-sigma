@@ -59,6 +59,8 @@ const Todo = ({
       x={todo.x}
       y={todo.y}
       name="shape"
+      scalingX={todo.scaleX ?? 1}
+      scalingY={todo.scaleY ?? 1}
       scaleX={todo.scaleX ?? 1}
       scaley={todo.scaleY ?? 1}
       onMouseEnter={() => {

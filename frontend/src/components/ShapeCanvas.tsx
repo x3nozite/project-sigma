@@ -186,7 +186,7 @@ const ShapeCanvas = ({ shapes = [], setShapes, tool, setTool, setZoomValue, zoom
   }
 
   const collapseChild = (shape: ShapeType, currentlyCollapsed: boolean) => {
-    if (shape.behavior !== "node") return;
+    if (shape.behavior !== "node" || shape.shape === "todo") return;
 
     if (shape.children.length === 0) return;
     shape.children.forEach((child) => {
@@ -216,7 +216,7 @@ const ShapeCanvas = ({ shapes = [], setShapes, tool, setTool, setZoomValue, zoom
   const changeChildToOrphan = (shapeId: string) => {
     const shapeInArray = shapes.find(s => s.id === shapeId);
 
-    if (shapeInArray?.behavior !== "node") return;
+    if (shapeInArray?.behavior !== "node" || shapeInArray?.shape === "todo") return;
 
     shapeInArray?.children.forEach(child => {
       const childInArray = shapes.find(r => "group-" + r.id === child);

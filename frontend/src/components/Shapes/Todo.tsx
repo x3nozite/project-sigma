@@ -61,8 +61,12 @@ const Todo = ({
       name="shape"
       scaleX={todo.scaleX ?? 1}
       scaley={todo.scaleY ?? 1}
-      onMouseEnter={() => setisHovered(true)}
-      onMouseLeave={() => setisHovered(false)}
+      onMouseEnter={() => {
+        if (tool === "hand") setisHovered(true);
+      }}
+      onMouseLeave={() => {
+        if (tool === "hand") setisHovered(false);
+      }}
       draggable={tool != "eraser"}
       onDragStart={onDragStart}
       onDragMove={onDragMove}

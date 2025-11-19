@@ -48,8 +48,12 @@ const Rectangle = ({
       onDragMove={onDragMove}
       onDragEnd={onDragEnd}
       onTransformEnd={onTransformEnd}
-      onMouseEnter={() => setisHovered(true)}
-      onMouseLeave={() => setisHovered(false)}
+      onMouseEnter={() => {
+        if (tool === "hand") setisHovered(true);
+      }}
+      onMouseLeave={() => {
+        if (tool === "hand") setisHovered(false);
+      }}
       onClick={() => {
         handleEraserClick(rect.id);
         if (tool === "hand") {

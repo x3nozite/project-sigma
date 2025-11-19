@@ -30,7 +30,12 @@ import {
 } from "react-icons/hi";
 import { DropdownMenu, AlertDialog } from "radix-ui";
 import AppToolbar from "./components/ui/buttons/tools/AppToolbar";
-import { deleteCanvas, loadCanvas, saveCanvas } from "./services/DBFunction";
+import {
+  deleteCanvas,
+  loadCanvas,
+  saveCanvas,
+  getUserProfile,
+} from "./services/DBFunction";
 import { date } from "zod";
 
 function App() {
@@ -46,6 +51,7 @@ function App() {
   const navigate = useNavigate();
   const [selectedShape, setSelectedShape] = useState<ShapeType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!session) return;
@@ -59,6 +65,20 @@ function App() {
         setShapes(response.data.shapes);
       } else {
         console.error("Failed to load canvas:", response.error);
+      }
+      const profileResponse = await getUserProfile();
+      console.log("Profile Response:", profileResponse);
+      if (profileResponse.success) {
+        console.log("Avatar URL:", profileResponse.data.avatar_url);
+        setAvatarUrl(profileResponse.data.avatar_url);
+      } else {
+        console.error("Failed to load user profile:", profileResponse.error);
+      }
+      if (!mounted) return;
+      if (profileResponse.success) {
+        setAvatarUrl(profileResponse.data.avatar_url);
+      } else {
+        console.error("Failed to load user profile:", profileResponse.error);
       }
     })();
     return () => {
@@ -299,7 +319,7 @@ function App() {
               onDrawClick={togglePencil}
               onSelectClick={toggleSelect}
               onColorSelect={setStrokeColor}
-              isActive={to#d68585ol === "eraser" || tool === "draw"}
+              isActive={tool === "eraser" || tool === "draw"}
               tool={tool}
               setTool={setTool}
             />
@@ -474,8 +494,16 @@ function App() {
                     {session && (
                       <div>
                         <div className="mob-user-info flex flex-col items-start justify-center">
-                          <div className="text-2xl pb-2">
-                            <HiUserCircle />
+                          <div className="pb-2">
+                            {avatarUrl ? (
+                              <img
+                                src={avatarUrl}
+                                alt="user profile"
+                                className="w-10 h-10 rounded-full object-cover"
+                              />
+                            ) : (
+                              <HiUserCircle className="text-2xl" />
+                            )}
                           </div>
                           <div className="flex flex-col items-start justify-start text-center">
                             <span className="text-xs font-semibold">

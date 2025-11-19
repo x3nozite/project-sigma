@@ -118,3 +118,40 @@ export async function deleteCanvas(): Promise<{
     return { success: false, error: String(err) };
   }
 }
+
+export async function getUserProfile(): Promise<
+  { success: true; data: UserProfile } | { success: false; error: string }
+> {
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: "User not authenticated" };
+    }
+
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    return {
+      success: true,
+      data: {
+        id: data.id,
+        avatar_url: data.avatar_url,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+      },
+    };
+  } catch (error: any) {
+    console.error("getUserProfile error:", error);
+    return { success: false, error: String(error) };
+  }
+}

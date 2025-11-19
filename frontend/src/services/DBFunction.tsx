@@ -20,24 +20,22 @@ export async function saveCanvas(
 
     if (data.shapes.length > 0) {
       await supabase.from("shapes").upsert(
-        data.shapes
-          .filter((s): s is RectType => s.type === "rect")
-          .map((rect) => ({
-            user_id: user.id,
-            rect_id: rect.id,
-            title: rect.title,
-            description: rect.description,
-            x: rect.x,
-            y: rect.y,
-            width: rect.width,
-            height: rect.height,
-            color: rect.color,
-            due_date: rect.dueDate,
-            status: rect.status,
-            is_collapsed: rect.isCollapsed,
-            children: rect.children,
-            parents: rect.parents,
-          }))
+        data.shapes.filter((s): s is RectType => s.type === "rect").map((rect) => ({
+          user_id: user.id,
+          rect_id: rect.id,
+          title: rect.title,
+          description: rect.description,
+          x: rect.x,
+          y: rect.y,
+          width: rect.width,
+          height: rect.height,
+          color: rect.color,
+          due_date: rect.dueDate,
+          status: rect.status,
+          is_collapsed: rect.isCollapsed,
+          children: rect.children,
+          parents: rect.parents,
+        }))
       );
     }
 
@@ -61,7 +59,7 @@ export async function loadCanvas(): Promise<
     }
 
     const { data, error } = await supabase
-      .from("shapes") //add others later
+      .from("rects") //add others later
       .select("*")
       .eq("user_id", user.id);
 
@@ -106,7 +104,7 @@ export async function deleteCanvas(): Promise<{
     }
 
     const { error } = await supabase
-      .from("shapes")
+      .from("rects")
       .delete()
       .eq("user_id", user.id);
 
@@ -118,42 +116,5 @@ export async function deleteCanvas(): Promise<{
   } catch (err: any) {
     console.error("deleteCanvas error:", err);
     return { success: false, error: String(err) };
-  }
-}
-
-export async function getUserProfile(): Promise<
-  { success: true; data: UserProfile } | { success: false; error: string }
-> {
-  try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return { success: false, error: "User not authenticated" };
-    }
-
-    const { data, error } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", user.id)
-      .maybeSingle();
-
-    if (error) {
-      return { success: false, error: error.message };
-    }
-
-    return {
-      success: true,
-      data: {
-        id: data.id,
-        avatar_url: data.avatar_url,
-        created_at: data.created_at,
-        updated_at: data.updated_at,
-      },
-    };
-  } catch (error: any) {
-    console.error("getUserProfile error:", error);
-    return { success: false, error: String(error) };
   }
 }

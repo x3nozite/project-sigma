@@ -156,7 +156,6 @@ function App() {
 
   const toggleEraser = () => {
     setTool(tool === "eraser" ? "hand" : "eraser");
-    console.log("aa");
   };
 
   const toggleSelect = () => {

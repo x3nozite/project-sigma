@@ -10,6 +10,8 @@ async function getOrCreateCanvas(userId: string): Promise<string | null> {
   const { data: existingCanvas, error: fetchError } = await supabase
     .from("canvas")
     .select("canvas_id")
+    .order("created_at", { ascending: false }) // ambil paling baru
+    .limit(1)
     .eq("owner_id", userId)
     .maybeSingle(); // returns null if no canvas exists
 
@@ -43,6 +45,53 @@ async function getOrCreateCanvas(userId: string): Promise<string | null> {
   return newCanvas.canvas_id;
 }
 
+export async function createNewCanvas(
+  userId: string,
+  name?: string
+): Promise<{ success: boolean; canvasId?: string; error?: string }> {
+  try {
+    const { data: newCanvas, error: createError } = await supabase
+      .from("canvas")
+      .insert({
+        owner_id: userId,
+        canvas_name: name || `Canvas ${Date.now()}`,
+        viewport_x: 0,
+        viewport_y: 0,
+        viewport_zoom: 100,
+      })
+      .select("canvas_id")
+      .single();
+
+    if (createError) {
+      return { success: false, error: createError.message };
+    }
+
+    return { success: true, canvasId: newCanvas.canvas_id };
+  } catch (error) {
+    return { success: false, error: String(error) };
+  }
+}
+
+export async function getUserCanvases(
+  userId: string
+): Promise<{ success: boolean; canvases?: any[]; error?: string }> {
+  try {
+    const { data, error } = await supabase
+      .from("canvas")
+      .select("canvas_id, canvas_name, created_at, updated_at")
+      .eq("owner_id", userId)
+      .order("updated_at", { ascending: false });
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, canvases: data || [] };
+  } catch (error) {
+    return { success: false, error: String(error) };
+  }
+}
+
 export async function saveCanvas(
   data: CanvasData,
   canvasId?: string | null
@@ -67,10 +116,7 @@ export async function saveCanvas(
 
     if (data.shapes.length > 0) {
       // Delete existing shapes for this canvas
-      await supabase
-        .from("shapes")
-        .delete()
-        .eq("canvas_id", targetCanvasId);
+      await supabase.from("shapes").delete().eq("canvas_id", targetCanvasId);
 
       // Insert new shapes
       const shapesToInsert = data.shapes.map((shape) => ({
@@ -87,10 +133,7 @@ export async function saveCanvas(
       }
     } else {
       // If no shapes, delete all shapes for this canvas
-      await supabase
-        .from("shapes")
-        .delete()
-        .eq("canvas_id", targetCanvasId);
+      await supabase.from("shapes").delete().eq("canvas_id", targetCanvasId);
     }
 
     return { success: true, canvasId: targetCanvasId };
@@ -100,11 +143,11 @@ export async function saveCanvas(
   }
 }
 
-
 export async function loadCanvas(
   canvasId?: string | null
 ): Promise<
-  { success: true; data: CanvasData; canvasId: string } | { success: false; error: string }
+  | { success: true; data: CanvasData; canvasId: string }
+  | { success: false; error: string }
 > {
   try {
     const {
@@ -114,7 +157,6 @@ export async function loadCanvas(
     if (!user) {
       return { success: false, error: "User not authenticated" };
     }
-
 
     let targetCanvasId = canvasId;
     if (!targetCanvasId) {
@@ -142,11 +184,7 @@ export async function loadCanvas(
   }
 }
 
-
-
-export async function deleteCanvas(
-  canvasId: string | null
-): Promise<{
+export async function deleteCanvas(canvasId: string | null): Promise<{
   success: boolean;
   error?: string;
 }> {
@@ -186,7 +224,6 @@ export async function deleteCanvas(
     return { success: false, error: String(err) };
   }
 }
-
 
 export async function getUserProfile(): Promise<
   { success: true; data: UserProfile } | { success: false; error: string }

@@ -27,6 +27,9 @@ import {
   HiOutlineLogout,
   HiOutlineLogin,
   HiOutlineChatAlt2,
+  HiOutlineFolderOpen,
+  HiOutlineCheck,
+  HiOutlinePlus,
 } from "react-icons/hi";
 import { DropdownMenu, AlertDialog } from "radix-ui";
 import AppToolbar from "./components/ui/buttons/tools/AppToolbar";
@@ -35,6 +38,8 @@ import {
   loadCanvas,
   saveCanvas,
   getUserProfile,
+  getUserCanvases,
+  createNewCanvas,
 } from "./services/DBFunction";
 import { date } from "zod";
 
@@ -53,10 +58,12 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const sessionUserId = session?.user?.id;
-  const [currentCanvasId, setCurrentCanvasId] = useState<string | null>(null);    
-  console.log(currentCanvasId);
+  const [currentCanvasId, setCurrentCanvasId] = useState<string | null>(null);
+  const [canvasList, setCanvasList] = useState<any[]>([]);
+  const [showCanvasList, setShowCanvasList] = useState(false);
+  // console.log(currentCanvasId);
 
-  console.log("App render - avatarUrl:", avatarUrl);
+  // console.log("App render - avatarUrl:", avatarUrl);
 
   useEffect(() => {
     if (!session) return;
@@ -65,7 +72,7 @@ function App() {
     let mounted = true;
 
     (async () => {
-      const canvasRes = await loadCanvas(currentCanvasId);
+      const canvasRes = await loadCanvas(null);
       if (!mounted) return;
 
       if (canvasRes.success) {
@@ -75,6 +82,16 @@ function App() {
         console.log("shapes: ", canvasRes.data.shapes);
       } else {
         console.error("Failed to load canvas:", canvasRes.error);
+      }
+
+      const listRes = await getUserCanvases(session.user.id);
+      if (!mounted) return;
+
+      if (listRes.success) {
+        setCanvasList(listRes.canvases || []);
+        console.log("Canvas list loaded:", listRes.canvases?.length);
+      } else {
+        console.error("Failed to load canvas list:", listRes.error);
       }
 
       const profileRes = await getUserProfile();
@@ -93,7 +110,7 @@ function App() {
     return () => {
       mounted = false;
     };
-  }, [session]);
+  }, [session, currentCanvasId]);
 
   async function getInstruments() {
     const { data } = await supabase.from("instruments").select();
@@ -227,6 +244,79 @@ function App() {
       setIsLoading(false);
     }
   };
+
+  const handleLoad = async (canvasId?: string) => {
+    setIsLoading(true);
+    console.log("Loading canvas:", canvasId || "default");
+
+    try {
+      if (currentCanvasId && canvasId && canvasId !== currentCanvasId) {
+        console.log("Saving current canvas");
+        await saveCanvas({ shapes }, currentCanvasId);
+      }
+      const result = await loadCanvas(canvasId || null);
+
+      if (result.success) {
+        setShapes(result.data.shapes);
+        setCurrentCanvasId(result.canvasId);
+        console.log("✅ Loaded", result.data.shapes.length, "shapes");
+      } else {
+        console.error("Load failed:", result.error);
+      }
+    } catch (error) {
+      console.error("Load error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCreateNewCanvas = async () => {
+    if (!session) {
+      console.warn("No session");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      if (currentCanvasId) {
+        await saveCanvas({ shapes }, currentCanvasId);
+      }
+
+      const result = await createNewCanvas(
+        session.user.id,
+        `Canvas ${canvasList.length + 1}`
+      );
+
+      if (result.success && result.canvasId) {
+        setShapes([]);
+        setCurrentCanvasId(result.canvasId);
+        idCounter.current = 0;
+
+        const listRes = await getUserCanvases(session.user.id);
+        if (listRes.success) {
+          setCanvasList(listRes.canvases || []);
+        }
+
+        console.log("New canvas created:", result.canvasId);
+      } else {
+        console.error("Create failed:", result.error);
+      }
+    } catch (error) {
+      console.error("Create canvas error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSwitchCanvas = async (canvasId: string) => {
+    if (canvasId === currentCanvasId) {
+      console.log("Already on this canvas");
+      return;
+    }
+
+    await handleLoad(canvasId);
+  };
   return (
     <>
       <div className="relative w-full h-screen overflow-hidden ">
@@ -255,11 +345,53 @@ function App() {
                     </div>
                   </DropdownMenu.Item>
                   <DropdownMenu.Item className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700">
+                    <div
+                    className="flex items-center gap-2"
+                    onSelect={() => setShowCanvasList(!showCanvasList)}
+                    >
+                      <HiOutlineFolderOpen /> 
+                      My Canvases ({canvasList.length})
+                    </div>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700">
                     <div className="flex items-center gap-2">
                       <HiOutlineDocument />
                       Export PDF
                     </div>
                   </DropdownMenu.Item>
+
+                  {showCanvasList &&
+                    canvasList.map((canvas) => (
+                      <DropdownMenu.Item key={canvas.canvas_id}>
+                        <div
+                          onClick={() => handleSwitchCanvas(canvas.canvas_id)}
+                          className={
+                            currentCanvasId === canvas.canvas_id
+                              ? "bg-blue-100"
+                              : ""
+                          }
+                        >
+                          <HiOutlineFolder className="w-4 h-4 mr-2" />
+                          <span>{canvas.canvas_name || "Untitled"}</span>
+                          {currentCanvasId === canvas.canvas_id && (
+                            <HiOutlineCheck className="w-4 h-4 ml-auto" />
+                          )}
+                        </div>
+                      </DropdownMenu.Item>
+                    ))}
+
+                  <DropdownMenu.Separator />
+
+                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700">
+                    <div
+                    className="flex items-center gap-2"
+                    onClick={handleCreateNewCanvas}
+                    >
+                      <HiOutlinePlus />
+                      <span>{isLoading ? "Creating" : "New Canvas"}</span>
+                    </div>
+                  </DropdownMenu.Item>
+
                   <DropdownMenu.Item
                     onSelect={(event: Event) => event.preventDefault()}
                     className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700"
@@ -364,15 +496,14 @@ function App() {
                               alt="user_profile"
                             /> */}
                             {avatarUrl ? (
-                                <img
-                                  src={avatarUrl}
-                                  alt="profile avatar"
-                                  className="w-10 h-10 rounded-full object-cover"
-                                />
-                              ) : (
-                                <HiUserCircle className="text-3xl text-blue-500" />
-                              )}
-
+                              <img
+                                src={avatarUrl}
+                                alt="profile avatar"
+                                className="w-10 h-10 rounded-full object-cover"
+                              />
+                            ) : (
+                              <HiUserCircle className="text-3xl text-blue-500" />
+                            )}
                           </div>
                           <div className="flex flex-col items-center justify-center">
                             <span className="text-sm font-medium">

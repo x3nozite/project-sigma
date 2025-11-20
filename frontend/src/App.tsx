@@ -344,19 +344,15 @@ function App() {
                       Save
                     </div>
                   </DropdownMenu.Item>
-                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700">
+                  <DropdownMenu.Item 
+                    className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700"
+                    onClick={() => setShowCanvasList(!showCanvasList)}
+                  >
                     <div
                     className="flex items-center gap-2"
-                    onSelect={() => setShowCanvasList(!showCanvasList)}
                     >
                       <HiOutlineFolderOpen /> 
                       My Canvases ({canvasList.length})
-                    </div>
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700">
-                    <div className="flex items-center gap-2">
-                      <HiOutlineDocument />
-                      Export PDF
                     </div>
                   </DropdownMenu.Item>
 
@@ -379,6 +375,13 @@ function App() {
                         </div>
                       </DropdownMenu.Item>
                     ))}
+
+                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700">
+                    <div className="flex items-center gap-2">
+                      <HiOutlineDocument />
+                      Export PDF
+                    </div>
+                  </DropdownMenu.Item>
 
                   <DropdownMenu.Separator />
 

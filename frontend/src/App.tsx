@@ -335,15 +335,26 @@ function App() {
                   alignOffset={5}
                   className="min-w-56 rounded-lg shadow-lg p-5 text-blue-700 hover:cursor-default hover:border-none bg-white"
                 >
-                  <DropdownMenu.Item className="group py-1 pl-2 hover:bg-sky-200 rounded-lg hover:text-blue-700 flex items-center">
-                    <div
-                      className="flex items-center gap-2"
-                      onClick={handleSave}
-                    >
-                      <HiOutlineFolder />
-                      Save
-                    </div>
-                  </DropdownMenu.Item>
+                  {session ? (
+                    <DropdownMenu.Item className="group py-1 pl-2 hover:bg-sky-200 rounded-lg hover:text-blue-700 flex items-center">
+                      <div
+                        className="flex items-center gap-2"
+                        onClick={handleSave}
+                      >
+                        <HiOutlineFolder />
+                        Save
+                      </div>
+                    </DropdownMenu.Item>
+                  ) : (
+                    <DropdownMenu.Item className="group py-1 pl-2 rounded-lg flex items-center pointer-events-none">
+                      <div
+                        className="flex items-center gap-2 opacity-50"
+                      >
+                        <HiOutlineFolder />
+                        Login to save
+                      </div>
+                    </DropdownMenu.Item>
+                  )}
                   <DropdownMenu.Item 
                     className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700"
                     onClick={() => setShowCanvasList(!showCanvasList)}

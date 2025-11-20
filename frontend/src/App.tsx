@@ -68,7 +68,7 @@ function App() {
   useEffect(() => {
     if (!session) return;
 
-    console.log("This session:", session);
+    // console.log("This session:", session);
     let mounted = true;
 
     (async () => {
@@ -78,8 +78,8 @@ function App() {
       if (canvasRes.success) {
         setShapes(canvasRes.data.shapes);
         setCurrentCanvasId(canvasRes.canvasId);
-        console.log("canvas id: ", canvasRes.canvasId);
-        console.log("shapes: ", canvasRes.data.shapes);
+        // console.log("canvas id: ", canvasRes.canvasId);
+        // console.log("shapes: ", canvasRes.data.shapes);
       } else {
         console.error("Failed to load canvas:", canvasRes.error);
       }
@@ -89,7 +89,7 @@ function App() {
 
       if (listRes.success) {
         setCanvasList(listRes.canvases || []);
-        console.log("Canvas list loaded:", listRes.canvases?.length);
+        // console.log("Canvas list loaded:", listRes.canvases?.length);
       } else {
         console.error("Failed to load canvas list:", listRes.error);
       }
@@ -97,10 +97,10 @@ function App() {
       const profileRes = await getUserProfile();
       if (!mounted) return;
 
-      console.log("Profile Response:", profileRes);
+      // console.log("Profile Response:", profileRes);
 
       if (profileRes.success) {
-        console.log("Avatar URL:", profileRes.data.avatar_url);
+        // console.log("Avatar URL:", profileRes.data.avatar_url);
         setAvatarUrl(profileRes.data.avatar_url);
       } else {
         console.error("Failed to load user profile:", profileRes.error);
@@ -227,19 +227,19 @@ function App() {
       await supabase.auth.signOut();
       await new Promise((resolve) => setTimeout(resolve, 2000));
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleSave = async () => {
-    console.log("saving to: ", currentCanvasId);
+    // console.log("saving to: ", currentCanvasId);
     setIsLoading(true);
     try {
       await saveCanvas({ shapes }, currentCanvasId || null);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -247,11 +247,11 @@ function App() {
 
   const handleLoad = async (canvasId?: string) => {
     setIsLoading(true);
-    console.log("Loading canvas:", canvasId || "default");
+    // console.log("Loading canvas:", canvasId || "default");
 
     try {
       if (currentCanvasId && canvasId && canvasId !== currentCanvasId) {
-        console.log("Saving current canvas");
+        // console.log("Saving current canvas");
         await saveCanvas({ shapes }, currentCanvasId);
       }
       const result = await loadCanvas(canvasId || null);
@@ -259,7 +259,7 @@ function App() {
       if (result.success) {
         setShapes(result.data.shapes);
         setCurrentCanvasId(result.canvasId);
-        console.log("✅ Loaded", result.data.shapes.length, "shapes");
+        // console.log("Loaded", result.data.shapes.length, "shapes");
       } else {
         console.error("Load failed:", result.error);
       }
@@ -298,7 +298,7 @@ function App() {
           setCanvasList(listRes.canvases || []);
         }
 
-        console.log("New canvas created:", result.canvasId);
+        // console.log("New canvas created:", result.canvasId);
       } else {
         console.error("Create failed:", result.error);
       }
@@ -311,7 +311,7 @@ function App() {
 
   const handleSwitchCanvas = async (canvasId: string) => {
     if (canvasId === currentCanvasId) {
-      console.log("Already on this canvas");
+      // console.log("Already on this canvas");
       return;
     }
 

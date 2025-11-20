@@ -53,6 +53,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const sessionUserId = session?.user?.id;
+  const [currentCanvasId, setCurrentCanvasId] = useState<string | null>(null);    
 
   console.log("App render - avatarUrl:", avatarUrl);
 
@@ -63,11 +64,14 @@ function App() {
     let mounted = true;
 
     (async () => {
-      const canvasRes = await loadCanvas();
+      const canvasRes = await loadCanvas(currentCanvasId);
       if (!mounted) return;
 
       if (canvasRes.success) {
         setShapes(canvasRes.data.shapes);
+        setCurrentCanvasId(canvasRes.canvasId);
+        console.log("canvas id: ", canvasRes.canvasId);
+        console.log("shapes: ", canvasRes.data.shapes);
       } else {
         console.error("Failed to load canvas:", canvasRes.error);
       }
@@ -214,7 +218,7 @@ function App() {
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      await saveCanvas({ shapes });
+      await saveCanvas({ shapes }, currentCanvasId || null);
     } catch (error) {
       console.log(error);
     } finally {

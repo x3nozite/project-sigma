@@ -110,7 +110,7 @@ function App() {
     return () => {
       mounted = false;
     };
-  }, [session, currentCanvasId]);
+  }, [session]);
 
   async function getInstruments() {
     const { data } = await supabase.from("instruments").select();

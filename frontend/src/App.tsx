@@ -54,6 +54,7 @@ function App() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const sessionUserId = session?.user?.id;
   const [currentCanvasId, setCurrentCanvasId] = useState<string | null>(null);    
+  console.log(currentCanvasId);
 
   console.log("App render - avatarUrl:", avatarUrl);
 
@@ -192,7 +193,7 @@ function App() {
 
   const clearCanvas = async () => {
     setShapes([]);
-    const response = await deleteCanvas();
+    const response = await deleteCanvas(currentCanvasId);
     if (!response.success) {
       console.error("Failed to delete canvas from supabase", response.error);
     }
@@ -216,6 +217,7 @@ function App() {
   };
 
   const handleSave = async () => {
+    console.log("saving to: ", currentCanvasId);
     setIsLoading(true);
     try {
       await saveCanvas({ shapes }, currentCanvasId || null);

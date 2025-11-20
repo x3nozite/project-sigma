@@ -6,46 +6,6 @@ export interface CanvasData {
   // add others later
 }
 
-// export async function saveCanvas(
-//   data: CanvasData
-// ): Promise<{ success: boolean; error?: string }> {
-//   try {
-//     const {
-//       data: { user },
-//     } = await supabase.auth.getUser();
-
-//     if (!user) {
-//       return { success: false, error: "User not authenticated" };
-//     }
-
-//     if (data.shapes.length > 0) {
-//       await supabase.from("shapes").upsert(
-//         data.shapes.filter((s): s is RectType => s.type === "rect").map((rect) => ({
-//           user_id: user.id,
-//           rect_id: rect.id,
-//           title: rect.title,
-//           description: rect.description,
-//           x: rect.x,
-//           y: rect.y,
-//           width: rect.width,
-//           height: rect.height,
-//           color: rect.color,
-//           due_date: rect.dueDate,
-//           status: rect.status,
-//           is_collapsed: rect.isCollapsed,
-//           children: rect.children,
-//           parents: rect.parents,
-//         }))
-//       );
-//     }
-
-//     return { success: true };
-//   } catch (error) {
-//     console.error("Error saving:", error);
-//     return { success: false };
-//   }
-// }
-
 async function getOrCreateCanvas(userId: string): Promise<string | null> {
   const { data: existingCanvas, error: fetchError } = await supabase
     .from("canvas")
@@ -70,7 +30,7 @@ async function getOrCreateCanvas(userId: string): Promise<string | null> {
       owner_id: userId,
       viewport_x: 0,
       viewport_y: 0,
-      viewport_zoom: 1,
+      viewport_zoom: 100,
     })
     .select("canvas_id")
     .single();
@@ -79,7 +39,7 @@ async function getOrCreateCanvas(userId: string): Promise<string | null> {
     console.error("Error creating canvas:", createError);
     return null;
   }
-  
+
   return newCanvas.canvas_id;
 }
 
@@ -135,55 +95,11 @@ export async function saveCanvas(
 
     return { success: true, canvasId: targetCanvasId };
   } catch (error) {
-    console.log("ASDJKLASDJLDJKLASASDJKL");
     console.error("Error saving:", error);
     return { success: false, error: String(error) };
   }
 }
 
-// export async function loadCanvas(): Promise<
-//   { success: true; data: CanvasData } | { success: false; error: string }
-// > {
-//   try {
-//     const {
-//       data: { user },
-//     } = await supabase.auth.getUser();
-
-//     if (!user) {
-//       return { success: false, error: "User not authenticated" };
-//     }
-
-//     const { data, error } = await supabase
-//       .from("rects") //add others later
-//       .select("*")
-//       .eq("user_id", user.id);
-
-//     if (error) {
-//       return { success: false, error: error.message };
-//     }
-
-//     const rects: RectType[] = (data ?? []).map((r: any) => ({
-//       id: r.rect_id,
-//       title: r.title ?? "",
-//       description: r.description ?? "",
-//       x: r.x,
-//       y: r.y,
-//       width: r.width,
-//       height: r.height,
-//       color: r.color ?? "#ffffff",
-//       dueDate: r.due_date ?? "",
-//       status: r.status ?? "",
-//       isCollapsed: r.is_collapsed ?? false,
-//       children: r.children ?? [],
-//       parents: r.parents ?? "",
-//     }));
-
-//     return { success: true, data: { rects } };
-//   } catch (error: any) {
-//     console.error("loadCanvas error:", error);
-//     return { success: false, error: String(error) };
-//   }
-// }
 
 export async function loadCanvas(
   canvasId?: string | null
@@ -227,34 +143,6 @@ export async function loadCanvas(
 }
 
 
-// export async function deleteCanvas(): Promise<{
-//   success: boolean;
-//   error?: string;
-// }> {
-//   try {
-//     const {
-//       data: { user },
-//     } = await supabase.auth.getUser();
-
-//     if (!user) {
-//       return { success: false, error: "User not authenticated" };
-//     }
-
-//     const { error } = await supabase
-//       .from("rects")
-//       .delete()
-//       .eq("user_id", user.id);
-
-//     if (error) {
-//       return { success: false, error: error.message };
-//     }
-
-//     return { success: true };
-//   } catch (err: any) {
-//     console.error("deleteCanvas error:", err);
-//     return { success: false, error: String(err) };
-//   }
-// }
 
 export async function deleteCanvas(
   canvasId: string | null
@@ -281,16 +169,16 @@ export async function deleteCanvas(
       return { success: false, error: shapesError.message };
     }
 
-    // Optionally delete the canvas record itself
-    const { error: canvasError } = await supabase
-      .from("canvas")
-      .delete()
-      .eq("canvas_id", canvasId)
-      .eq("owner_id", user.id);
+    /* DELETE CANVAS FROM DATABASE, COULD BE USEFUL IN OTHER PARTS */
+    // const { error: canvasError } = await supabase
+    //   .from("canvas")
+    //   .delete()
+    //   .eq("canvas_id", canvasId)
+    //   .eq("owner_id", user.id);
 
-    if (canvasError) {
-      return { success: false, error: canvasError.message };
-    }
+    // if (canvasError) {
+    //   return { success: false, error: canvasError.message };
+    // }
 
     return { success: true };
   } catch (err: any) {

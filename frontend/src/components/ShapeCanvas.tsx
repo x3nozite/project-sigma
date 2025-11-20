@@ -103,7 +103,7 @@ const ShapeCanvas = ({ shapes = [], setShapes, tool, setTool, setZoomValue, zoom
         const sourceShape = (e as DragEventWithSource).source;
         if (s.behavior !== "node" || (s.shape !== "todo" && s.children.includes(sourceShape.id())) || !sourceShape || s.parents.includes(sourceShape.id())) return;
         const sourceShapeInArray = shapes.find(rectToFind => ("group-" + rectToFind.id === sourceShape.id()));
-        if (sourceShapeInArray?.behavior !== "node" || sourceShapeInArray?.parents !== "") return;
+        if (sourceShapeInArray?.behavior !== "node" || sourceShapeInArray?.parents !== "" || shapeInArray.shape === "todo") return;
 
         shape.fill("white");
 

@@ -51,7 +51,11 @@ const ShapeCanvas = ({ shapes = [], setShapes, tool, setTool, setZoomValue, zoom
   const addConnector = (from: Konva.Node, to: Konva.Node) => {
     setConnectors([
       ...connectors,
-      { id: "connector-" + connectors.length, from: from.id(), to: to.id() },
+      { shape: "connector",
+        id: "connector-" + connectors.length,
+        from: from.id(),
+        to: to.id() 
+      },
     ]);
   };
   useEffect(() => {

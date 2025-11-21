@@ -24,6 +24,7 @@ export type RectType = BaseShape & {
 };
 
 export type ArrowType = {
+  shape: "connector";
   id: string;
   from: string;
   to: string;

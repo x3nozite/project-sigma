@@ -1,9 +1,9 @@
 import { supabase } from "../supabase-client";
-import type { RectType, ShapeType } from "../components/types";
+import type { RectType, ShapeType, LineType, ArrowType } from "../components/types";
 
 export interface CanvasData {
   shapes: ShapeType[];
-  // add others later
+  connectors: ArrowType[];
 }
 
 async function getOrCreateCanvas(userId: string): Promise<string | null> {
@@ -93,7 +93,7 @@ export async function getUserCanvases(
 }
 
 export async function saveCanvas(
-  data: CanvasData,
+  shapesData: CanvasData,
   canvasId?: string | null
 ): Promise<{ success: boolean; error?: string; canvasId?: string }> {
   try {
@@ -114,20 +114,31 @@ export async function saveCanvas(
       }
     }
 
-    if (data.shapes.length > 0) {
+    if (shapesData.shapes.length > 0) {
       // Delete existing shapes for this canvas
       await supabase.from("shapes").delete().eq("canvas_id", targetCanvasId);
 
       // Insert new shapes
-      const shapesToInsert = data.shapes.map((shape) => ({
+      const shapesToInsert = shapesData.shapes.map((shape) => ({
         canvas_id: targetCanvasId,
-        shape_data: shape, // Store the entire shape object as JSON
+        shape_data: shape
       }));
+
+      const connectorsToInsert = shapesData.connectors.map((connector) => ({
+        canvas_id: targetCanvasId,
+        shape_data: connector
+      }));
+
+      console.log("connectors to insert:", connectorsToInsert);
+
+
+      const allData = [...shapesToInsert, ...connectorsToInsert];
+
+      console.log(allData);
 
       const { error: insertError } = await supabase
         .from("shapes")
-        .insert(shapesToInsert);
-
+        .insert(allData);
       if (insertError) {
         return { success: false, error: insertError.message };
       }
@@ -175,9 +186,12 @@ export async function loadCanvas(
       return { success: false, error: error.message };
     }
 
-    const shapes: ShapeType[] = (data ?? []).map((row: any) => row.shape_data);
+    const shapes: ShapeType[] = data.filter((row) => row.shape_data["shape"] === "rect").map((row) => row.shape_data);
+    const connectors: ArrowType[] = data.filter((row) => row.shape_data["shape"] === "connector").map((row) => row.shape_data);
+    console.log("rects to load: ", shapes);
+    console.log("connectors to load: ", connectors);
 
-    return { success: true, data: { shapes }, canvasId: targetCanvasId };
+    return { success: true, data: { shapes, connectors }, canvasId: targetCanvasId };
   } catch (error: any) {
     console.error("loadCanvas error:", error);
     return { success: false, error: String(error) };

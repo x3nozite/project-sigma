@@ -64,7 +64,7 @@ function App() {
   // console.log(currentCanvasId);
 
   // console.log("App render - avatarUrl:", avatarUrl);
-
+  console.log("arrows: ", connectors);
   useEffect(() => {
     if (!session) return;
 
@@ -237,7 +237,7 @@ function App() {
     // console.log("saving to: ", currentCanvasId);
     setIsLoading(true);
     try {
-      await saveCanvas({ shapes }, currentCanvasId || null);
+      await saveCanvas({ shapes, connectors }, currentCanvasId || null);
     } catch (error) {
       // console.log(error);
     } finally {
@@ -252,12 +252,13 @@ function App() {
     try {
       if (currentCanvasId && canvasId && canvasId !== currentCanvasId) {
         // console.log("Saving current canvas");
-        await saveCanvas({ shapes }, currentCanvasId);
+        await saveCanvas({ shapes, connectors }, currentCanvasId);
       }
       const result = await loadCanvas(canvasId || null);
 
       if (result.success) {
         setShapes(result.data.shapes);
+        setConnectors(result.data.connectors);
         setCurrentCanvasId(result.canvasId);
         // console.log("Loaded", result.data.shapes.length, "shapes");
       } else {
@@ -280,7 +281,7 @@ function App() {
 
     try {
       if (currentCanvasId) {
-        await saveCanvas({ shapes }, currentCanvasId);
+        await saveCanvas({ shapes, connectors }, currentCanvasId);
       }
 
       const result = await createNewCanvas(

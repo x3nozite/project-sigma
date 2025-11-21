@@ -6,6 +6,12 @@ export interface CanvasData {
   connectors: ArrowType[];
 }
 
+interface CanvasDataRecord {
+  local_canvas: string;
+  canvasData: CanvasData;
+  updatedAt: number;
+}
+
 async function getOrCreateCanvas(userId: string): Promise<string | null> {
   const { data: existingCanvas, error: fetchError } = await supabase
     .from("canvas")
@@ -102,7 +108,32 @@ export async function saveCanvas(
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return { success: false, error: "User not authenticated" };
+      return new Promise((resolve) => {
+        const request = indexedDB.open("CanvasDB");
+        const data = {
+          local_canvas: "local",
+          canvasData: shapesData,
+          updatedAt: Date.now()
+        }
+
+        request.onsuccess = () => {
+          const db = request.result;
+          const tx = db.transaction("Canvas", "readwrite");
+          const store = tx.objectStore("Canvas");
+          tx.oncomplete = () => resolve({ success: true });
+          tx.onerror = () => resolve({ success: false, error: tx.error?.message });
+
+          store.put(data);
+          resolve({ success: true });
+        };
+
+        request.onerror = () => {
+          // harusnya nampilin error message
+          // sekarang baru console log doang
+          console.log("error");
+          resolve({ success: false, error: request.error?.message ?? "IndexedDB error" });
+        }
+      })
     }
 
     // Get the canvas ID (either provided or get/create default)
@@ -166,7 +197,23 @@ export async function loadCanvas(
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return { success: false, error: "User not authenticated" };
+      return new Promise((resolve) => {
+        const request = indexedDB.open("CanvasDB");
+
+        request.onsuccess = () => {
+          const db = request.result;
+          const tx = db.transaction("Canvas", "readonly");
+          const store = tx.objectStore("Canvas");
+          const res = store.get("local");
+
+          res.onsuccess = () => {
+            const record = res.result as CanvasDataRecord;
+            if (record) resolve({ success: true, data: record.canvasData, canvasId: record.local_canvas });
+            else resolve({ success: false, error: "No offline canvas found" });
+          }
+          res.onerror = () => resolve({ success: false, error: "Failed to get canvas data" });
+        }
+      })
     }
 
     let targetCanvasId = canvasId;

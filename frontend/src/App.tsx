@@ -41,9 +41,11 @@ import {
   getUserCanvases,
   createNewCanvas,
 } from "./services/DBFunction";
-import { date } from "zod";
+import { useIndexedDBInit } from "./services/useIndexedDb";
 
 function App() {
+  const { init } = useIndexedDBInit();
+
   const { session } = useSession();
   const [instruments, setInstruments] = useState<any[]>([]);
   const [zoomValue, setZoomValue] = useState(100);
@@ -65,12 +67,12 @@ function App() {
 
   // console.log("App render - avatarUrl:", avatarUrl);
   useEffect(() => {
-    if (!session) return;
-
     // console.log("This session:", session);
     let mounted = true;
 
     (async () => {
+      await init();
+
       const canvasRes = await loadCanvas(null);
       if (!mounted) return;
 
@@ -84,6 +86,7 @@ function App() {
         console.error("Failed to load canvas:", canvasRes.error);
       }
 
+      if (!session) return;
       const listRes = await getUserCanvases(session.user.id);
       if (!mounted) return;
 
@@ -110,7 +113,7 @@ function App() {
     return () => {
       mounted = false;
     };
-  }, [session]);
+  }, [init, session]);
 
   async function getInstruments() {
     const { data } = await supabase.from("instruments").select();
@@ -185,12 +188,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-              ...r,
-              title: newData.title,
-              description: newData.description,
-              color: newData.color,
-              dueDate: newData.date,
-            }
+            ...r,
+            title: newData.title,
+            description: newData.description,
+            color: newData.color,
+            dueDate: newData.date,
+          }
           : r
       )
     );
@@ -254,7 +257,6 @@ function App() {
         await saveCanvas({ shapes, connectors }, currentCanvasId);
       }
       const result = await loadCanvas(canvasId || null);
-
       if (result.success) {
         setShapes(result.data.shapes);
         setConnectors(result.data.connectors);
@@ -336,34 +338,23 @@ function App() {
                   alignOffset={5}
                   className="min-w-56 rounded-lg shadow-lg p-5 text-blue-700 hover:cursor-default hover:border-none bg-white"
                 >
-                  {session ? (
-                    <DropdownMenu.Item className="group py-1 pl-2 hover:bg-sky-200 rounded-lg hover:text-blue-700 flex items-center">
-                      <div
-                        className="flex items-center gap-2"
-                        onClick={handleSave}
-                      >
-                        <HiOutlineFolder />
-                        Save
-                      </div>
-                    </DropdownMenu.Item>
-                  ) : (
-                    <DropdownMenu.Item className="group py-1 pl-2 rounded-lg flex items-center pointer-events-none">
-                      <div
-                        className="flex items-center gap-2 opacity-50"
-                      >
-                        <HiOutlineFolder />
-                        Login to save
-                      </div>
-                    </DropdownMenu.Item>
-                  )}
-                  <DropdownMenu.Item 
+                  <DropdownMenu.Item className="group py-1 pl-2 hover:bg-sky-200 rounded-lg hover:text-blue-700 flex items-center">
+                    <div
+                      className="flex items-center gap-2"
+                      onClick={handleSave}
+                    >
+                      <HiOutlineFolder />
+                      Save
+                    </div>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item
                     className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700"
                     onClick={() => setShowCanvasList(!showCanvasList)}
                   >
                     <div
-                    className="flex items-center gap-2"
+                      className="flex items-center gap-2"
                     >
-                      <HiOutlineFolderOpen /> 
+                      <HiOutlineFolderOpen />
                       My Canvases ({canvasList.length})
                     </div>
                   </DropdownMenu.Item>
@@ -399,8 +390,8 @@ function App() {
 
                   <DropdownMenu.Item className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700">
                     <div
-                    className="flex items-center gap-2"
-                    onClick={handleCreateNewCanvas}
+                      className="flex items-center gap-2"
+                      onClick={handleCreateNewCanvas}
                     >
                       <HiOutlinePlus />
                       <span>{isLoading ? "Creating" : "New Canvas"}</span>

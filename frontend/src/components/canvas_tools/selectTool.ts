@@ -108,7 +108,6 @@ export const handleStageSelectClick = (e: KonvaEventObject<MouseEvent>, selectio
 
   // if clicked not our rectangle
   const group = e.target.findAncestor(".shape", true);
-  console.log(group.name());
   if (!group || !group.hasName("shape")) return;
 
   const clickedId = group.attrs.shapeId;

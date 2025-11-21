@@ -51,10 +51,11 @@ const ShapeCanvas = ({ shapes = [], setShapes, tool, setTool, setZoomValue, zoom
   const addConnector = (from: Konva.Node, to: Konva.Node) => {
     setConnectors([
       ...connectors,
-      { shape: "connector",
+      {
+        shape: "connector",
         id: "connector-" + connectors.length,
         from: from.id(),
-        to: to.id() 
+        to: to.id()
       },
     ]);
   };
@@ -76,7 +77,6 @@ const ShapeCanvas = ({ shapes = [], setShapes, tool, setTool, setZoomValue, zoom
         const sourceShape = (e as DragEventWithSource).source;
         if (!sourceShape || shapeGroup === sourceShape || shape.fill() === "green" || shapeInArray.shape === "todo") return;
 
-        console.log(sourceShape.id());
         if (
           (s.shape !== "todo" && s.children.includes(sourceShape.id())) ||
           s.parents.includes(sourceShape.id())

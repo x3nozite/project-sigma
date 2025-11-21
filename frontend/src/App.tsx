@@ -42,6 +42,7 @@ import {
   createNewCanvas,
 } from "./services/DBFunction";
 import { useIndexedDBInit } from "./services/useIndexedDb";
+import { useAutosaveCanvas } from "./services/autosaveCanvas";
 
 function App() {
   const { init } = useIndexedDBInit();
@@ -66,6 +67,9 @@ function App() {
   // console.log(currentCanvasId);
 
   // console.log("App render - avatarUrl:", avatarUrl);
+
+  useAutosaveCanvas({ shapes, connectors }, 600, () => saveCanvas({ shapes, connectors }, currentCanvasId));
+
   useEffect(() => {
     // console.log("This session:", session);
     let mounted = true;

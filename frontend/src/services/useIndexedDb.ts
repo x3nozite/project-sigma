@@ -12,7 +12,9 @@ export const useIndexedDBInit = () => {
       const success = await initIndexedDb();
 
       if (!success) console.error("InitDb - Something went wrong");
+      else console.log("IndexedDB Initialized (first time)");
     }
+    console.log("IndexedDB initailized");
   }, [])
 
   return { init };

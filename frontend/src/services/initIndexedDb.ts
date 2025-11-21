@@ -11,6 +11,7 @@ export const initIndexedDb = async (): Promise<boolean> => {
 
       // create object store if it doesn't exist yet
       if (!db.objectStoreNames.contains("Canvas")) {
+        console.log("create object store");
         db.createObjectStore("Canvas", { keyPath: "local_canvas" });
       }
     };

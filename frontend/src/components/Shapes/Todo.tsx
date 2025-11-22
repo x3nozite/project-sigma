@@ -37,7 +37,71 @@ const Todo = ({
 
   // Change color to parent
   const borderColor = todo.color;
-  //
+
+  // For showing due date
+  const due = new Date(todo.dueDate);
+  const formatted = due
+    .toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    })
+    .replace(/, (?=\d{4})/, " ");
+
+  // For calculating date difference
+  const now = new Date();
+  const diffMs = due.getTime() - now.getTime(); // miliseconds
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  const diffWeeks = Math.floor(diffDays / 7);
+  const diffMonths = Math.floor(diffDays / 30);
+  // maybe i can use useMemo for optimization, but it depends if its worth it or not
+  const getStatusinfo = () => {
+    if (todo.completed)
+      return {
+        statusColor: "#00bc7d",
+        statusText: "Completed",
+        statusTextColor: "white",
+      };
+    else if (diffMonths >= 1)
+      return {
+        statusColor: "#2b7fff",
+        statusText: `${diffMonths} Month${diffMonths > 1 ? "s" : ""} left`,
+        statusTextColor: "white",
+      };
+    else if (diffWeeks >= 1)
+      return {
+        statusColor: "#2b7fff",
+        statusText: `${diffWeeks} Week${diffWeeks > 1 ? "s" : ""} left`,
+        statusTextColor: "white",
+      };
+    else if (diffDays >= 2)
+      return {
+        statusColor: "#2b7fff",
+        statusText: `${diffDays} Day${diffDays > 1 ? "s" : ""} left`,
+        statusTextColor: "white",
+      };
+    else if (diffDays === 1)
+      return {
+        statusColor: "#ff6900",
+        statusText: "Due Tomorrow!!!",
+        statusTextColor: "white",
+      };
+    else if (diffDays === 0)
+      return {
+        statusColor: "#ff2056",
+        statusText: "Due Today!!!",
+        statusTextColor: "white",
+      };
+    else
+      return {
+        statusColor: "purple",
+        statusText: "Overdue",
+        statusTextColor: "white",
+      };
+  };
+
+  const { statusColor, statusText, statusTextColor } = getStatusinfo();
 
   // Setting checkbox
   const handleCheck = (id: string) => {
@@ -45,7 +109,6 @@ const Todo = ({
       prevShapes.map((todo) => {
         if (todo.id === id && todo.shape === "todo") {
           const updated = { ...todo, completed: !todo.completed };
-          console.log(updated);
           return updated;
         }
         return todo;
@@ -113,42 +176,28 @@ const Todo = ({
               fontSize={20}
               fontStyle="bold"
             />
-            <Text x={60} y={32} text={todo.dueDate} />
+            <Text x={60} y={32} text={formatted} />
             <Group>
               <Text x={60} y={54} text={todo.owner} />
-              {todo.completed ? (
-                <Group x={280} y={50}>
-                  <Rect
-                    width={110}
-                    height={18}
-                    fill="green"
-                    cornerRadius={[4, 4, 4, 4]}
-                  />
-                  <Text
-                    x={26}
-                    y={3}
-                    text="Completed"
-                    fill="white"
-                    fontSize={12}
-                  />
-                </Group>
-              ) : (
-                <Group x={280} y={50}>
-                  <Rect
-                    width={110}
-                    height={18}
-                    fill={red}
-                    cornerRadius={[4, 4, 4, 4]}
-                  />
-                  <Text
-                    x={26}
-                    y={3}
-                    text="Not Started"
-                    fill="white"
-                    fontSize={12}
-                  />
-                </Group>
-              )}
+              <Group x={280} y={50}>
+                <Rect
+                  width={110}
+                  height={18}
+                  fill={statusColor}
+                  cornerRadius={[4, 4, 4, 4]}
+                />
+                <Text
+                  x={0}
+                  y={3}
+                  width={110}
+                  height={18}
+                  text={statusText}
+                  fill={statusTextColor}
+                  align="center"
+                  fontStyle="bold"
+                  fontSize={12}
+                />
+              </Group>
             </Group>
             {(isHovered || todo.completed) && (
               <Group x={26} y={36}>

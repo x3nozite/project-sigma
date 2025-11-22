@@ -138,6 +138,8 @@ function App() {
   const addTodo = (parent?: RectType) => {
     console.log(parent ? parent.id : "no parent");
 
+    const iso = new Date("March 30, 2026").toISOString();
+
     const newTodo: TodoType = {
       id: "todo-" + Date.now().toString(),
       x: parent ? parent.x + 600 : 100,
@@ -152,7 +154,7 @@ function App() {
       height: 75,
       title: "Something-something",
       description: "Even more things",
-      dueDate: Date.now().toString(),
+      dueDate: iso,
       completed: false,
       owner: session ? session.user.user_metadata.name : "Guest",
       status: "Something",

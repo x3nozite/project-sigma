@@ -48,7 +48,7 @@ function App() {
   const { init } = useIndexedDBInit();
 
   const { session } = useSession();
-  const [instruments, setInstruments] = useState<any[]>([]);
+  const [instruments, _setInstruments] = useState<any[]>([]);
   const [zoomValue, setZoomValue] = useState(100);
   const [showForm, setShowForm] = useState(false);
   const [shapes, setShapes] = useState<ShapeType[]>([]);

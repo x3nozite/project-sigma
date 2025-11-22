@@ -43,7 +43,6 @@ import {
 } from "./services/DBFunction";
 import { useIndexedDBInit } from "./services/useIndexedDb";
 import { useAutosaveCanvas } from "./services/autosaveCanvas";
-import { arrowMovement } from "./components/utilities/ArrowFunction";
 
 function App() {
   const { init } = useIndexedDBInit();
@@ -61,7 +60,6 @@ function App() {
   const [selectedShape, setSelectedShape] = useState<ShapeType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const sessionUserId = session?.user?.id;
   const [currentCanvasId, setCurrentCanvasId] = useState<string | null>(null);
   const [canvasList, setCanvasList] = useState<any[]>([]);
   const [showCanvasList, setShowCanvasList] = useState(false);
@@ -120,10 +118,10 @@ function App() {
     };
   }, [init, session]);
 
-  async function getInstruments() {
-    const { data } = await supabase.from("instruments").select();
-    setInstruments(data ?? []);
-  }
+  // async function getInstruments() {
+  //   const { data } = await supabase.from("instruments").select();
+  //   setInstruments(data ?? []);
+  // }
 
   const openForm = (shape: ShapeType | null) => {
     setSelectedShape(shape);

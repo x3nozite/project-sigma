@@ -24,7 +24,6 @@ function BottomNav({
   onShapeClick,
   onDrawClick,
   onColorSelect,
-  onTextClick,
   onEraserClick,
   isActive,
 }: Props) {

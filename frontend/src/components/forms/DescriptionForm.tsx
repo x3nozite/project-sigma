@@ -19,7 +19,7 @@ const DescriptionForm = ({ onclick, shape }: Props) => {
               type="text"
               id="title"
               size={11}
-              placeholder={shape?.title}
+              // placeholder={shape?.title}
               className="text-3xl h-full p-2 font-bold rounded-lg"
             ></input>
             <button
@@ -51,7 +51,7 @@ const DescriptionForm = ({ onclick, shape }: Props) => {
               <label className="text-md font-semibold">Description</label>
             </div>
             <textarea
-              placeholder={shape?.description}
+              // placeholder={shape?.description}
               className="border border-gray-300 bg-gray-50 rounded-lg p-2 shadow-xs ml-8 w-[calc(100%-2rem)] items-start h-25 resize-none"
             ></textarea>
           </div>

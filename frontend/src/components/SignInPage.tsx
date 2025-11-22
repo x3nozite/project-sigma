@@ -1,9 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { SecondButton } from "./ui/buttons";
 import { useState } from "react";
 import { supabase } from "../supabase-client";
 import { useSession } from "../context/SessionContext";
-import { useEffect } from "react";
 import loginimage from "../assets/loginImage.webp";
 import { HiArrowLeft } from "react-icons/hi";
 
@@ -16,14 +14,14 @@ function SignIn() {
   const handleOAuthSignIn = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    const { } = await supabase.auth.signInWithOAuth({
       provider: "google",
     });
   };
 
   const handleSignIn = async () => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });

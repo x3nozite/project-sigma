@@ -2,11 +2,9 @@ import { Toolbar } from "radix-ui";
 import {
   HiOutlineCube,
   HiOutlineHand,
-  HiOutlineCursorClick,
   HiOutlinePencil,
   HiOutlineAnnotation,
   HiOutlinePhotograph,
-  HiOutlineTrash,
   HiSelector,
   HiOutlineBookOpen,
 } from "react-icons/hi";
@@ -27,16 +25,16 @@ interface Props {
 }
 
 function AppToolbar({
-  onClearClick,
+  // onClearClick,
   onShapeClick,
   onTodoClick,
   onDrawClick,
   onSelectClick,
-  onColorSelect,
-  onTextClick,
+  // onColorSelect,
+  // onTextClick,
   onEraserClick,
-  isActive,
-  tool,
+  // isActive,
+  // tool,
   setTool,
 }: Props) {
   return (

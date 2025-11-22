@@ -32,7 +32,7 @@ function pointToSegmentDistance(px: number, py: number, x1: number, y1: number, 
   return Math.hypot(px - projX, py - projY);
 }
 
-export function handleEraseLinesMouseMove(stage: RefObject<Konva.Stage | null>, tool: ToolType, layer: RefObject<Konva.Layer | null>, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, isDeleting: boolean) {
+export function handleEraseLinesMouseMove(stage: RefObject<Konva.Stage | null>, tool: ToolType, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, isDeleting: boolean) {
   if (tool !== "eraser" || !isDeleting) return;
 
   //find lines in intersection with mouse, then remove it

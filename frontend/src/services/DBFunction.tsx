@@ -1,5 +1,5 @@
 import { supabase } from "../supabase-client";
-import type { RectType, ShapeType, LineType, ArrowType } from "../components/types";
+import type { ShapeType, ArrowType } from "../components/types";
 
 export interface CanvasData {
   shapes: ShapeType[];

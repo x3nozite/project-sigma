@@ -216,6 +216,7 @@ function App() {
 
   const clearCanvas = async () => {
     setShapes([]);
+    setConnectors([]);
     const response = await deleteCanvas(currentCanvasId);
     if (!response.success) {
       console.error("Failed to delete canvas from supabase", response.error);

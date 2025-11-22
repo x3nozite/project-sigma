@@ -40,19 +40,19 @@ export default function TaskForm({
     setError,
     formState: { errors, isSubmitting },
   } = useForm<taskFields>({
-    defaultValues: initialData
+    defaultValues: initialData && initialData.behavior === "node"
       ? {
-          title: initialData.title,
-          description: initialData.description,
-          date: initialData.dueDate,
-          time: "09:11",
-        }
+        title: initialData.title,
+        description: initialData.description,
+        date: initialData.dueDate,
+        time: "09:11",
+      }
       : {
-          title: "My New Subject",
-          // description: "abcedfghijkl",
-          date: "2025-10-11",
-          time: "06:07",
-        },
+        title: "My New Subject",
+        // description: "abcedfghijkl",
+        date: "2025-10-11",
+        time: "06:07",
+      },
     resolver: zodResolver(schema),
   });
 
@@ -66,7 +66,7 @@ export default function TaskForm({
       onCloseForm();
     } catch (error) {
       setError("root", {
-        message: "This Task already exists!",
+        message: "This Task already exists!: " + error,
       });
     }
   };

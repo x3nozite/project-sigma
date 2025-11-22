@@ -19,7 +19,7 @@ const DescriptionForm = ({ onclick, shape }: Props) => {
               type="text"
               id="title"
               size={11}
-              // placeholder={shape?.title}
+              placeholder={(shape?.behavior === "node") ? shape?.title : ""}
               className="text-3xl h-full p-2 font-bold rounded-lg"
             ></input>
             <button

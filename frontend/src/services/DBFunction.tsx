@@ -12,6 +12,13 @@ interface CanvasDataRecord {
   updatedAt: number;
 }
 
+interface UserProfile {
+  id: string;
+  avatar_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 async function getOrCreateCanvas(userId: string): Promise<string | null> {
   const { data: existingCanvas, error: fetchError } = await supabase
     .from("canvas")

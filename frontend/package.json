@@ -27,9 +27,9 @@
     "serve": "^14.2.5",
     "tailwindcss": "^4.1.13",
     "zod": "^4.1.12",
-    "@wojtekmaj/date-utils": "^3.0.0",
+    "@wojtekmaj/date-utils": "^2.0.2",
     "clsx": "^2.1.0",
-    "get-user-locale": "^2.4.0",
+    "get-user-locale": "^3.0.0",
     "warning": "^4.0.3"
   },
   "devDependencies": {

@@ -122,7 +122,7 @@ export const handleStageSelectClick = (e: KonvaEventObject<MouseEvent>, selectio
   else if (metaPressed && !isSelected) setSelectedIds([...selectedIds, clickedId]);
 };
 
-export const handleTransfromEnd = (e: any, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>) => {
+export const handleTransfromEnd = (e: Konva.KonvaEventObject<DragEvent>, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>) => {
   const id = e.target.id();
   const node = e.target;
 

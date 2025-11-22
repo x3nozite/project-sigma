@@ -13,7 +13,7 @@ interface Props {
   onShapeClick: (shape: ShapeType | null) => void;
   tool: ToolType;
   handleEraserClick: (rectId: string) => void;
-  onTransformEnd: (e) => void;
+  onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
 }
 
 const Rectangle = ({

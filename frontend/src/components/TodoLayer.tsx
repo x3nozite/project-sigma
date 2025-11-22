@@ -10,7 +10,7 @@ interface Props {
   onDragEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   tool: ToolType;
   handleEraserClick: (todoId: string) => void;
-  onTransformEnd: (e) => void;
+  onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
 }
 
 const TodoLayer = ({ todos, setShapes, onDragStart, onDragMove, onDragEnd, tool, handleEraserClick, onTransformEnd }: Props) => {

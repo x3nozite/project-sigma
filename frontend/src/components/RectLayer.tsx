@@ -12,7 +12,7 @@ interface Props {
   tool: ToolType;
   handleEraserClick: (rectId: string) => void;
   onShapeClick: (shape: ShapeType | null) => void;
-  onTransformEnd: (e) => void;
+  onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
 }
 
 const RectLayer = ({ shapes, setShapes, onDragStart, onDragMove, onDragEnd, tool, collapseChild, handleEraserClick, onShapeClick, onTransformEnd }: Props) => {

@@ -1,6 +1,6 @@
 import type Konva from "konva/lib/_CoreInternals";
 import Todo from "./Shapes/Todo";
-import type { ShapeType, TodoType, ToolType } from "./types"
+import type { ShapeType, TodoType, ToolType } from "./types";
 
 interface Props {
   todos: TodoType[];
@@ -11,12 +11,23 @@ interface Props {
   tool: ToolType;
   handleEraserClick: (todoId: string) => void;
   onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
+  getBorder: (color: string) => string | undefined;
 }
 
-const TodoLayer = ({ todos, setShapes, onDragStart, onDragMove, onDragEnd, tool, handleEraserClick, onTransformEnd }: Props) => {
+const TodoLayer = ({
+  todos,
+  setShapes,
+  onDragStart,
+  onDragMove,
+  onDragEnd,
+  tool,
+  handleEraserClick,
+  onTransformEnd,
+  getBorder,
+}: Props) => {
   return (
     <>
-      {todos.map(todo => (
+      {todos.map((todo) => (
         <Todo
           todo={todo}
           key={"key-" + todo.id}
@@ -27,10 +38,11 @@ const TodoLayer = ({ todos, setShapes, onDragStart, onDragMove, onDragEnd, tool,
           tool={tool}
           handleEraserClick={handleEraserClick}
           onTransformEnd={onTransformEnd}
+          getBorder={getBorder}
         />
       ))}
     </>
-  )
-}
+  );
+};
 
-export default TodoLayer
+export default TodoLayer;

@@ -12,6 +12,7 @@ interface Props {
   tool: ToolType;
   handleEraserClick: (todoId: string) => void;
   onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
+  getBorder: (color: string) => string | undefined;
 }
 
 const Todo = ({
@@ -35,6 +36,7 @@ const Todo = ({
   const red = "#e7000b";
 
   // Change color to parent
+  const borderColor = todo.color;
   //
 
   // Setting checkbox
@@ -90,7 +92,7 @@ const Todo = ({
           shadowOpacity={0.5}
           shadowColor="black"
           cornerRadius={[8, 8, 8, 8]}
-          stroke="black"
+          stroke={borderColor}
           strokeWidth={1}
           shadowForStrokeEnabled={false}
         />
@@ -153,7 +155,7 @@ const Todo = ({
                 <Circle
                   radius={16}
                   fill={inner}
-                  stroke={bColor}
+                  stroke={borderColor}
                   strokeWidth={1.5}
                   onClick={() => handleCheck(todo.id)}
                 />

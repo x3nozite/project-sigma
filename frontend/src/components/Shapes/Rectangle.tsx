@@ -14,6 +14,8 @@ interface Props {
   tool: ToolType;
   handleEraserClick: (rectId: string) => void;
   onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
+  getBorder: (color: string) => string | undefined;
+  addTodo: (parent?: RectType) => void;
 }
 
 const Rectangle = ({
@@ -27,22 +29,13 @@ const Rectangle = ({
   handleEraserClick,
   onShapeClick,
   onTransformEnd,
+  getBorder,
+  addTodo,
 }: Props) => {
   // hover to show todo
   const [isHovered, setisHovered] = useState(false);
 
   // change border color
-  function getBorder(color: string) {
-    let border;
-
-    if (color === "#ff2056") border = "#f6339a"; // rose-400
-    else if (color === "#2b7fff") border = "#00a6f4"; // sky-500
-    else if (color === "#00bc7d") border = "#00c951"; // emerald-600
-    else if (color === "#ad46ff") border = "#8e51ff"; // violet-500
-    else if (color === "#ff6900") border = "#fd9a00"; // orange-600
-
-    return border;
-  }
   const borderColor = getBorder(rect.color);
 
   return (
@@ -145,7 +138,14 @@ const Rectangle = ({
         </Group>
         {isHovered && (
           <Group x={rect.width + 5} y={rect.height / 2}>
-            <Circle radius={16} fill="blue" />
+            <Circle
+              radius={16}
+              fill="blue"
+              onClick={(e) => {
+                e.cancelBubble = true;
+                addTodo(rect);
+              }}
+            />
           </Group>
         )}
       </Group>

@@ -9,12 +9,12 @@ import {
   HiOutlineBookOpen,
 } from "react-icons/hi";
 import { BsEraser } from "react-icons/bs";
-import type { ToolType } from "../../../types";
+import type { RectType, ToolType } from "../../../types";
 
 interface Props {
   onEraserClick: () => void;
   onShapeClick: () => void;
-  onTodoClick: () => void;
+  onTodoClick: (parent?: RectType) => void;
   onClearClick: () => void;
   onDrawClick: () => void;
   onSelectClick: () => void;
@@ -54,7 +54,7 @@ function AppToolbar({
         <Toolbar.ToggleItem value="todo">
           <div
             className="add-shape group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50"
-            onClick={onTodoClick}
+            onClick={() => onTodoClick()}
           >
             <HiOutlineBookOpen className="text-xl" />
             <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">

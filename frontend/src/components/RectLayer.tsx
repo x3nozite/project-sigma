@@ -13,9 +13,25 @@ interface Props {
   handleEraserClick: (rectId: string) => void;
   onShapeClick: (shape: ShapeType | null) => void;
   onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
+  // briant added these
+  getBorder: (color: string) => string | undefined;
+  addTodo: (parentId?: RectType) => void;
 }
 
-const RectLayer = ({ shapes, setShapes, onDragStart, onDragMove, onDragEnd, tool, collapseChild, handleEraserClick, onShapeClick, onTransformEnd }: Props) => {
+const RectLayer = ({
+  shapes,
+  setShapes,
+  onDragStart,
+  onDragMove,
+  onDragEnd,
+  tool,
+  collapseChild,
+  handleEraserClick,
+  onShapeClick,
+  onTransformEnd,
+  getBorder,
+  addTodo,
+}: Props) => {
   return (
     <>
       {shapes.map((rect) => (
@@ -31,10 +47,12 @@ const RectLayer = ({ shapes, setShapes, onDragStart, onDragMove, onDragEnd, tool
           collapseChild={collapseChild}
           handleEraserClick={handleEraserClick}
           onShapeClick={onShapeClick}
+          getBorder={getBorder}
+          addTodo={addTodo}
         />
       ))}
     </>
-  )
-}
+  );
+};
 
-export default RectLayer
+export default RectLayer;

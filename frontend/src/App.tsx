@@ -67,7 +67,9 @@ function App() {
 
   // console.log("App render - avatarUrl:", avatarUrl);
 
-  useAutosaveCanvas({ shapes, connectors }, 600, () => saveCanvas({ shapes, connectors }, currentCanvasId));
+  useAutosaveCanvas({ shapes, connectors }, 600, () =>
+    saveCanvas({ shapes, connectors }, currentCanvasId)
+  );
 
   useEffect(() => {
     // console.log("This session:", session);
@@ -133,12 +135,14 @@ function App() {
     setShowForm(false);
   };
 
-  const addTodo = () => {
+  const addTodo = (parent?: RectType) => {
+    console.log(parent ? parent.id : "no parent");
+
     const newTodo: TodoType = {
       id: "todo-" + Date.now().toString(),
-      x: 100,
-      y: 100,
-      color: "green",
+      x: parent ? parent.x + 600 : 100,
+      y: parent ? parent.y : 100,
+      color: parent ? parent.color : "#00bc7d", // default is green
       isCollapsed: false,
       scaleX: 1,
       scaleY: 1,
@@ -152,7 +156,7 @@ function App() {
       completed: false,
       owner: session ? session.user.user_metadata.name : "Guest",
       status: "Something",
-      parents: "",
+      parents: parent ? parent.id : "",
     };
     setShapes([...shapes, newTodo]);
   };
@@ -191,12 +195,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-            ...r,
-            title: newData.title,
-            description: newData.description,
-            color: newData.color,
-            dueDate: newData.date,
-          }
+              ...r,
+              title: newData.title,
+              description: newData.description,
+              color: newData.color,
+              dueDate: newData.date,
+            }
           : r
       )
     );
@@ -355,9 +359,7 @@ function App() {
                     className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700"
                     onClick={() => setShowCanvasList(!showCanvasList)}
                   >
-                    <div
-                      className="flex items-center gap-2"
-                    >
+                    <div className="flex items-center gap-2">
                       <HiOutlineFolderOpen />
                       My Canvases ({canvasList.length})
                     </div>
@@ -783,6 +785,7 @@ function App() {
           setConnectors={setConnectors}
           strokeColor={strokeColor}
           onShapeClick={openForm}
+          addTodo={addTodo}
         />
       </div>
 

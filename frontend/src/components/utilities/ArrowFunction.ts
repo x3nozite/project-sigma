@@ -46,3 +46,25 @@ export function arrowMovement(connectors: ArrowType[], mainLayer: RefObject<Konv
     ]);
   });
 }
+
+export const getConnectorPoints = (fromGroup: Konva.Node, toGroup: Konva.Node, fromShape: Konva.Node, toShape: Konva.Node) => {
+  const dx = toGroup.x() - fromGroup.x();
+  const dy = toGroup.y() - fromGroup.y();
+  const dist = Math.sqrt(dx * dx + dy * dy);
+
+  const vectorX = dx / dist;
+  const vectorY = dy / dist;
+  const offset = Math.min(30, dist / 5 - 1);
+
+  const fromWidth = fromShape.width() * (fromGroup.attrs.scalingX ?? 1);
+  const fromHeight = fromShape.height() * (fromGroup.attrs.scalingY ?? 1);
+  const toWidth = toShape.width() * (toGroup.attrs.scalingX ?? 1);
+  const toHeight = toShape.height() * (toGroup.attrs.scalingY ?? 1);
+
+  return [
+    fromGroup.x() + fromWidth / 2 + vectorX * (fromWidth / 2 + offset),
+    fromGroup.y() + fromHeight / 2 + vectorY * (fromHeight / 2 + offset),
+    toGroup.x() + toWidth / 2 - vectorX * (toWidth / 2 + offset),
+    toGroup.y() + toHeight / 2 - vectorY * (toHeight / 2 + offset)
+  ];
+};

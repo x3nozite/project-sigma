@@ -43,6 +43,7 @@ import {
 } from "./services/DBFunction";
 import { useIndexedDBInit } from "./services/useIndexedDb";
 import { useAutosaveCanvas } from "./services/autosaveCanvas";
+import { arrowMovement } from "./components/utilities/ArrowFunction";
 
 function App() {
   const { init } = useIndexedDBInit();
@@ -82,8 +83,8 @@ function App() {
 
       if (canvasRes.success) {
         setShapes(canvasRes.data.shapes);
-        setConnectors(canvasRes.data.connectors);
         setCurrentCanvasId(canvasRes.canvasId);
+        setConnectors(canvasRes.data.connectors);
         // console.log("canvas id: ", canvasRes.canvasId);
         // console.log("shapes: ", canvasRes.data.shapes);
       } else {

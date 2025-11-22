@@ -2,7 +2,7 @@ import { Stage, Layer, Rect, Transformer } from "react-konva";
 import { useEffect, useRef, useState } from "react";
 import type { RectType, ArrowType, ToolType, ShapeType, TodoType, LineType, SelectionRectType } from "./types";
 import type { DragEventWithSource } from "./eventTypes";
-import ArrowShape from "./ArrowShape";
+import ArrowLayer from "./ArrowLayer";
 import { handleDragStart, handleDragMove, handleDragEnd, handleStageDragStart, handleStageDragEnd }
   from "./utilities/DragHandler";
 import { arrowMovement } from "./utilities/ArrowFunction.ts";
@@ -15,7 +15,6 @@ import { handleStageMouseDown, handleStageMouseMove, handleStageMouseUp } from "
 import LineLayer from "./LineLayer.tsx";
 import { handleEraseLinesMouseMove, handleEraseLinesMouseDown, handleEraseLinesMouseUp } from "./canvas_tools/eraseTool.ts";
 import { handleSelectMouseDown, handleSelectMouseMove, handleSelectMouseUp, handleStageSelectClick, handleTransfromEnd } from "./canvas_tools/selectTool.ts";
-import type { KonvaEventObject } from "konva/lib/Node";
 
 interface Props {
   shapes: ShapeType[];
@@ -274,7 +273,7 @@ const ShapeCanvas = ({ shapes = [], setShapes, tool, setTool, setZoomValue, zoom
         style={{ cursor: changeCursor(tool) }}
       >
         <Layer ref={arrowLayer}>
-          <ArrowShape connectors={connectors} mainLayer={mainLayer} />
+          <ArrowLayer connectors={connectors} mainLayer={mainLayer} />
         </Layer>
 
         <LineLayer

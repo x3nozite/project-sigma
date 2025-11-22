@@ -257,7 +257,7 @@ const ShapeCanvas = ({ shapes = [], setShapes, tool, setTool, setZoomValue, zoom
         }}
         onMouseMove={() => {
           if (tool === "draw") handleStageMouseMove(stageRef.current, tool, setShapes, mouseHeldDown);
-          if (tool === "eraser") handleEraseLinesMouseMove(stageRef, tool, lineLayer, setShapes, mouseHeldDown);
+          if (tool === "eraser") handleEraseLinesMouseMove(stageRef, tool, setShapes, mouseHeldDown);
           if (tool === "select") handleSelectMouseMove(stageRef, isSelecting, selectionRectangle, setSelectionRectangle);
         }}
         onMouseUp={() => {

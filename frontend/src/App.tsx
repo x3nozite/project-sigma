@@ -11,6 +11,7 @@ import type {
 } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
 import TaskForm from "./components/forms/TaskForm";
+import TodoForm, { type todoFields } from "./components/forms/TodoForm";
 import type { taskFields } from "./components/forms/TaskForm";
 import { useNavigate } from "react-router-dom";
 import { useSession } from "./context/SessionContext";
@@ -43,6 +44,7 @@ import {
 } from "./services/DBFunction";
 import { useIndexedDBInit } from "./services/useIndexedDb";
 import { useAutosaveCanvas } from "./services/autosaveCanvas";
+import Todo from "./components/Shapes/Todo";
 
 function App() {
   const { init } = useIndexedDBInit();
@@ -51,6 +53,7 @@ function App() {
   const [instruments, _setInstruments] = useState<any[]>([]);
   const [zoomValue, setZoomValue] = useState(100);
   const [showForm, setShowForm] = useState(false);
+  const [showTodoForm, setShowTodoForm] = useState(false);
   const [shapes, setShapes] = useState<ShapeType[]>([]);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
   const [tool, setTool] = useState<ToolType>("select");
@@ -58,6 +61,7 @@ function App() {
   const idCounter = useRef(0);
   const navigate = useNavigate();
   const [selectedShape, setSelectedShape] = useState<ShapeType | null>(null);
+  const [selectedParent, setSelectedParent] = useState<RectType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [currentCanvasId, setCurrentCanvasId] = useState<string | null>(null);
@@ -125,6 +129,15 @@ function App() {
   //   setInstruments(data ?? []);
   // }
 
+  const openTodoForm = (parent: RectType | null) => {
+    setSelectedParent(parent);
+    setShowTodoForm(true);
+  };
+
+  const closeTodoForm = () => {
+    setShowTodoForm(false);
+  };
+
   const openForm = (shape: ShapeType | null) => {
     setSelectedShape(shape);
     setShowForm(true);
@@ -135,16 +148,16 @@ function App() {
     setShowForm(false);
   };
 
-  const addTodo = (parent?: RectType) => {
+  const addTodo = (newFields: todoFields, parent: RectType | null) => {
     console.log(parent ? parent.id : "no parent");
 
-    const iso = new Date("March 30, 2026").toISOString();
+    const iso = new Date(newFields.date).toISOString();
 
     const newTodo: TodoType = {
       id: "todo-" + Date.now().toString(),
       x: parent ? parent.x + 600 : 100,
       y: parent ? parent.y : 100,
-      color: parent ? parent.color : "#00bc7d", // default is green
+      color: parent ? parent.color : newFields.color, // default is green
       isCollapsed: false,
       scaleX: 1,
       scaleY: 1,
@@ -152,11 +165,12 @@ function App() {
       behavior: "node",
       width: 400,
       height: 75,
-      title: "Something-something",
-      description: "Even more things",
+      title: newFields.title,
+      description: "",
       dueDate: iso,
-      completed: false,
-      owner: session ? session.user.user_metadata.name : "Guest",
+      completed: newFields.completed,
+      // assignee: session ? session.user.user_metadata.name : "Guest",
+      assignee: newFields.assignee,
       status: "Something",
       parents: parent ? parent.id : "",
     };
@@ -196,12 +210,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-            ...r,
-            title: newData.title,
-            description: newData.description,
-            color: newData.color,
-            dueDate: newData.date,
-          }
+              ...r,
+              title: newData.title,
+              description: newData.description,
+              color: newData.color,
+              dueDate: newData.date,
+            }
           : r
       )
     );
@@ -468,7 +482,7 @@ function App() {
             /> */}
             <AppToolbar
               onShapeClick={() => openForm(null)}
-              onTodoClick={addTodo}
+              onTodoClick={() => openTodoForm(null)}
               onEraserClick={toggleEraser}
               onClearClick={clearCanvas}
               onDrawClick={togglePencil}
@@ -767,6 +781,13 @@ function App() {
             </span>
           </button>
         </a>
+        {showTodoForm && (
+          <TodoForm
+            parent={selectedParent}
+            onAddTodo={addTodo}
+            onCloseForm={closeTodoForm}
+          />
+        )}
         {showForm && (
           <TaskForm
             onAddTask={addRect}
@@ -786,7 +807,7 @@ function App() {
           setConnectors={setConnectors}
           strokeColor={strokeColor}
           onShapeClick={openForm}
-          addTodo={addTodo}
+          onAddTodo={openTodoForm}
         />
       </div>
 

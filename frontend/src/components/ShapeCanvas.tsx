@@ -55,7 +55,7 @@ interface Props {
   strokeColor?: string;
   onShapeClick: (shape: ShapeType | null) => void;
   // add todo from rectangle
-  addTodo: (parent?: RectType) => void;
+  onAddTodo: (parent: RectType | null) => void;
 }
 
 const ShapeCanvas = ({
@@ -69,7 +69,7 @@ const ShapeCanvas = ({
   setConnectors,
   strokeColor = "#000",
   onShapeClick,
-  addTodo,
+  onAddTodo,
 }: Props) => {
   const mainLayer = useRef<Konva.Layer | null>(null!);
   const prevShape = useRef<Konva.Shape | null>(null!);
@@ -352,7 +352,15 @@ const ShapeCanvas = ({
         onDragEnd={(e) => handleStageDragEnd(e, mainLayer, arrowLayer)}
         onWheel={(e) => handleZoomWithScroll(stageRef, e, setZoomValue)}
         onMouseDown={(e) => {
-          if (tool === "draw") handleStageMouseDown(stageRef.current, tool, strokeColor, setShapes, setMouseHeldDown, idCounter);
+          if (tool === "draw")
+            handleStageMouseDown(
+              stageRef.current,
+              tool,
+              strokeColor,
+              setShapes,
+              setMouseHeldDown,
+              idCounter
+            );
           if (tool === "eraser") handleEraseLinesMouseDown(setMouseHeldDown);
           if (tool === "select")
             handleSelectMouseDown(
@@ -445,7 +453,7 @@ const ShapeCanvas = ({
             handleEraserClick={handleEraserClick}
             onShapeClick={onShapeClick}
             getBorder={getBorder}
-            addTodo={addTodo}
+            onAddTodo={onAddTodo}
           />
           <TodoLayer
             todos={shapes.filter(

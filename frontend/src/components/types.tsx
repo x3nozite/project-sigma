@@ -41,7 +41,7 @@ export type TodoType = BaseShape & {
   status: string;
   parents: string;
   completed: boolean;
-  owner: string;
+  assignee: string;
 };
 
 export type LineType = {

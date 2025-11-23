@@ -178,7 +178,7 @@ const Todo = ({
             />
             <Text x={60} y={32} text={formatted} />
             <Group>
-              <Text x={60} y={54} text={todo.owner} />
+              <Text x={60} y={54} text={"Assigned: " + todo.assignee} />
               <Group x={280} y={50}>
                 <Rect
                   width={110}

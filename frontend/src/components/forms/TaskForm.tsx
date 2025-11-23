@@ -34,25 +34,30 @@ export default function TaskForm({
   onCloseForm,
   initialData,
 }: Props) {
+  const today = new Date();
+  const formattedToday = today.toISOString().split("T")[0];
+
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
   } = useForm<taskFields>({
-    defaultValues: initialData && initialData.behavior === "node"
-      ? {
-        title: initialData.title,
-        description: initialData.description,
-        date: initialData.dueDate,
-        time: "09:11",
-      }
-      : {
-        title: "My New Subject",
-        // description: "abcedfghijkl",
-        date: "2025-10-11",
-        time: "06:07",
-      },
+    defaultValues:
+      initialData && initialData.behavior === "node"
+        ? {
+            title: initialData.title,
+            description: initialData.description,
+            date: initialData.dueDate,
+            time: "09:11",
+            color: initialData.color,
+          }
+        : {
+            title: "My New Subject",
+            // description: "abcedfghijkl",
+            date: formattedToday,
+            time: "06:07",
+          },
     resolver: zodResolver(schema),
   });
 

@@ -15,7 +15,7 @@ interface Props {
   handleEraserClick: (rectId: string) => void;
   onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   getBorder: (color: string) => string | undefined;
-  addTodo: (parent?: RectType) => void;
+  onAddTodo: (parent: RectType | null) => void;
 }
 
 const Rectangle = ({
@@ -30,7 +30,7 @@ const Rectangle = ({
   onShapeClick,
   onTransformEnd,
   getBorder,
-  addTodo,
+  onAddTodo,
 }: Props) => {
   // hover to show todo
   const [isHovered, setisHovered] = useState(false);
@@ -143,7 +143,7 @@ const Rectangle = ({
               fill="blue"
               onClick={(e) => {
                 e.cancelBubble = true;
-                addTodo(rect);
+                onAddTodo(rect);
               }}
             />
           </Group>

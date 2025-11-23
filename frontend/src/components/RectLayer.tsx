@@ -15,7 +15,7 @@ interface Props {
   onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   // briant added these
   getBorder: (color: string) => string | undefined;
-  addTodo: (parentId?: RectType) => void;
+  onAddTodo: (parent: RectType | null) => void;
 }
 
 const RectLayer = ({
@@ -30,7 +30,7 @@ const RectLayer = ({
   onShapeClick,
   onTransformEnd,
   getBorder,
-  addTodo,
+  onAddTodo,
 }: Props) => {
   return (
     <>
@@ -48,7 +48,7 @@ const RectLayer = ({
           handleEraserClick={handleEraserClick}
           onShapeClick={onShapeClick}
           getBorder={getBorder}
-          addTodo={addTodo}
+          onAddTodo={onAddTodo}
         />
       ))}
     </>

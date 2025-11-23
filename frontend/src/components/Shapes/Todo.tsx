@@ -32,8 +32,8 @@ const Todo = ({
 
   // Const Colors
   const inner = "#FDF6B2";
-  const bColor = "#008236";
-  const red = "#e7000b";
+  // const bColor = "#008236";
+  // const red = "#e7000b";
 
   // Change color to parent
   const borderColor = todo.color;

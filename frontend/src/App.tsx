@@ -163,7 +163,6 @@ function App() {
     setShapes([...shapes, newTodo]);
   };
 
-  const newId = idCounter.current;
   const addRect = (newTask: taskFields) => {
     idCounter.current += 1;
 

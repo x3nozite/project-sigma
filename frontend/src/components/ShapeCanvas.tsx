@@ -75,7 +75,6 @@ const ShapeCanvas = ({
   const prevShape = useRef<Konva.Shape | null>(null!);
   const tempLayer = useRef<Konva.Layer | null>(null!);
   const arrowLayer = useRef<Konva.Layer | null>(null!);
-  const lineLayer = useRef<Konva.Layer | null>(null);
   const stageRef = useRef<Konva.Stage | null>(null!);
 
   const [mouseHeldDown, setMouseHeldDown] = useState<boolean>(false);
@@ -412,20 +411,19 @@ const ShapeCanvas = ({
           <ArrowLayer connectors={connectors} mainLayer={mainLayer} />
         </Layer>
 
-        <LineLayer
-          lines={shapes.filter(
-            (s: ShapeType): s is LineType => s.shape === "line"
-          )}
-          ref={lineLayer}
-          onDragEnd={(e) => {
-            handleDragEnd(e, mainLayer, tool, prevShape, setShapes);
-          }}
-          onTransformEnd={(e) => {
-            handleTransfromEnd(e, setShapes);
-          }}
-        />
 
         <Layer ref={mainLayer}>
+          <LineLayer
+            lines={shapes.filter(
+              (s: ShapeType): s is LineType => s.shape === "line"
+            )}
+            onDragEnd={(e) => {
+              handleDragEnd(e, mainLayer, tool, prevShape, setShapes);
+            }}
+            onTransformEnd={(e) => {
+              handleTransfromEnd(e, setShapes);
+            }}
+          />
           <RectLayer
             shapes={shapes.filter(
               (s: ShapeType): s is RectType => s.shape === "rect"

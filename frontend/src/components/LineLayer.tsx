@@ -1,7 +1,6 @@
-import { Layer, Line } from "react-konva"
+import { Line } from "react-konva"
 import Konva from "konva";
 import type { LineType } from "./types";
-import { forwardRef } from "react";
 
 interface Props {
   lines: LineType[];
@@ -9,31 +8,28 @@ interface Props {
   onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
 }
 
-const LineLayer = forwardRef<Konva.Layer, Props>(
-  ({ lines, onDragEnd, onTransformEnd }, ref) => {
+const LineLayer = ({ lines, onDragEnd, onTransformEnd }: Props) => {
 
-    return (
-      <Layer
-        ref={ref}
-      >
-        {lines.map(ln => (
-          <Line
-            key={ln.id}
-            id={"group-" + ln.id}
-            points={ln.points}
-            stroke={ln.stroke}
-            strokeWidth={ln.strokeWidth}
-            lineCap="round"
-            lineJoin="round"
-            globalCompositeOperation="source-over"
-            draggable
-            onDragEnd={onDragEnd}
-            onTransformEnd={onTransformEnd}
-          />
-        ))}
-      </Layer>
-    )
-  }
-)
+  return (
+    <>
+      {lines.map(ln => (
+        <Line
+          key={ln.id}
+          id={"group-" + ln.id}
+          points={ln.points}
+          stroke={ln.stroke}
+          strokeWidth={ln.strokeWidth}
+          lineCap="round"
+          lineJoin="round"
+          globalCompositeOperation="source-over"
+          draggable
+          onDragEnd={onDragEnd}
+          onTransformEnd={onTransformEnd}
+        />
+      ))}
+    </>
+  )
+}
+
 
 export default LineLayer

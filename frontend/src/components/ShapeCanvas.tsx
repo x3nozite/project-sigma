@@ -353,15 +353,7 @@ const ShapeCanvas = ({
         onDragEnd={(e) => handleStageDragEnd(e, mainLayer, arrowLayer)}
         onWheel={(e) => handleZoomWithScroll(stageRef, e, setZoomValue)}
         onMouseDown={(e) => {
-          if (tool === "draw")
-            handleStageMouseDown(
-              stageRef.current,
-              tool,
-              strokeColor,
-              setShapes,
-              setMouseHeldDown,
-              idCounter
-            );
+          if (tool === "draw") handleStageMouseDown(stageRef.current, tool, strokeColor, setShapes, setMouseHeldDown, idCounter);
           if (tool === "eraser") handleEraseLinesMouseDown(setMouseHeldDown);
           if (tool === "select")
             handleSelectMouseDown(
@@ -399,7 +391,8 @@ const ShapeCanvas = ({
               selectionRectangle,
               setSelectionRectangle,
               setSelectedIds,
-              shapes
+              shapes,
+              mainLayer
             );
         }}
         onClick={(e) => {

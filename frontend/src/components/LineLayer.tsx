@@ -17,7 +17,7 @@ const LineLayer = forwardRef<Konva.Layer, Props>(
         {lines.map(ln => (
           <Line
             key={ln.id}
-            id={ln.id}
+            id={"group-" + ln.id}
             points={ln.points}
             stroke={ln.stroke}
             strokeWidth={ln.strokeWidth}

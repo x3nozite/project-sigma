@@ -171,7 +171,7 @@ function App() {
 
     const newRect: RectType = {
       shape: "rect",
-      id: "rect-" + newId,
+      id: "rect-" + Date.now().toString(),
       behavior: "node",
       x: 100,
       y: 100,
@@ -197,12 +197,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-              ...r,
-              title: newData.title,
-              description: newData.description,
-              color: newData.color,
-              dueDate: newData.date,
-            }
+            ...r,
+            title: newData.title,
+            description: newData.description,
+            color: newData.color,
+            dueDate: newData.date,
+          }
           : r
       )
     );

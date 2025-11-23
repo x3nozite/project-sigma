@@ -98,7 +98,7 @@ const ShapeCanvas = ({
       ...connectors,
       {
         shape: "connector",
-        id: "connector-" + connectors.length,
+        id: "connector-" + Date.now().toString(),
         from: from.id(),
         to: to.id(),
       },

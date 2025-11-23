@@ -63,6 +63,16 @@ export function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: R
         x: e.target.x(),
         y: e.target.y()
       };
+    } else if (index !== -1 && newShapes[index].shape === "line") {
+      const lines = e.target as Konva.Line;
+
+      const dx = lines.x();
+      const dy = lines.y();
+      newShapes[index] = {
+        ...newShapes[index], points: newShapes[index].points.map((p, i) => (i % 2 === 0 ? p + dx : p + dy))
+      };
+
+      lines.x(0); lines.y(0);
     }
     return newShapes;
   })

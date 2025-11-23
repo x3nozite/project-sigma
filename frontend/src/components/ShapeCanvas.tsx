@@ -417,6 +417,12 @@ const ShapeCanvas = ({
             (s: ShapeType): s is LineType => s.shape === "line"
           )}
           ref={lineLayer}
+          onDragEnd={(e) => {
+            handleDragEnd(e, mainLayer, tool, prevShape, setShapes);
+          }}
+          onTransformEnd={(e) => {
+            handleTransfromEnd(e, setShapes);
+          }}
         />
 
         <Layer ref={mainLayer}>

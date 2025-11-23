@@ -5,10 +5,12 @@ import { forwardRef } from "react";
 
 interface Props {
   lines: LineType[];
+  onDragEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
+  onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
 }
 
 const LineLayer = forwardRef<Konva.Layer, Props>(
-  ({ lines }, ref) => {
+  ({ lines, onDragEnd, onTransformEnd }, ref) => {
 
     return (
       <Layer
@@ -24,6 +26,9 @@ const LineLayer = forwardRef<Konva.Layer, Props>(
             lineCap="round"
             lineJoin="round"
             globalCompositeOperation="source-over"
+            draggable
+            onDragEnd={onDragEnd}
+            onTransformEnd={onTransformEnd}
           />
         ))}
       </Layer>

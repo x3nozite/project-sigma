@@ -280,7 +280,21 @@ const ShapeCanvas = ({
       const bbox = boundBoxRef.current;
       bbox?.hide();
     }
-  }, [selectedIds])
+
+    if (tool !== "select") {
+      transformerRef.current?.nodes([]);
+      const bbox = boundBoxRef.current;
+      bbox?.hide();
+    }
+  }, [selectedIds, tool])
+
+
+  useEffect(() => {
+    // When switching away from select → clear the selection
+    if (tool !== "select") {
+      setSelectedIds([]);
+    }
+  }, [tool]);
 
   const checkParentVisible = (shape: ShapeType) => {
     if (shape.behavior !== "node") return;

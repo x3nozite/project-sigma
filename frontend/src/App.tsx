@@ -55,7 +55,7 @@ function App() {
   const [showTodoForm, setShowTodoForm] = useState(false);
   const [shapes, setShapes] = useState<ShapeType[]>([]);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
-  const [tool, setTool] = useState<ToolType>("select");
+  const [tool, setTool] = useState<ToolType>("hand");
   const [strokeColor, setStrokeColor] = useState<string>("#000000");
   const idCounter = useRef(0);
   const navigate = useNavigate();

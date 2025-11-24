@@ -44,7 +44,6 @@ import {
 } from "./services/DBFunction";
 import { useIndexedDBInit } from "./services/useIndexedDb";
 import { useAutosaveCanvas } from "./services/autosaveCanvas";
-import Todo from "./components/Shapes/Todo";
 
 function App() {
   const { init } = useIndexedDBInit();
@@ -210,12 +209,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-              ...r,
-              title: newData.title,
-              description: newData.description,
-              color: newData.color,
-              dueDate: newData.date,
-            }
+            ...r,
+            title: newData.title,
+            description: newData.description,
+            color: newData.color,
+            dueDate: newData.date,
+          }
           : r
       )
     );

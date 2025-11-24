@@ -1,10 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { use, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { z } from "zod";
-import type { RectType, ShapeType } from "../types";
-import type { Session } from "react-router-dom";
+import type { RectType } from "../types";
 
 const schema = z.object({
   title: z
@@ -30,7 +29,7 @@ export default function TodoForm({ onAddTodo, parent, onCloseForm }: Props) {
     register,
     handleSubmit,
     setError,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<todoFields>({
     defaultValues: {
       title: "My Newest Todo",

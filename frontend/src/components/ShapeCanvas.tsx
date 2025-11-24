@@ -58,6 +58,8 @@ interface Props {
   onAddTodo: (parent: RectType | null) => void;
 }
 
+const bbox_id = "1234567890";
+
 const ShapeCanvas = ({
   shapes = [],
   setShapes,
@@ -91,6 +93,7 @@ const ShapeCanvas = ({
     });
   const isSelecting = useRef(false);
   const transformerRef = useRef<Konva.Transformer>(null);
+  const boundBoxRef = useRef<Konva.Rect>(null);
 
   const addConnector = (from: Konva.Node, to: Konva.Node) => {
     setConnectors([
@@ -224,14 +227,6 @@ const ShapeCanvas = ({
       });
     });
 
-    //update transformer when selection changes
-    if (selectedIds.length && transformerRef.current) {
-      const nodes = selectedIds
-        .map((id) => stageRef.current?.findOne<Konva.Shape>(`#group-${id}`))
-        .filter(Boolean) as Konva.Rect[];
-
-      transformerRef.current.nodes(nodes);
-    } else if (transformerRef.current) transformerRef.current.nodes([]);
 
     function handleKeyDown(e: KeyboardEvent) {
       switch (e.key) {
@@ -260,6 +255,32 @@ const ShapeCanvas = ({
       window.removeEventListener("keydown", handleKeyDown);
     };
   });
+
+  useEffect(() => {
+    //update transformer when selection changes
+    if (selectedIds.length && transformerRef.current) {
+      const nodes = selectedIds
+        .map((id) => stageRef.current?.findOne<Konva.Shape>(`#group-${id}`))
+        .filter(Boolean) as Konva.Rect[];
+
+      transformerRef.current.nodes(nodes);
+      const bbox = boundBoxRef.current;
+      if (!bbox) return;
+      bbox.show();
+      bbox.x(transformerRef.current.x());
+      bbox.y(transformerRef.current.y());
+      bbox.width(transformerRef.current.width());
+      bbox.height(transformerRef.current.height());
+
+      const currentNodes = transformerRef.current.nodes();
+      transformerRef.current.nodes([...currentNodes, bbox]);
+    } else if (transformerRef.current) {
+      transformerRef.current.nodes([]);
+      console.log("2");
+      const bbox = boundBoxRef.current;
+      bbox?.hide();
+    }
+  }, [selectedIds])
 
   const checkParentVisible = (shape: ShapeType) => {
     if (shape.behavior !== "node") return;
@@ -474,6 +495,12 @@ const ShapeCanvas = ({
             }}
             handleEraserClick={handleEraserClick}
             getBorder={getBorder}
+          />
+          <Rect
+            id={bbox_id}
+            ref={boundBoxRef}
+            fill="transparent"
+            draggable={true}
           />
         </Layer>
         <Layer ref={tempLayer}></Layer>

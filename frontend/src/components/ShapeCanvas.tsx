@@ -275,24 +275,15 @@ const ShapeCanvas = ({
       bbox.scaleX(1);
       bbox.scaleY(1);
 
-      console.log(bbox.x());
-      console.log(bbox.y());
-      console.log(transformerRef.current.x());
-      console.log(transformerRef.current.y());
-      console.log(nodes[0].x());
-      console.log(nodes[0].y());
       const currentNodes = transformerRef.current.nodes();
       transformerRef.current.nodes([...currentNodes, bbox]);
     } else if (transformerRef.current) {
       transformerRef.current.nodes([]);
-      console.log("2");
       const bbox = boundBoxRef.current;
       bbox?.scaleX(1);
       bbox?.scaleY(1);
       bbox?.hide();
     }
-
-    console.log(transformerRef.current?.nodes());
 
     if (tool !== "select") {
       transformerRef.current?.nodes([]);
@@ -394,6 +385,8 @@ const ShapeCanvas = ({
       <Stage
         width={window.innerWidth}
         height={window.innerHeight}
+        x={stageCoor.x}
+        y={stageCoor.y}
         ref={stageRef}
         draggable={tool === "hand"}
         onWheel={(e) => handleZoomWithScroll(stageRef, e, setZoomValue)}
@@ -472,6 +465,12 @@ const ShapeCanvas = ({
 
 
         <Layer ref={mainLayer}>
+          <Rect
+            id={bbox_id}
+            ref={boundBoxRef}
+            fill="transparent"
+            draggable={true}
+          />
           <LineLayer
             lines={shapes.filter(
               (s: ShapeType): s is LineType => s.shape === "line"
@@ -525,12 +524,6 @@ const ShapeCanvas = ({
             }}
             handleEraserClick={handleEraserClick}
             getBorder={getBorder}
-          />
-          <Rect
-            id={bbox_id}
-            ref={boundBoxRef}
-            fill="transparent"
-            draggable={true}
           />
         </Layer>
         <Layer ref={tempLayer}></Layer>

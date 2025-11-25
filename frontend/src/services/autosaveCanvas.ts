@@ -11,7 +11,6 @@ export function useAutosaveCanvas<T>(
     // Clear previous timer
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
-      console.log("saved");
     }
 
     // Start new timer

@@ -15,8 +15,6 @@ import {
   handleDragStart,
   handleDragMove,
   handleDragEnd,
-  handleStageDragStart,
-  handleStageDragEnd,
 } from "./utilities/DragHandler";
 import { arrowMovement } from "./utilities/ArrowFunction.ts";
 import RectLayer from "./RectLayer";
@@ -78,6 +76,7 @@ const ShapeCanvas = ({
   const tempLayer = useRef<Konva.Layer | null>(null!);
   const arrowLayer = useRef<Konva.Layer | null>(null!);
   const stageRef = useRef<Konva.Stage | null>(null!);
+  const [stageCoor, setStageCoor] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
 
   const [mouseHeldDown, setMouseHeldDown] = useState<boolean>(false);
   const idCounter = useRef(1);
@@ -264,29 +263,43 @@ const ShapeCanvas = ({
         .filter(Boolean) as Konva.Rect[];
 
       transformerRef.current.nodes(nodes);
+
       const bbox = boundBoxRef.current;
       if (!bbox) return;
+
       bbox.show();
-      bbox.x(transformerRef.current.x());
-      bbox.y(transformerRef.current.y());
+      bbox.x(transformerRef.current.x() - stageCoor.x);
+      bbox.y(transformerRef.current.y() - stageCoor.y);
       bbox.width(transformerRef.current.width());
       bbox.height(transformerRef.current.height());
+      bbox.scaleX(1);
+      bbox.scaleY(1);
 
+      console.log(bbox.x());
+      console.log(bbox.y());
+      console.log(transformerRef.current.x());
+      console.log(transformerRef.current.y());
+      console.log(nodes[0].x());
+      console.log(nodes[0].y());
       const currentNodes = transformerRef.current.nodes();
       transformerRef.current.nodes([...currentNodes, bbox]);
     } else if (transformerRef.current) {
       transformerRef.current.nodes([]);
       console.log("2");
       const bbox = boundBoxRef.current;
+      bbox?.scaleX(1);
+      bbox?.scaleY(1);
       bbox?.hide();
     }
+
+    console.log(transformerRef.current?.nodes());
 
     if (tool !== "select") {
       transformerRef.current?.nodes([]);
       const bbox = boundBoxRef.current;
       bbox?.hide();
     }
-  }, [selectedIds, tool])
+  }, [selectedIds, tool, stageCoor])
 
 
   useEffect(() => {
@@ -383,8 +396,6 @@ const ShapeCanvas = ({
         height={window.innerHeight}
         ref={stageRef}
         draggable={tool === "hand"}
-        onDragStart={(e) => handleStageDragStart(e, mainLayer, arrowLayer)}
-        onDragEnd={(e) => handleStageDragEnd(e, mainLayer, arrowLayer)}
         onWheel={(e) => handleZoomWithScroll(stageRef, e, setZoomValue)}
         onMouseDown={(e) => {
           if (tool === "draw")
@@ -434,7 +445,8 @@ const ShapeCanvas = ({
               setSelectionRectangle,
               setSelectedIds,
               shapes,
-              mainLayer
+              mainLayer,
+              stageCoor
             );
         }}
         onClick={(e) => {
@@ -449,6 +461,10 @@ const ShapeCanvas = ({
         scaleX={zoom / 100}
         scaleY={zoom / 100}
         style={{ cursor: changeCursor(tool) }}
+        onDragEnd={() => {
+          if (!stageRef.current) return;
+          setStageCoor({ x: stageRef.current.x(), y: stageRef.current.y() });
+        }}
       >
         <Layer ref={arrowLayer}>
           <ArrowLayer connectors={connectors} mainLayer={mainLayer} />

@@ -69,7 +69,7 @@ export const handleSelectMouseMove = (stageRef: RefObject<Konva.Stage | null>, i
   })
 };
 
-export const handleSelectMouseUp = (isSelecting: RefObject<boolean>, selectionRectangle: SelectionRectType, setSelectionRectangle: React.Dispatch<React.SetStateAction<SelectionRectType>>, setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>, shapes: ShapeType[], mainLayer: RefObject<Konva.Layer | null>) => {
+export const handleSelectMouseUp = (isSelecting: RefObject<boolean>, selectionRectangle: SelectionRectType, setSelectionRectangle: React.Dispatch<React.SetStateAction<SelectionRectType>>, setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>, shapes: ShapeType[], mainLayer: RefObject<Konva.Layer | null>, stageCoor: { x: number, y: number }) => {
   if (!isSelecting.current) return;
   isSelecting.current = false;
 
@@ -81,8 +81,8 @@ export const handleSelectMouseUp = (isSelecting: RefObject<boolean>, selectionRe
   });
 
   const selBox = {
-    x: Math.min(selectionRectangle.x1, selectionRectangle.x2),
-    y: Math.min(selectionRectangle.y1, selectionRectangle.y2),
+    x: Math.min(selectionRectangle.x1, selectionRectangle.x2) + stageCoor.x,
+    y: Math.min(selectionRectangle.y1, selectionRectangle.y2) + stageCoor.y,
     width: Math.abs(selectionRectangle.x2 - selectionRectangle.x1),
     height: Math.abs(selectionRectangle.y2 - selectionRectangle.y1),
   };

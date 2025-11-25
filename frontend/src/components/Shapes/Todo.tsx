@@ -127,7 +127,7 @@ const Todo = ({
       scalingX={todo.scaleX ?? 1}
       scalingY={todo.scaleY ?? 1}
       scaleX={todo.scaleX ?? 1}
-      scaley={todo.scaleY ?? 1}
+      scaleY={todo.scaleY ?? 1}
       onMouseEnter={() => {
         if (tool === "hand") setisHovered(true);
       }}

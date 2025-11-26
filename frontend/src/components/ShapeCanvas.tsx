@@ -389,7 +389,7 @@ const ShapeCanvas = ({
         ref={stageRef}
         draggable={tool === "hand"}
         onWheel={(e) => handleZoomWithScroll(stageRef, e, setZoomValue)}
-        onMouseDown={(e) => {
+        onPointerDown={(e) => {
           if (tool === "draw")
             handleStageMouseDown(
               stageRef.current,
@@ -407,7 +407,7 @@ const ShapeCanvas = ({
               setSelectionRectangle
             );
         }}
-        onMouseMove={() => {
+        onPointerMove={() => {
           if (tool === "draw")
             handleStageMouseMove(
               stageRef.current,
@@ -425,7 +425,7 @@ const ShapeCanvas = ({
               setSelectionRectangle
             );
         }}
-        onMouseUp={() => {
+        onPointerUp={() => {
           if (tool === "draw")
             handleStageMouseUp(mouseHeldDown, setMouseHeldDown);
           if (tool === "eraser") handleEraseLinesMouseUp(setMouseHeldDown);

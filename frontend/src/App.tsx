@@ -176,7 +176,6 @@ function App() {
   };
 
   const addRect = (newTask: taskFields) => {
-
     setTool("hand");
 
     const newRect: RectType = {
@@ -207,12 +206,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-            ...r,
-            title: newData.title,
-            description: newData.description,
-            color: newData.color,
-            dueDate: newData.date,
-          }
+              ...r,
+              title: newData.title,
+              description: newData.description,
+              color: newData.color,
+              dueDate: newData.date,
+            }
           : r
       )
     );
@@ -237,7 +236,6 @@ function App() {
     if (!response.success) {
       console.error("Failed to delete canvas from supabase", response.error);
     }
-
   };
   // if (!session) {
   //   return <Auth supabase={supabase} appearance={{ theme: ThemeSupa }}></Auth>
@@ -367,33 +365,85 @@ function App() {
                   </DropdownMenu.Item>
                   <DropdownMenu.Item
                     className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700"
-                    onClick={() => setShowCanvasList(!showCanvasList)}
+                    onSelect={(event: Event) => event.preventDefault()}
                   >
-                    <div className="flex items-center gap-2">
-                      <HiOutlineFolderOpen />
-                      My Canvases ({canvasList.length})
-                    </div>
-                  </DropdownMenu.Item>
-
-                  {showCanvasList &&
-                    canvasList.map((canvas) => (
-                      <DropdownMenu.Item key={canvas.canvas_id}>
-                        <div
-                          onClick={() => handleSwitchCanvas(canvas.canvas_id)}
-                          className={
-                            currentCanvasId === canvas.canvas_id
-                              ? "bg-blue-100"
-                              : ""
-                          }
-                        >
-                          <HiOutlineFolder className="w-4 h-4 mr-2" />
-                          <span>{canvas.canvas_name || "Untitled"}</span>
-                          {currentCanvasId === canvas.canvas_id && (
-                            <HiOutlineCheck className="w-4 h-4 ml-auto" />
-                          )}
+                    <AlertDialog.Root>
+                      <AlertDialog.Trigger asChild>
+                        <div className="flex items-center gap-2 w-full">
+                          <HiOutlineFolderOpen />
+                          My Canvases ({canvasList.length})
                         </div>
-                      </DropdownMenu.Item>
-                    ))}
+                      </AlertDialog.Trigger>
+                      <AlertDialog.Portal>
+                        <AlertDialog.Overlay className="fixed bg-black opacity-50 inset-0 z-100" />
+                        <AlertDialog.Content className="bg-white min-w-md max-w-2xl fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg z-101 max-h-96 overflow-y-auto">
+                          <AlertDialog.Title className="text-xl font-bold mb-4 flex items-center gap-2">
+                            <HiOutlineFolderOpen />
+                            My Canvases
+                          </AlertDialog.Title>
+                          <AlertDialog.Description className="my-4">
+                            <div className="grid grid-cols-1 gap-3">
+                              {canvasList.length === 0 ? (
+                                <p className="text-gray-500 text-center py-8">
+                                  No canvases yet. Create your first one!
+                                </p>
+                              ) : (
+                                canvasList.map((canvas) => (
+                                  <div
+                                    key={canvas.canvas_id}
+                                    onClick={() => {
+                                      handleSwitchCanvas(canvas.canvas_id);
+                                    }}
+                                    className={`
+                                        flex items-center justify-between p-4 rounded-lg border-2 
+                                        hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-all
+                                        ${
+                                          currentCanvasId === canvas.canvas_id
+                                            ? "bg-blue-100 border-blue-400"
+                                            : "bg-gray-50 border-gray-200"
+                                        }
+                                      `}
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <HiOutlineFolder className="w-5 h-5 text-blue-600" />
+                                      <div>
+                                        <span className="font-medium text-gray-800">
+                                          {canvas.canvas_name || "Untitled"}
+                                        </span>
+                                        {canvas.created_at && (
+                                          <p className="text-xs text-gray-500 mt-1">
+                                            Created:{" "}
+                                            {new Date(
+                                              canvas.created_at
+                                            ).toLocaleDateString()}
+                                          </p>
+                                        )}
+                                      </div>
+                                    </div>
+                                    {currentCanvasId === canvas.canvas_id && (
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-xs text-blue-600 font-medium">
+                                          Current
+                                        </span>
+                                        <HiOutlineCheck className="w-5 h-5 text-blue-600" />
+                                      </div>
+                                    )}
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                          </AlertDialog.Description>
+                          <div className="flex justify-end mt-6">
+                            <AlertDialog.Cancel asChild>
+                              <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                                Close
+                              </button>
+                            </AlertDialog.Cancel>
+                          </div>
+                        </AlertDialog.Content>
+                      </AlertDialog.Portal>
+                    </AlertDialog.Root>
+                  </DropdownMenu.Item>
 
                   <DropdownMenu.Item className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700">
                     <div className="flex items-center gap-2">

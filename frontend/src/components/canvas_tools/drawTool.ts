@@ -11,7 +11,7 @@ export function getRelativePointerPosition(stage: Konva.Stage | null) {
   return transform.point(pointer);
 }
 
-export function handleStageMouseDown(stage: Konva.Stage | null, tool: ToolType, strokeColor: string, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, setIsDrawing: React.Dispatch<React.SetStateAction<boolean>>, idCounter: RefObject<number>) {
+export function handleStageMouseDown(stage: Konva.Stage | null, tool: ToolType, strokeColor: string, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, setIsDrawing: React.Dispatch<React.SetStateAction<boolean>>) {
   if (tool !== "draw") return;
   const pos = getRelativePointerPosition(stage);
   if (!pos) return;
@@ -21,12 +21,11 @@ export function handleStageMouseDown(stage: Konva.Stage | null, tool: ToolType, 
     shape: "line",
     behavior: "decor",
     color: "black",
-    id: "line-" + idCounter.current,
+    id: "line-" + Date.now.toString(),
     points: [pos.x, pos.y],
     stroke: strokeColor,
     strokeWidth: 4
   };
-  idCounter.current++;
   setShapes((prev) => [...prev, newLine]);
 }
 

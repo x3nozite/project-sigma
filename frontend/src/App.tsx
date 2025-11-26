@@ -57,7 +57,6 @@ function App() {
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
   const [tool, setTool] = useState<ToolType>("hand");
   const [strokeColor, setStrokeColor] = useState<string>("#000000");
-  const idCounter = useRef(0);
   const navigate = useNavigate();
   const [selectedShape, setSelectedShape] = useState<ShapeType | null>(null);
   const [selectedParent, setSelectedParent] = useState<RectType | null>(null);
@@ -177,7 +176,6 @@ function App() {
   };
 
   const addRect = (newTask: taskFields) => {
-    idCounter.current += 1;
 
     setTool("hand");
 
@@ -240,7 +238,6 @@ function App() {
       console.error("Failed to delete canvas from supabase", response.error);
     }
 
-    idCounter.current = 0;
   };
   // if (!session) {
   //   return <Auth supabase={supabase} appearance={{ theme: ThemeSupa }}></Auth>
@@ -316,7 +313,6 @@ function App() {
       if (result.success && result.canvasId) {
         setShapes([]);
         setCurrentCanvasId(result.canvasId);
-        idCounter.current = 0;
 
         const listRes = await getUserCanvases(session.user.id);
         if (listRes.success) {

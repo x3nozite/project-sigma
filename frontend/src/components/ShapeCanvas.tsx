@@ -79,7 +79,6 @@ const ShapeCanvas = ({
   const [stageCoor, setStageCoor] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
 
   const [mouseHeldDown, setMouseHeldDown] = useState<boolean>(false);
-  const idCounter = useRef(1);
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectionRectangle, setSelectionRectangle] =
@@ -398,7 +397,6 @@ const ShapeCanvas = ({
               strokeColor,
               setShapes,
               setMouseHeldDown,
-              idCounter
             );
           if (tool === "eraser") handleEraseLinesMouseDown(setMouseHeldDown);
           if (tool === "select")

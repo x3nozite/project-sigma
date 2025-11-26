@@ -1,6 +1,6 @@
 import "./App.css";
 import BottomNav from "./components/BottomNav";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import ShapeCanvas from "./components/ShapeCanvas";
 import type {
   RectType,

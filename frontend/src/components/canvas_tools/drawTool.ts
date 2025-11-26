@@ -1,6 +1,6 @@
 import Konva from "konva";
 import type { LineType, ShapeType, ToolType } from "../types";
-import type { RefObject, SetStateAction } from "react";
+import type { SetStateAction } from "react";
 
 export function getRelativePointerPosition(stage: Konva.Stage | null) {
   if (!stage) return null;

@@ -272,10 +272,6 @@ const ShapeCanvas = ({
         const height = transformerRef.current.height() / stageRef.current.scaleY();
         const x = (transformerRef.current.x() - stageCoor.x) / stageRef.current.scaleX();
         const y = (transformerRef.current.y() - stageCoor.y) / stageRef.current.scaleY();
-        console.log("node x: ", nodes[0].x());
-        console.log("bbox x:", x);
-        console.log("transformer x: ", transformerRef.current.x());
-        console.log("stage x: ", stageCoor.x);
 
         bbox.show();
         bbox.x(x);

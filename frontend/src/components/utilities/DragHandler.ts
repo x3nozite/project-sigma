@@ -47,7 +47,7 @@ export function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: R
   const pointerPos = stage?.getPointerPosition();
   const shapeOnPointer = mainLayer.current?.getIntersection(pointerPos as Vector2d);
 
-  if (shapeOnPointer) {
+  if (shapeOnPointer && !shapeOnPointer.getAttr("temporary")) {
     prevShape.current?.fire("drop", { evt: e.evt, source: e.target }, true);
   }
   shape.moveTo(mainLayer.current);

@@ -21,7 +21,7 @@ export function handleStageMouseDown(stage: Konva.Stage | null, tool: ToolType, 
     shape: "line",
     behavior: "decor",
     color: "black",
-    id: "line-" + Date.now.toString(),
+    id: "line-" + Date.now().toString(),
     points: [pos.x, pos.y],
     stroke: strokeColor,
     strokeWidth: 4

@@ -87,10 +87,15 @@ export const handleSelectMouseUp = (isSelecting: RefObject<boolean>, selectionRe
     height: Math.abs(selectionRectangle.y2 - selectionRectangle.y1),
   };
 
+  const stage = mainLayer.current?.getStage();
+
   const selected = shapes.filter(shape => {
     if (shape.shape === "line") {
       const points = shape.points;
-      return lineIntersectsRect(points, selBox);
+      const stagePoints = points.map((p, i) =>
+        i % 2 === 0 ? p + stageCoor.x : p + stageCoor.y
+      );
+      return lineIntersectsRect(stagePoints, selBox);
     }
 
     if (!mainLayer.current) return;
@@ -98,7 +103,10 @@ export const handleSelectMouseUp = (isSelecting: RefObject<boolean>, selectionRe
     if (!node) return;
 
 
-    const s = node?.getClientRect();
+    const s = node?.getClientRect({ relativeTo: stage });
+    s.x += stageCoor.x;
+    s.y += stageCoor.y;
+
     if (!s) return;
     return Konva.Util.haveIntersection(selBox, s);
   });

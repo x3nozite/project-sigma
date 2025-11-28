@@ -263,24 +263,32 @@ const ShapeCanvas = ({
 
       transformerRef.current.nodes(nodes);
 
-      const bbox = boundBoxRef.current;
-      if (!bbox) return;
+      requestAnimationFrame(() => {
 
-      bbox.show();
-      bbox.x(transformerRef.current.x() - stageCoor.x);
-      bbox.y(transformerRef.current.y() - stageCoor.y);
-      bbox.width(transformerRef.current.width());
-      bbox.height(transformerRef.current.height());
-      bbox.scaleX(1);
-      bbox.scaleY(1);
+        const bbox = boundBoxRef.current;
+        if (!bbox || !stageRef.current || !transformerRef.current) return;
 
-      const currentNodes = transformerRef.current.nodes();
-      transformerRef.current.nodes([...currentNodes, bbox]);
+        const width = transformerRef.current.width() / stageRef.current.scaleX();
+        const height = transformerRef.current.height() / stageRef.current.scaleY();
+        const x = (transformerRef.current.x() - stageCoor.x) / stageRef.current.scaleX();
+        const y = (transformerRef.current.y() - stageCoor.y) / stageRef.current.scaleY();
+        console.log("node x: ", nodes[0].x());
+        console.log("bbox x:", x);
+        console.log("transformer x: ", transformerRef.current.x());
+        console.log("stage x: ", stageCoor.x);
+
+        bbox.show();
+        bbox.x(x);
+        bbox.y(y);
+        bbox.width(width);
+        bbox.height(height);
+
+        const currentNodes = transformerRef.current.nodes();
+        transformerRef.current.nodes([...currentNodes, bbox]);
+      })
     } else if (transformerRef.current) {
       transformerRef.current.nodes([]);
       const bbox = boundBoxRef.current;
-      bbox?.scaleX(1);
-      bbox?.scaleY(1);
       bbox?.hide();
     }
 
@@ -388,7 +396,11 @@ const ShapeCanvas = ({
         y={stageCoor.y}
         ref={stageRef}
         draggable={tool === "hand"}
-        onWheel={(e) => handleZoomWithScroll(stageRef, e, setZoomValue)}
+        onWheel={(e) => {
+          handleZoomWithScroll(stageRef, e, setZoomValue);
+          if (!stageRef.current) return;
+          setStageCoor({ x: stageRef.current.x(), y: stageRef.current.y() });
+        }}
         onPointerDown={(e) => {
           if (tool === "draw")
             handleStageMouseDown(
@@ -468,6 +480,7 @@ const ShapeCanvas = ({
             ref={boundBoxRef}
             fill="transparent"
             draggable={true}
+            temporary={true}
           />
           <LineLayer
             lines={shapes.filter(

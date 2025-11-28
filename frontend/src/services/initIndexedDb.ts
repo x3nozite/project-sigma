@@ -14,6 +14,11 @@ export const initIndexedDb = async (): Promise<boolean> => {
         console.log("create object store");
         db.createObjectStore("Canvas", { keyPath: "local_canvas" });
       }
+
+      if (!db.objectStoreNames.contains("Viewport")) {
+
+        db.createObjectStore("Viewport", { keyPath: "canvas_viewport" })
+      }
     };
 
     request.onsuccess = () => {

@@ -279,6 +279,9 @@ const ShapeCanvas = ({
         bbox.width(width);
         bbox.height(height);
 
+        bbox.scaleX(1);
+        bbox.scaleY(1);
+
         const currentNodes = transformerRef.current.nodes();
         transformerRef.current.nodes([...currentNodes, bbox]);
       })

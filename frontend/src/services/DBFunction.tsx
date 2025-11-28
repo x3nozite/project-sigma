@@ -123,6 +123,7 @@ export async function saveCanvas(
           updatedAt: Date.now()
         }
 
+
         request.onsuccess = () => {
           const db = request.result;
           const tx = db.transaction("Canvas", "readwrite");

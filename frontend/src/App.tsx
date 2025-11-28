@@ -1,6 +1,6 @@
 import "./App.css";
 import BottomNav from "./components/BottomNav";
-import { useEffect, useState } from "react";
+import { Children, useEffect, useState } from "react";
 import ShapeCanvas from "./components/ShapeCanvas";
 import type {
   RectType,
@@ -175,6 +175,13 @@ function App() {
     setShapes([...shapes, newTodo]);
 
     if (parent) {
+      setShapes(prev =>
+        prev.map(s =>
+          (s.shape === "rect" && s.id === parent.id)
+            ? { ...s, children: [...s.children, "group-" + newTodo.id] }
+            : s
+        )
+      )
       addConnector(newTodo, parent);
     }
   };

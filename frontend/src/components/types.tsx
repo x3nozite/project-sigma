@@ -52,6 +52,8 @@ export type LineType = {
   points: number[];
   stroke?: string;
   strokeWidth?: number;
+  scaleX: number;
+  scaleY: number;
 };
 
 export type SelectionRectType = {
@@ -62,6 +64,18 @@ export type SelectionRectType = {
   y2: number;
 };
 
+export type TextType = {
+  id: string;
+  x: number;
+  y: number;
+  fontSize: number;
+  text: string;
+  shape: string;
+  behavior: string;
+  scaleX: number;
+  scaleY: number;
+}
+
 export type ToolType = "hand" | "eraser" | "draw" | "select";
 
-export type ShapeType = RectType | TodoType | LineType;
+export type ShapeType = RectType | TodoType | LineType | TextType;

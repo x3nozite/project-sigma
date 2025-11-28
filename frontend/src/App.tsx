@@ -1,6 +1,6 @@
 import "./App.css";
 import BottomNav from "./components/BottomNav";
-import { Children, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ShapeCanvas from "./components/ShapeCanvas";
 import type {
   RectType,
@@ -227,6 +227,21 @@ function App() {
       },
     ]);
   };
+
+  const addText = () => {
+    const newText = {
+      id: "text-" + Date.now().toString(),
+      x: 100,
+      y: 100,
+      fontSize: 20,
+      text: "Placeholder Text",
+      shape: "text",
+      behavior: "decor",
+      scaleX: 1,
+      scaleY: 1
+    }
+    setShapes([...shapes, newText])
+  }
 
   const updateRect = (shape: ShapeType, newData: taskFields) => {
     setShapes((prev) =>
@@ -554,6 +569,7 @@ function App() {
             <AppToolbar
               onShapeClick={() => openForm(null)}
               onTodoClick={() => openTodoForm(null)}
+              onTextClick={addText}
               onEraserClick={toggleEraser}
               onClearClick={clearCanvas}
               onDrawClick={togglePencil}

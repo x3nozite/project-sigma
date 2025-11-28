@@ -16,6 +16,8 @@ const LineLayer = ({ lines, onDragEnd, onTransformEnd }: Props) => {
         <Line
           key={ln.id}
           id={"group-" + ln.id}
+          scaleX={ln.scaleX}
+          scaleY={ln.scaleY}
           points={ln.points}
           stroke={ln.stroke}
           strokeWidth={ln.strokeWidth}

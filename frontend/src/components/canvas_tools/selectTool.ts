@@ -103,7 +103,7 @@ export const handleSelectMouseUp = (isSelecting: RefObject<boolean>, selectionRe
     if (!node) return;
 
 
-    const s = node?.getClientRect({ relativeTo: stage });
+    const s = node.getClientRect({ relativeTo: stage });
     s.x += stageCoor.x;
     s.y += stageCoor.y;
 

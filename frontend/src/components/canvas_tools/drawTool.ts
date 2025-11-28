@@ -24,7 +24,9 @@ export function handleStageMouseDown(stage: Konva.Stage | null, tool: ToolType, 
     id: "line-" + Date.now().toString(),
     points: [pos.x, pos.y],
     stroke: strokeColor,
-    strokeWidth: 4
+    strokeWidth: 4,
+    scaleX: 1,
+    scaleY: 1
   };
   setShapes((prev) => [...prev, newLine]);
 }

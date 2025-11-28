@@ -8,6 +8,7 @@ import type {
   TodoType,
   LineType,
   SelectionRectType,
+  TextType,
 } from "./types";
 import type { DragEventWithSource } from "./eventTypes";
 import ArrowLayer from "./ArrowLayer";
@@ -40,6 +41,7 @@ import {
   handleStageSelectClick,
   handleTransfromEnd,
 } from "./canvas_tools/selectTool.ts";
+import TextLayer from "./TextLayer.tsx";
 
 interface Props {
   shapes: ShapeType[];
@@ -482,6 +484,9 @@ const ShapeCanvas = ({
             onTransformEnd={(e) => {
               handleTransfromEnd(e, setShapes);
             }}
+          />
+          <TextLayer
+            texts={shapes.filter((s: ShapeType): s is TextType => s.shape === "text")}
           />
           <RectLayer
             shapes={shapes.filter(

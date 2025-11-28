@@ -25,6 +25,9 @@ interface Props {
 }
 
 export default function TodoForm({ onAddTodo, parent, onCloseForm }: Props) {
+  const today = new Date();
+  const formattedToday = today.toISOString().split("T")[0];
+
   const {
     register,
     handleSubmit,
@@ -34,7 +37,7 @@ export default function TodoForm({ onAddTodo, parent, onCloseForm }: Props) {
     defaultValues: {
       title: "My Newest Todo",
       assignee: "Guest",
-      date: "2025-10-11",
+      date: formattedToday,
       completed: false,
     },
     resolver: zodResolver(schema),

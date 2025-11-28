@@ -64,7 +64,7 @@ function App() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [currentCanvasId, setCurrentCanvasId] = useState<string | null>(null);
   const [canvasList, setCanvasList] = useState<any[]>([]);
-  const [showCanvasList, setShowCanvasList] = useState(false);
+  //  const [showCanvasList, setShowCanvasList] = useState(false);
   // console.log(currentCanvasId);
 
   // console.log("App render - avatarUrl:", avatarUrl);
@@ -206,12 +206,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-              ...r,
-              title: newData.title,
-              description: newData.description,
-              color: newData.color,
-              dueDate: newData.date,
-            }
+            ...r,
+            title: newData.title,
+            description: newData.description,
+            color: newData.color,
+            dueDate: newData.date,
+          }
           : r
       )
     );
@@ -397,11 +397,10 @@ function App() {
                                     className={`
                                         flex items-center justify-between p-4 rounded-lg border-2 
                                         hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-all
-                                        ${
-                                          currentCanvasId === canvas.canvas_id
-                                            ? "bg-blue-100 border-blue-400"
-                                            : "bg-gray-50 border-gray-200"
-                                        }
+                                        ${currentCanvasId === canvas.canvas_id
+                                        ? "bg-blue-100 border-blue-400"
+                                        : "bg-gray-50 border-gray-200"
+                                      }
                                       `}
                                   >
                                     <div className="flex items-center gap-3">

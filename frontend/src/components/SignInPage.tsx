@@ -14,7 +14,7 @@ function SignIn() {
   const handleOAuthSignIn = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { data: _data, error } = await supabase.auth.signInWithOAuth({
         provider: "google"
       });
       if (error) {
@@ -22,19 +22,19 @@ function SignIn() {
         return;
       }
     } catch (error) {
-      console.error("cant sign in with google");
+      console.error("cant sign in with google: ", error);
     }
-    
+
   };
 
   const handleSignIn = async () => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error: _error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      
+
 
       alert("Login successful!");
       navigate("/");

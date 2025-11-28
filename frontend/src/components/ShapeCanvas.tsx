@@ -46,6 +46,7 @@ interface Props {
   setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>;
   connectors: ArrowType[];
   setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>;
+  addConnector: (from: Konva.Node, to: Konva.Node) => void;
   tool: ToolType;
   setTool: React.Dispatch<React.SetStateAction<ToolType>>;
   zoom: number;
@@ -67,6 +68,7 @@ const ShapeCanvas = ({
   zoom,
   connectors = [],
   setConnectors,
+  addConnector,
   strokeColor = "#000",
   onShapeClick,
   onAddTodo,
@@ -93,17 +95,6 @@ const ShapeCanvas = ({
   const transformerRef = useRef<Konva.Transformer>(null);
   const boundBoxRef = useRef<Konva.Rect>(null);
 
-  const addConnector = (from: Konva.Node, to: Konva.Node) => {
-    setConnectors([
-      ...connectors,
-      {
-        shape: "connector",
-        id: "connector-" + Date.now().toString(),
-        from: from.id(),
-        to: to.id(),
-      },
-    ]);
-  };
   useEffect(() => {
     if (!mainLayer.current) return;
 

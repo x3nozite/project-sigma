@@ -44,6 +44,7 @@ import {
 } from "./services/DBFunction";
 import { useIndexedDBInit } from "./services/useIndexedDb";
 import { useAutosaveCanvas } from "./services/autosaveCanvas";
+import Konva from "konva";
 
 function App() {
   const { init } = useIndexedDBInit();
@@ -147,7 +148,6 @@ function App() {
   };
 
   const addTodo = (newFields: todoFields, parent: RectType | null) => {
-    console.log(parent ? parent.id : "no parent");
 
     const iso = new Date(newFields.date).toISOString();
 
@@ -173,6 +173,10 @@ function App() {
       parents: parent ? parent.id : "",
     };
     setShapes([...shapes, newTodo]);
+
+    if (parent) {
+      addConnector(newTodo, parent);
+    }
   };
 
   const addRect = (newTask: taskFields) => {
@@ -199,6 +203,22 @@ function App() {
     };
 
     setShapes([...shapes, newRect]);
+  };
+
+  const addConnector = (from: Konva.Node | ShapeType, to: Konva.Node | ShapeType) => {
+
+    const fromId = (from instanceof Konva.Node) ? from.id() : "group-" + from.id;
+    const toId = (to instanceof Konva.Node) ? to.id() : "group-" + to.id;
+
+    setConnectors([
+      ...connectors,
+      {
+        shape: "connector",
+        id: "connector-" + Date.now().toString(),
+        from: fromId,
+        to: toId,
+      },
+    ]);
   };
 
   const updateRect = (shape: ShapeType, newData: taskFields) => {
@@ -848,6 +868,7 @@ function App() {
           setZoomValue={setZoomValue}
           zoom={zoomValue}
           connectors={connectors}
+          addConnector={addConnector}
           setConnectors={setConnectors}
           strokeColor={strokeColor}
           onShapeClick={openForm}

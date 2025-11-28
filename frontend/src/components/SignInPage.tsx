@@ -13,10 +13,18 @@ function SignIn() {
 
   const handleOAuthSignIn = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-
-    const { } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google"
+      });
+      if (error) {
+        console.error("cant handle oauth:", error);
+        return;
+      }
+    } catch (error) {
+      console.error("cant sign in with google");
+    }
+    
   };
 
   const handleSignIn = async () => {
@@ -26,10 +34,7 @@ function SignIn() {
         password,
       });
 
-      if (error) {
-        alert(error.message);
-        return;
-      }
+      
 
       alert("Login successful!");
       navigate("/");

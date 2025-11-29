@@ -108,8 +108,8 @@ function SignIn() {
     //     </div>
     //   </div>
     // </div>
-    <div className="main-container w-full h-screen grid grid-cols-3 items-center">
-      <div className="form-column h-full w-full px-40 pb-40 pt-20 bg-white flex flex-col items-center justify-center gap-4 col-span-2">
+    <div className="main-container w-full h-screen flex flex-col lg:grid lg:grid-cols-3 items-center">
+      <div className="form-column h-full w-full px-6 sm:px-10 lg:px-40 pb-10 lg:pb-40 pt-10 lg:pt-20 bg-white flex flex-col items-center justify-center gap-4 lg:col-span-2">
         <div className="lognav flex flex-col w-full items-center justify-center">
           <button
             onClick={() => navigate("/")}
@@ -125,7 +125,7 @@ function SignIn() {
             </span>
           </div>
         </div>
-        <div className="form-container w-full bg-white p-5 rounded-lg">
+        <div className="form-container w-full max-w-md bg-white p-5 rounded-lg">
           <div className="hero-text flex flex-col pb-5">
             <span className="text-3xl/10 font-bold">Sign In</span>
             <span className="text-md opacity-70">
@@ -194,7 +194,7 @@ function SignIn() {
           </div>
         </div>
       </div>
-      <div className="image-column bg-gray-200 h-full flex justify-center items-center">
+      <div className="image-column bg-gray-200 h-full hidden lg:flex justify-center items-center">
         <img src={loginimage} alt="" className="object-cover w-full h-full" />
       </div>
     </div>

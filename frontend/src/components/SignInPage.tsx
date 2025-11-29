@@ -109,21 +109,28 @@ function SignIn() {
     //   </div>
     // </div>
     <div className="main-container w-full h-screen flex flex-col lg:grid lg:grid-cols-3 items-center">
+      <div className="absolute top-4 left-4 z-50 flex items-center gap-2 bg-white/70 backdrop-blur-sm px-3 py-2 rounded-lg shadow hover:cursor-pointer" onClick={() => navigate("/")}>
+        <HiArrowLeft className="text-lg" />
+        <span className="font-medium text-sm">Go Back</span>
+      </div>
+
+      <div className="absolute top-20 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center text-white text-center lg:hidden">
+        <span className="text-3xl/12 font-bold drop-shadow-lg">MyTudus</span>
+        <span className="text-lg font-medium opacity-90 drop-shadow-md"> The all in one task management app</span>
+      </div>
+
+      <div className="image-column w-full aspect-[16/9] bg-gray-200 flex lg:hidden">
+        <img src={loginimage} alt="" className="object-cover w-full h-full" />
+      </div>
+
       <div className="form-column h-full w-full px-6 sm:px-10 lg:px-40 pb-10 lg:pb-40 pt-10 lg:pt-20 bg-white flex flex-col items-center justify-center gap-4 lg:col-span-2">
         <div className="lognav flex flex-col w-full items-center justify-center">
-          <button
-            onClick={() => navigate("/")}
-            className="text-start w-full inline-flex items-center gap-2 hover:cursor-pointer hover:underline"
-          >
-            <HiArrowLeft />
-            <span>Go Back</span>
-          </button>
-          <div className="my-company flex flex-col text-center">
+          {/* <div className="my-company flex flex-col text-center">
             <span className="text-3xl/12 font-bold">MyTudus</span>
             <span className="text-lg font-medium">
               The all in one task management app
             </span>
-          </div>
+          </div> */}
         </div>
         <div className="form-container w-full max-w-md bg-white p-5 rounded-lg">
           <div className="hero-text flex flex-col pb-5">

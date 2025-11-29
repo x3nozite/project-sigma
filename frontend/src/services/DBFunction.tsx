@@ -244,10 +244,12 @@ export async function loadCanvas(
       return { success: false, error: error.message };
     }
 
-    const shapes: ShapeType[] = data.filter((row) => row.shape_data["shape"] === "rect").map((row) => row.shape_data);
+    const rects: ShapeType[] = data.filter((row) => row.shape_data["shape"] === "rect").map((row) => row.shape_data);
+    const lines: ShapeType[] = data.filter((row) => row.shape_data["shape"] === "line").map((row) => row.shape_data);
     const connectors: ArrowType[] = data.filter((row) => row.shape_data["shape"] === "connector").map((row) => row.shape_data);
-    console.log("rects to load: ", shapes);
-    console.log("connectors to load: ", connectors);
+    const todos: ShapeType[] = data.filter((row) => row.shape_data["shape"] === "todo").map((row) => row.shape_data);
+    console.log("lines to load:",lines);
+    const shapes = [...rects, ...lines, ...todos];
 
     return { success: true, data: { shapes, connectors }, canvasId: targetCanvasId };
   } catch (error: any) {

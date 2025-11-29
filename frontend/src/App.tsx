@@ -91,6 +91,7 @@ function App() {
       if (!mounted) return;
 
       if (canvasRes.success) {
+        
         setShapes(canvasRes.data.shapes);
         setCurrentCanvasId(canvasRes.canvasId);
         setConnectors(canvasRes.data.connectors);
@@ -324,9 +325,9 @@ function App() {
       }
       const result = await loadCanvas(canvasId || null);
       if (result.success) {
+        
         setShapes(result.data.shapes);
         setConnectors(result.data.connectors);
-        console.log("after setting connectors: ", connectors);
         setCurrentCanvasId(result.canvasId);
         // console.log("Loaded", result.data.shapes.length, "shapes");
       } else {

@@ -70,8 +70,8 @@ export type TextType = {
   y: number;
   fontSize: number;
   text: string;
-  shape: string;
-  behavior: string;
+  shape: "text";
+  behavior: "decor";
   scaleX: number;
   scaleY: number;
 }

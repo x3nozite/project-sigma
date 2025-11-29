@@ -1,9 +1,5 @@
 import type { TextType } from "../types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import type { SubmitHandler } from "react-hook-form";
-import { registry, z } from "zod";
+import { z } from "zod";
 
 const schema = z.object({
   text: z.string(),

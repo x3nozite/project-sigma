@@ -40,7 +40,7 @@ export function handleStageMouseMove(stage: Konva.Stage | null, tool: ToolType, 
     if (prev.length === 0) return prev;
     const last = prev[prev.length - 1];
 
-    if (last.behavior !== "decor") return prev;
+    if (last.shape !== "line") return prev;
 
     const updatedLast = { ...last, points: [...last.points, pos.x, pos.y] };
 

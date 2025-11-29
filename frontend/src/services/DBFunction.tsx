@@ -157,7 +157,6 @@ export async function saveCanvas(
       // Delete existing shapes for this canvas
       await supabase.from("shapes").delete().eq("canvas_id", targetCanvasId);
 
-      // Insert new shapes
       const shapesToInsert = shapesData.shapes.map((shape) => ({
         canvas_id: targetCanvasId,
         shape_data: shape
@@ -167,9 +166,6 @@ export async function saveCanvas(
         canvas_id: targetCanvasId,
         shape_data: connector
       }));
-
-      console.log("connectors to insert:", connectorsToInsert);
-
 
       const allData = [...shapesToInsert, ...connectorsToInsert];
 

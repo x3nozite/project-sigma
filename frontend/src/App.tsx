@@ -41,6 +41,10 @@ import {
   getUserProfile,
   getUserCanvases,
   createNewCanvas,
+  getCanvasCollaborators,
+  addCollaborator,
+  checkCollaboratorExists,
+  type CanvasCollaborator,
 } from "./services/DBFunction";
 import { useIndexedDBInit } from "./services/useIndexedDb";
 import { useAutosaveCanvas } from "./services/autosaveCanvas";
@@ -65,6 +69,7 @@ function App() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [currentCanvasId, setCurrentCanvasId] = useState<string | null>(null);
   const [canvasList, setCanvasList] = useState<any[]>([]);
+  const [collaborators, setCollaborators] = useState<CanvasCollaborator[]>([]);
   //  const [showCanvasList, setShowCanvasList] = useState(false);
   // console.log(currentCanvasId);
 
@@ -73,6 +78,7 @@ function App() {
   useAutosaveCanvas({ shapes, connectors }, 600, () =>
     saveCanvas({ shapes, connectors }, currentCanvasId)
   );
+
 
   useEffect(() => {
     // console.log("This session:", session);
@@ -88,7 +94,8 @@ function App() {
         setShapes(canvasRes.data.shapes);
         setCurrentCanvasId(canvasRes.canvasId);
         setConnectors(canvasRes.data.connectors);
-        // console.log("canvas id: ", canvasRes.canvasId);
+        
+        console.log("canvas id: ", canvasRes.canvasId);
         // console.log("shapes: ", canvasRes.data.shapes);
       } else {
         console.error("Failed to load canvas:", canvasRes.error);
@@ -117,7 +124,7 @@ function App() {
         console.error("Failed to load user profile:", profileRes.error);
       }
     })();
-
+    
     return () => {
       mounted = false;
     };

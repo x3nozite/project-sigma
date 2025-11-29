@@ -19,6 +19,13 @@ interface UserProfile {
   updated_at: string;
 }
 
+type CollaboratorRole = 'owner' | 'editor' | 'viewer';
+
+export interface CanvasCollaborator {
+  user_id: string;
+  role: CollaboratorRole;
+}
+
 async function getOrCreateCanvas(userId: string): Promise<string | null> {
   const { data: existingCanvas, error: fetchError } = await supabase
     .from("canvas")
@@ -247,6 +254,73 @@ export async function loadCanvas(
     console.error("loadCanvas error:", error);
     return { success: false, error: String(error) };
   }
+}
+
+export async function addCollaborator(
+  canvasId: string,
+  userId: string | undefined,
+  role: CollaboratorRole
+) {
+  try {
+    const { data, error } = await supabase
+      .from('canvas_collaborators')
+      .insert([
+        {
+          canvas_id: canvasId,
+          user_id: userId,
+          role: role,
+        },
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return {
+      success: true,
+      collaborator: data as CanvasCollaborator,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || 'Failed to add collaborator',
+    };
+  }
+}
+
+export async function checkCollaboratorExists(canvasId: string, userId: string | undefined) {
+  const { data } = await supabase
+    .from('canvas_collaborators')
+    .select('canvas_id')
+    .eq('canvas_id', canvasId)
+    .eq('user_id', userId)
+    .single();
+
+  return !!data; //converts data to boolean
+}
+
+export async function getCanvasCollaborators(canvasId: string) {
+
+  try {
+    const { data, error } = await supabase
+    .from('canvas_collaborators')
+    .select('user_id, role')
+    .eq('canvas_id', canvasId)
+    .order('added_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching collaborators:', error);
+      return [];
+    }
+
+    return data as CanvasCollaborator[];
+  } catch (error) {
+    console.error("Error:", error);
+  }
+
+  return [];
 }
 
 export async function deleteCanvas(canvasId: string | null): Promise<{

@@ -23,7 +23,7 @@ async function getOrCreateCanvas(userId: string): Promise<string | null> {
   const { data: existingCanvas, error: fetchError } = await supabase
     .from("canvas")
     .select("canvas_id")
-    .order("created_at", { ascending: false }) // ambil paling baru
+    .order("updated_at", { ascending: false }) // ambil paling baru
     .limit(1)
     .eq("owner_id", userId)
     .maybeSingle(); // returns null if no canvas exists

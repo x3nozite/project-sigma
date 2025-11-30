@@ -1,24 +1,54 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { supabase } from "../supabase-client";
+import { useForm } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
 import loginimage from "../assets/loginImage.webp";
 import { HiArrowLeft } from "react-icons/hi";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+// schema for validation
+const schema = z
+  .object({
+    username: z.string().min(1, "Username is required"),
+    email: z.email("Email is required"),
+    password: z
+      .string("Password is required")
+      .min(8, "Password at least 8 characters long"),
+    confirmPassword: z.string(),
+  })
+  .superRefine(({ confirmPassword, password }, ctx) => {
+    if (confirmPassword !== password) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Password must match",
+        path: ["confirmPassword"],
+      });
+    }
+  });
+
+export type userFields = z.infer<typeof schema>;
 
 function CreateAccount() {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<userFields>({
+    resolver: zodResolver(schema),
+  });
 
-  const handleCreateAccount = async () => {
-    if (password !== confirmPassword) {
+  const navigate = useNavigate();
+  const handleCreateAccount: SubmitHandler<userFields> = async (data) => {
+    if (data.password !== data.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { username, email, password } = data;
+      const { data: signUpData, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -27,109 +57,24 @@ function CreateAccount() {
           },
         },
       });
-
       if (error) {
+        setError("root", {
+          message: error.message,
+        });
         alert("Error creating account: " + error.message);
-      } else {
-        alert("Account created successfully, please verify your email");
-        navigate("/signin");
+        return;
       }
+
+      console.log("Success: ", signUpData);
+      alert("Account created successfully, please verify email");
+      navigate("/signin");
     } catch (error) {
+      setError("root", {
+        message: "Error!" + error,
+      });
       alert("Error creating account: " + error);
     }
   };
-
-  // return (
-  //   <div className="">
-  //     <div className="flex min-h-screen items-center justify-center bg-gray-100">
-  //       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
-  //         <h2 className="text-2xl text-purple-700 font-bold mb-6 text-center">
-  //           Create Account
-  //         </h2>
-  //         <form className="space-y-5">
-  //           <div>
-  //             <label
-  //               className="block text-sm text-purple-700 font-medium mb-1"
-  //               htmlFor="username"
-  //             >
-  //               Username
-  //             </label>
-  //             <input
-  //               type="text"
-  //               id="username"
-  //               value={username}
-  //               onChange={(e) => setUsername(e.target.value)}
-  //               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-  //               placeholder="Enter your username"
-  //             />
-  //           </div>
-  //           <div>
-  //             <label
-  //               className="block text-sm text-purple-700 font-medium mb-1"
-  //               htmlFor="email"
-  //             >
-  //               Email
-  //             </label>
-  //             <input
-  //               type="email"
-  //               id="email"
-  //               value={email}
-  //               onChange={(e) => setEmail(e.target.value)}
-  //               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-  //               placeholder="Enter your email"
-  //             />
-  //           </div>
-  //           <div>
-  //             <label
-  //               className="block text-sm text-purple-700 font-medium mb-1"
-  //               htmlFor="password"
-  //             >
-  //               Password
-  //             </label>
-  //             <input
-  //               type="password"
-  //               id="password"
-  //               value={password}
-  //               onChange={(e) => setPassword(e.target.value)}
-  //               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-  //               placeholder="Enter your password"
-  //             />
-  //           </div>
-  //           <div>
-  //             <label
-  //               className="block text-sm text-purple-700 font-medium mb-1"
-  //               htmlFor="confirm-password"
-  //             >
-  //               Confirm Password
-  //             </label>
-  //             <input
-  //               type="password"
-  //               id="confirm-password"
-  //               value={confirmPassword}
-  //               onChange={(e) => setConfirmPassword(e.target.value)}
-  //               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-  //               placeholder="Enter your password"
-  //             />
-  //           </div>
-  //           <div className="flex justify-center">
-  //             <SecondButton
-  //               title="Sign In"
-  //               variant="invert"
-  //               onClick={(e) => {
-  //                 e.preventDefault();
-  //                 handleCreateAccount();
-  //               }}
-  //             />
-  //           </div>
-  //         </form>
-  //         <div className="mt-6 flex justify-center">
-  //           <SecondButton title="Back" onClick={() => navigate("/")} />
-  //         </div>
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
-
   return (
     <div className="main-container w-full h-screen flex flex-col lg:grid lg:grid-cols-3 items-center">
       <div
@@ -153,9 +98,7 @@ function CreateAccount() {
       </div>
 
       <div className="form-column h-full w-full px-6 sm:px-10 lg:px-40 pb-10 lg:pb-40 pt-10 lg:pt-20 bg-white flex flex-col items-center justify-center gap-4 lg:col-span-2">
-
         <div className="form-container w-full max-w-md bg-white p-5 rounded-lg">
-
           <div className="hero-text flex flex-col pb-5">
             <span className="text-3xl/10 font-bold">Create Account</span>
             <span className="text-md opacity-70">
@@ -164,77 +107,96 @@ function CreateAccount() {
           </div>
 
           <div className="main-form">
-            <form className="flex flex-col justify-between">
-
+            <form
+              onSubmit={handleSubmit(handleCreateAccount)}
+              className="flex flex-col justify-between"
+              autoComplete="off"
+            >
               <div className="mb-6 flex flex-col gap-y-2">
                 <label className="font-bold">Username</label>
                 <input
+                  {...register("username")}
                   type="text"
                   placeholder="Your Username"
                   className="border border-gray-300 rounded-lg p-2 shadow-xs"
-                  onChange={(e) => setUsername(e.target.value)}
+                  autoComplete="new-username"
                 />
+                {errors.username && (
+                  <div className="text-red-500">{errors.username?.message}</div>
+                )}
               </div>
 
               <div className="mb-6 flex flex-col gap-y-2">
                 <label className="font-bold">Email</label>
                 <input
+                  {...register("email")}
                   type="email"
                   placeholder="Your Email"
                   className="border border-gray-300 rounded-lg p-2 shadow-xs"
-                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="new-email"
                 />
+                {errors.email && (
+                  <div className="text-red-500">{errors.email?.message}</div>
+                )}
               </div>
 
               <div className="mb-6 flex flex-col gap-y-2">
                 <label className="font-bold">Password</label>
                 <input
+                  {...register("password")}
                   type="password"
                   placeholder="Your Password"
                   className="border border-gray-300 rounded-lg p-2 shadow-xs"
-                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="new-password"
                 />
+                {errors.password && (
+                  <div className="text-red-500">{errors.password?.message}</div>
+                )}
               </div>
 
               <div className="mb-6 flex flex-col gap-y-2">
                 <label className="font-bold">Confirm Password</label>
                 <input
+                  {...register("confirmPassword")}
                   type="password"
                   placeholder="Re-enter Password"
                   className="border border-gray-300 rounded-lg p-2 shadow-xs"
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  autoComplete="new-confirmPassword"
                 />
+                {errors.confirmPassword && (
+                  <div className="text-red-500">
+                    {errors.confirmPassword?.message}
+                  </div>
+                )}
               </div>
-
+              <div className="userbuttons flex flex-col gap-5">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full px-5 py-2.5 bg-blue-600 rounded-lg font-medium text-white hover:bg-blue-700"
+                >
+                  {isSubmitting ? "Loading..." : "Create Account"}
+                </button>
+                <button
+                  onClick={() => navigate("/signin")}
+                  className="w-full px-5 py-2 rounded-lg border font-medium hover:bg-gray-100"
+                >
+                  Already have an account?
+                </button>
+              </div>
+              {errors.root && (
+                <div className="text-red-500">{errors.root.message}</div>
+              )}
             </form>
-
-            <div className="userbuttons flex flex-col gap-5">
-              <button
-                onClick={handleCreateAccount}
-                className="w-full px-5 py-2.5 bg-blue-600 rounded-lg font-medium text-white hover:bg-blue-700"
-              >
-                Create Account
-              </button>
-
-              <button
-                onClick={() => navigate("/signin")}
-                className="w-full px-5 py-2 rounded-lg border font-medium hover:bg-gray-100"
-              >
-                Already have an account?
-              </button>
-            </div>
           </div>
-
         </div>
       </div>
 
       <div className="image-column bg-gray-200 h-full hidden lg:flex justify-center items-center relative">
         <img src={loginimage} alt="" className="object-cover w-full h-full" />
       </div>
-
     </div>
   );
-
 }
 
 export default CreateAccount;

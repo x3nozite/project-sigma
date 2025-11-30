@@ -37,7 +37,7 @@ function AppToolbar({
   onTextClick,
   onEraserClick,
   // isActive,
-  // tool,
+  tool,
   setTool,
 }: Props) {
   return (
@@ -92,15 +92,19 @@ function AppToolbar({
       <Toolbar.Separator className="w-px my-3 mx-2 bg-black" />
       <Toolbar.ToggleGroup
         type="single"
+        value={tool}
         onValueChange={(value) => {
           if (value) setTool(value as ToolType);
         }}
       >
         <Toolbar.ToggleItem value="hand" className="group">
-          <div className="pan-canvas  flex flex-col justify-center items-center  rounded-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50  ">
+          <div className="pan-canvas relative flex flex-col justify-center items-center  rounded-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50  ">
             <HiOutlineHand className="-rotate-[45deg] text-xl group-data-[state=on]:stroke-blue-500" />
             <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
               Pan Canvas
+            </span>
+            <span className="absolute text-xs right-0 bottom-0 font-bold text-gray-300 group-data-[state=on]:text-blue-500">
+              1
             </span>
           </div>
         </Toolbar.ToggleItem>
@@ -109,11 +113,14 @@ function AppToolbar({
           className="group"
           onClick={onSelectClick}
         >
-          <div className="select-canvas flex flex-col justify-center items-center  rounded-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50  ">
+          <div className="select-canvas relative flex flex-col justify-center items-center  rounded-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50  ">
             {/* <HiSelector className="-rotate-[45deg] text-xl  group-data-[state=on]:blue-500" /> */}
             <HiOutlineCursorClick className="text-xl group-data-[state=on]:stroke-blue-500" />
             <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
               Select
+            </span>
+            <span className="absolute text-xs right-0 bottom-0 font-bold text-gray-300 group-data-[state=on]:text-blue-500">
+              2
             </span>
           </div>
         </Toolbar.ToggleItem>
@@ -122,10 +129,13 @@ function AppToolbar({
           className="group"
           onClick={onDrawClick}
         >
-          <div className="draw-canvas flex flex-col justify-center items-center rounded-sm border-none w-10 h-10 p-1 duration-50 text-gray-700 transition-colors hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2  focus:ring-offset-white focus:outline-none  disabled:pointer-events-auto disabled:opacity-50">
+          <div className="draw-canvas relative flex flex-col justify-center items-center rounded-sm border-none w-10 h-10 p-1 duration-50 text-gray-700 transition-colors hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2  focus:ring-offset-white focus:outline-none  disabled:pointer-events-auto disabled:opacity-50">
             <HiOutlinePencil className="text-xl group-data-[state=on]:stroke-blue-500" />
             <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
               Draw
+            </span>
+            <span className="absolute text-xs right-0 bottom-0 font-bold text-gray-300 group-data-[state=on]:text-blue-500">
+              3
             </span>
           </div>
         </Toolbar.ToggleItem>
@@ -136,7 +146,7 @@ function AppToolbar({
         >
           <div
             className={
-              "add-shape group flex flex-col justify-center items-center rounded-sm border-none w-10 h-10 p-1 transition-colors duration-50 hover:text-red-500 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none  disabled:pointer-events-auto disabled:opacity-50"
+              "add-shape relative group flex flex-col justify-center items-center rounded-sm border-none w-10 h-10 p-1 transition-colors duration-50 hover:text-red-500 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none  disabled:pointer-events-auto disabled:opacity-50"
             }
           >
             <BsEraser
@@ -145,6 +155,9 @@ function AppToolbar({
             />
             <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
               Delete Task
+            </span>
+            <span className="absolute text-xs right-0 bottom-0 font-bold text-gray-300 group-data-[state=on]:text-red-500">
+              4
             </span>
           </div>
         </Toolbar.ToggleItem>

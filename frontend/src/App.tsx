@@ -53,7 +53,10 @@ function App() {
   const { session } = useSession();
   const [instruments, _setInstruments] = useState<any[]>([]);
   const [zoomValue, setZoomValue] = useState(100);
-  const [stageCoor, setStageCoor] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
+  const [stageCoor, setStageCoor] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
   const [showForm, setShowForm] = useState(false);
   const [showTodoForm, setShowTodoForm] = useState(false);
   const [shapes, setShapes] = useState<ShapeType[]>([]);
@@ -70,9 +73,15 @@ function App() {
   // const [collaborators, setCollaborators] = useState<CanvasCollaborator[]>([]);
 
   useAutosaveCanvas({ shapes, connectors }, 600, () =>
-    saveCanvas({ shapes, connectors, viewport: { x: stageCoor.x, y: stageCoor.y, scale: zoomValue / 100 } }, currentCanvasId)
+    saveCanvas(
+      {
+        shapes,
+        connectors,
+        viewport: { x: stageCoor.x, y: stageCoor.y, scale: zoomValue / 100 },
+      },
+      currentCanvasId
+    )
   );
-
 
   useEffect(() => {
     let mounted = true;
@@ -84,11 +93,13 @@ function App() {
       if (!mounted) return;
 
       if (canvasRes.success) {
-
         setShapes(canvasRes.data.shapes);
         setCurrentCanvasId(canvasRes.canvasId);
         setConnectors(canvasRes.data.connectors);
-        setStageCoor({ x: canvasRes.data.viewport.x, y: canvasRes.data.viewport.y })
+        setStageCoor({
+          x: canvasRes.data.viewport.x,
+          y: canvasRes.data.viewport.y,
+        });
         setZoomValue(Math.round(canvasRes.data.viewport.scale * 100));
 
         console.log("canvas id: ", canvasRes.canvasId);
@@ -151,14 +162,13 @@ function App() {
   };
 
   const addTodo = (newFields: todoFields, parent: RectType | null) => {
-
     const iso = new Date(newFields.date).toISOString();
 
     const newTodo: TodoType = {
       id: "todo-" + Date.now().toString(),
       x: parent ? parent.x + 600 : 100,
       y: parent ? parent.y : 100,
-      color: parent ? parent.color : newFields.color, // default is green
+      color: newFields.color, // default is green
       isCollapsed: false,
       scaleX: 1,
       scaleY: 1,
@@ -178,13 +188,13 @@ function App() {
     setShapes([...shapes, newTodo]);
 
     if (parent) {
-      setShapes(prev =>
-        prev.map(s =>
-          (s.shape === "rect" && s.id === parent.id)
+      setShapes((prev) =>
+        prev.map((s) =>
+          s.shape === "rect" && s.id === parent.id
             ? { ...s, children: [...s.children, "group-" + newTodo.id] }
             : s
         )
-      )
+      );
       addConnector(newTodo, parent);
     }
   };
@@ -215,10 +225,12 @@ function App() {
     setShapes([...shapes, newRect]);
   };
 
-  const addConnector = (from: Konva.Node | ShapeType, to: Konva.Node | ShapeType) => {
-
-    const fromId = (from instanceof Konva.Node) ? from.id() : "group-" + from.id;
-    const toId = (to instanceof Konva.Node) ? to.id() : "group-" + to.id;
+  const addConnector = (
+    from: Konva.Node | ShapeType,
+    to: Konva.Node | ShapeType
+  ) => {
+    const fromId = from instanceof Konva.Node ? from.id() : "group-" + from.id;
+    const toId = to instanceof Konva.Node ? to.id() : "group-" + to.id;
 
     setConnectors([
       ...connectors,
@@ -241,22 +253,22 @@ function App() {
       shape: "text",
       behavior: "decor",
       scaleX: 1,
-      scaleY: 1
+      scaleY: 1,
     } as const;
-    setShapes([...shapes, newText])
-  }
+    setShapes([...shapes, newText]);
+  };
 
   const updateRect = (shape: ShapeType, newData: taskFields) => {
     setShapes((prev) =>
       prev.map((r) =>
         r.id === shape.id
           ? {
-            ...r,
-            title: newData.title,
-            description: newData.description,
-            color: newData.color,
-            dueDate: newData.date,
-          }
+              ...r,
+              title: newData.title,
+              description: newData.description,
+              color: newData.color,
+              dueDate: newData.date,
+            }
           : r
       )
     );
@@ -302,7 +314,14 @@ function App() {
     // console.log("saving to: ", currentCanvasId);
     setIsLoading(true);
     try {
-      await saveCanvas({ shapes, connectors, viewport: { x: stageCoor.x, y: stageCoor.y, scale: zoomValue / 100 } }, currentCanvasId || null);
+      await saveCanvas(
+        {
+          shapes,
+          connectors,
+          viewport: { x: stageCoor.x, y: stageCoor.y, scale: zoomValue / 100 },
+        },
+        currentCanvasId || null
+      );
     } catch (error) {
       // console.log(error);
     } finally {
@@ -316,11 +335,21 @@ function App() {
     try {
       if (currentCanvasId && canvasId && canvasId !== currentCanvasId) {
         // console.log("Saving current canvas");
-        await saveCanvas({ shapes, connectors, viewport: { x: stageCoor.x, y: stageCoor.y, scale: zoomValue / 100 } }, currentCanvasId);
+        await saveCanvas(
+          {
+            shapes,
+            connectors,
+            viewport: {
+              x: stageCoor.x,
+              y: stageCoor.y,
+              scale: zoomValue / 100,
+            },
+          },
+          currentCanvasId
+        );
       }
       const result = await loadCanvas(canvasId || null);
       if (result.success) {
-
         setShapes(result.data.shapes);
         setConnectors(result.data.connectors);
         setCurrentCanvasId(result.canvasId);
@@ -345,7 +374,18 @@ function App() {
 
     try {
       if (currentCanvasId) {
-        await saveCanvas({ shapes, connectors, viewport: { x: stageCoor.x, y: stageCoor.y, scale: zoomValue / 100 } }, currentCanvasId);
+        await saveCanvas(
+          {
+            shapes,
+            connectors,
+            viewport: {
+              x: stageCoor.x,
+              y: stageCoor.y,
+              scale: zoomValue / 100,
+            },
+          },
+          currentCanvasId
+        );
       }
 
       const result = await createNewCanvas(
@@ -442,10 +482,11 @@ function App() {
                                     className={`
                                         flex items-center justify-between p-4 rounded-lg border-2 
                                         hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-all
-                                        ${currentCanvasId === canvas.canvas_id
-                                        ? "bg-blue-100 border-blue-400"
-                                        : "bg-gray-50 border-gray-200"
-                                      }
+                                        ${
+                                          currentCanvasId === canvas.canvas_id
+                                            ? "bg-blue-100 border-blue-400"
+                                            : "bg-gray-50 border-gray-200"
+                                        }
                                       `}
                                   >
                                     <div className="flex items-center gap-3">

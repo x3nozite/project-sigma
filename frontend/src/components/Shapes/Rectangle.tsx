@@ -38,6 +38,17 @@ const Rectangle = ({
   // change border color
   const borderColor = getBorder(rect.color);
 
+  // formatted date
+  const due = new Date(rect.dueDate);
+  const formatted = due
+    .toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    })
+    .replace(/, (?=\d{4})/, " ");
+
   return (
     <Group
       key={"key-" + rect.id}
@@ -63,6 +74,11 @@ const Rectangle = ({
       }}
       onClick={() => {
         handleEraserClick(rect.id);
+        // if (tool === "hand") {
+        //   onShapeClick(rect);
+        // }
+      }}
+      onDblClick={() => {
         if (tool === "hand") {
           onShapeClick(rect);
         }
@@ -101,15 +117,12 @@ const Rectangle = ({
           listening={false}
         />
         <Text
-          text={rect.dueDate}
-          x={0}
-          y={rect.height - 35}
+          text={formatted}
+          x={-12}
+          y={rect.height - 30}
           width={rect.width}
-          height={16}
           fontFamily="Inter"
-          fontSize={12}
-          fontStyle="light"
-          padding={5}
+          fontSize={10}
           align="right"
           fill="blue"
           opacity={0.8}
@@ -137,14 +150,23 @@ const Rectangle = ({
           ></Text>
         </Group>
         {isHovered && (
-          <Group x={rect.width + 5} y={rect.height / 2}>
-            <Circle
-              radius={16}
-              fill="blue"
-              onClick={(e) => {
-                e.cancelBubble = true;
-                onAddTodo(rect);
-              }}
+          <Group
+            x={rect.width + 5}
+            y={rect.height / 2}
+            onClick={(e) => {
+              e.cancelBubble = true;
+              onAddTodo(rect);
+            }}
+          >
+            <Circle radius={16} fill="white" stroke={rect.color} />
+            <Text
+              x={-8}
+              y={-13.5}
+              text="+"
+              fill="black"
+              fontSize={24}
+              fontFamily="Inter"
+              align="left"
             />
           </Group>
         )}

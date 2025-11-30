@@ -39,6 +39,7 @@ export default function TodoForm({ onAddTodo, parent, onCloseForm }: Props) {
       assignee: "Guest",
       date: formattedToday,
       completed: false,
+      color: parent?.color,
     },
     resolver: zodResolver(schema),
   });
@@ -81,7 +82,13 @@ export default function TodoForm({ onAddTodo, parent, onCloseForm }: Props) {
               <label className="text-sm px-2.5 py-2 text-start rounded-md">
                 Subject
               </label>
-              <div className="w-full h-full flex items-center justify-center hover:bg-gray-300 px-2 rounded-md ">
+              <div
+                className="w-full h-full font-medium flex items-center justify-center px-2 rounded-md bg-red-200 "
+                style={{
+                  backgroundColor: parent ? parent.color : "#d1d5dc",
+                  color: parent ? "#ffffff" : "#000000",
+                }}
+              >
                 <span className="text-sm text-start  w-full ">
                   {parent ? parent.title : "Not Assigned"}
                 </span>

@@ -1,9 +1,16 @@
 import { supabase } from "../supabase-client";
 import type { ShapeType, ArrowType } from "../components/types";
 
+interface Viewport {
+  x: number;
+  y: number;
+  scale: number;
+}
+
 export interface CanvasData {
   shapes: ShapeType[];
   connectors: ArrowType[];
+  viewport: Viewport;
 }
 
 interface CanvasDataRecord {
@@ -124,21 +131,30 @@ export async function saveCanvas(
     if (!user) {
       return new Promise((resolve) => {
         const request = indexedDB.open("CanvasDB");
-        const data = {
+        const canvasData = {
           local_canvas: "local",
           canvasData: shapesData,
           updatedAt: Date.now()
         }
 
+        const viewportData = {
+          canvas_viewport: "local",
+          x: shapesData.viewport.x,
+          y: shapesData.viewport.y,
+          scale: shapesData.viewport.scale,
+          updatedAt: Date.now()
+        }
 
         request.onsuccess = () => {
           const db = request.result;
-          const tx = db.transaction("Canvas", "readwrite");
-          const store = tx.objectStore("Canvas");
+          const tx = db.transaction(["Canvas", "Viewport"], "readwrite");
+          const canvasStore = tx.objectStore("Canvas");
+          const viewportStore = tx.objectStore("Viewport");
           tx.oncomplete = () => resolve({ success: true });
           tx.onerror = () => resolve({ success: false, error: tx.error?.message });
 
-          store.put(data);
+          canvasStore.put(canvasData);
+          viewportStore.put(viewportData);
           resolve({ success: true });
         };
 
@@ -213,16 +229,39 @@ export async function loadCanvas(
 
         request.onsuccess = () => {
           const db = request.result;
-          const tx = db.transaction("Canvas", "readonly");
-          const store = tx.objectStore("Canvas");
-          const res = store.get("local");
+          const tx = db.transaction(["Canvas", "Viewport"], "readonly");
+          const canvasStore = tx.objectStore("Canvas");
+          const canvasRes = canvasStore.get("local");
 
-          res.onsuccess = () => {
-            const record = res.result as CanvasDataRecord;
+          const viewportStore = tx.objectStore("Viewport");
+          const viewportRes = viewportStore.get("local");
+
+          canvasRes.onerror = () => resolve({ success: false, error: "Failed to get canvas data" });
+          viewportRes.onerror = () => resolve({ success: false, error: "Failed to get canvas viewport" });
+          
+          canvasRes.onsuccess = () => {
+            const record = canvasRes.result as CanvasDataRecord;
             if (record) resolve({ success: true, data: record.canvasData, canvasId: record.local_canvas });
             else resolve({ success: false, error: "No offline canvas found" });
           }
-          res.onerror = () => resolve({ success: false, error: "Failed to get canvas data" });
+
+          tx.oncomplete = () => {
+            const canvasRecord = canvasRes.result as CanvasDataRecord | undefined;
+            const viewportRecord = viewportRes.result as Viewport | undefined;
+
+            if(!canvasRecord){
+              resolve({success: false, error: "No offline canvas found"});
+              return
+            }
+
+            if(viewportRecord) canvasRecord.canvasData.viewport = viewportRecord;
+
+            resolve({
+              success: true,
+              data: canvasRecord.canvasData,
+              canvasId: canvasRecord.local_canvas
+            })
+          }
         }
       })
     }

@@ -53,6 +53,7 @@ function App() {
   const { session } = useSession();
   const [instruments, _setInstruments] = useState<any[]>([]);
   const [zoomValue, setZoomValue] = useState(100);
+  const [stageCoor, setStageCoor] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
   const [showForm, setShowForm] = useState(false);
   const [showTodoForm, setShowTodoForm] = useState(false);
   const [shapes, setShapes] = useState<ShapeType[]>([]);
@@ -69,7 +70,7 @@ function App() {
   // const [collaborators, setCollaborators] = useState<CanvasCollaborator[]>([]);
 
   useAutosaveCanvas({ shapes, connectors }, 600, () =>
-    saveCanvas({ shapes, connectors }, currentCanvasId)
+    saveCanvas({ shapes, connectors, viewport: { x: stageCoor.x, y: stageCoor.y, scale: zoomValue / 100 } }, currentCanvasId)
   );
 
 
@@ -87,6 +88,8 @@ function App() {
         setShapes(canvasRes.data.shapes);
         setCurrentCanvasId(canvasRes.canvasId);
         setConnectors(canvasRes.data.connectors);
+        setStageCoor({ x: canvasRes.data.viewport.x, y: canvasRes.data.viewport.y })
+        setZoomValue(Math.round(canvasRes.data.viewport.scale * 100));
 
         console.log("canvas id: ", canvasRes.canvasId);
         // console.log("shapes: ", canvasRes.data.shapes);
@@ -299,7 +302,7 @@ function App() {
     // console.log("saving to: ", currentCanvasId);
     setIsLoading(true);
     try {
-      await saveCanvas({ shapes, connectors }, currentCanvasId || null);
+      await saveCanvas({ shapes, connectors, viewport: { x: stageCoor.x, y: stageCoor.y, scale: zoomValue / 100 } }, currentCanvasId || null);
     } catch (error) {
       // console.log(error);
     } finally {
@@ -313,7 +316,7 @@ function App() {
     try {
       if (currentCanvasId && canvasId && canvasId !== currentCanvasId) {
         // console.log("Saving current canvas");
-        await saveCanvas({ shapes, connectors }, currentCanvasId);
+        await saveCanvas({ shapes, connectors, viewport: { x: stageCoor.x, y: stageCoor.y, scale: zoomValue / 100 } }, currentCanvasId);
       }
       const result = await loadCanvas(canvasId || null);
       if (result.success) {
@@ -342,7 +345,7 @@ function App() {
 
     try {
       if (currentCanvasId) {
-        await saveCanvas({ shapes, connectors }, currentCanvasId);
+        await saveCanvas({ shapes, connectors, viewport: { x: stageCoor.x, y: stageCoor.y, scale: zoomValue / 100 } }, currentCanvasId);
       }
 
       const result = await createNewCanvas(
@@ -896,6 +899,8 @@ function App() {
           strokeColor={strokeColor}
           onShapeClick={openForm}
           onAddTodo={openTodoForm}
+          stageCoor={stageCoor}
+          setStageCoor={setStageCoor}
         />
       </div>
 

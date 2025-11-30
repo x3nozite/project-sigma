@@ -57,6 +57,8 @@ interface Props {
   onShapeClick: (shape: ShapeType | null) => void;
   // add todo from rectangle
   onAddTodo: (parent: RectType | null) => void;
+  stageCoor: { x: number, y: number };
+  setStageCoor: React.Dispatch<React.SetStateAction<{ x: number, y: number }>>;
 }
 
 const bbox_id = "1234567890";
@@ -74,13 +76,14 @@ const ShapeCanvas = ({
   strokeColor = "#000",
   onShapeClick,
   onAddTodo,
+  stageCoor,
+  setStageCoor
 }: Props) => {
   const mainLayer = useRef<Konva.Layer | null>(null!);
   const prevShape = useRef<Konva.Shape | null>(null!);
   const tempLayer = useRef<Konva.Layer | null>(null!);
   const arrowLayer = useRef<Konva.Layer | null>(null!);
   const stageRef = useRef<Konva.Stage | null>(null!);
-  const [stageCoor, setStageCoor] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
 
   const [mouseHeldDown, setMouseHeldDown] = useState<boolean>(false);
 

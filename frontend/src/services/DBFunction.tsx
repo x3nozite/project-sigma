@@ -124,50 +124,47 @@ export async function saveCanvas(
   canvasId?: string | null
 ): Promise<{ success: boolean; error?: string; canvasId?: string }> {
   try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    // --- ALWAYS SAVE TO INDEXEDDB ---
+    await new Promise((resolve) => {
+      const request = indexedDB.open("CanvasDB");
+
+      const canvasData = {
+        local_canvas: "local",
+        canvasData: shapesData,
+        updatedAt: Date.now()
+      };
+
+      const viewportData = {
+        canvas_viewport: "local",
+        x: shapesData.viewport.x,
+        y: shapesData.viewport.y,
+        scale: shapesData.viewport.scale,
+        updatedAt: Date.now()
+      };
+
+      request.onsuccess = () => {
+        const db = request.result;
+        const tx = db.transaction(["Canvas", "Viewport"], "readwrite");
+        const canvasStore = tx.objectStore("Canvas");
+        const viewportStore = tx.objectStore("Viewport");
+
+        canvasStore.put(canvasData);
+        viewportStore.put(viewportData);
+
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => resolve(true); // even if it fails, don't block cloud save
+      };
+
+      request.onerror = () => resolve(true);
+    });
+
+    const { data: auth } = await supabase.auth.getUser();
+    const user = auth?.user;
 
     if (!user) {
-      return new Promise((resolve) => {
-        const request = indexedDB.open("CanvasDB");
-        const canvasData = {
-          local_canvas: "local",
-          canvasData: shapesData,
-          updatedAt: Date.now()
-        }
-
-        const viewportData = {
-          canvas_viewport: "local",
-          x: shapesData.viewport.x,
-          y: shapesData.viewport.y,
-          scale: shapesData.viewport.scale,
-          updatedAt: Date.now()
-        }
-
-        request.onsuccess = () => {
-          const db = request.result;
-          const tx = db.transaction(["Canvas", "Viewport"], "readwrite");
-          const canvasStore = tx.objectStore("Canvas");
-          const viewportStore = tx.objectStore("Viewport");
-          tx.oncomplete = () => resolve({ success: true });
-          tx.onerror = () => resolve({ success: false, error: tx.error?.message });
-
-          canvasStore.put(canvasData);
-          viewportStore.put(viewportData);
-          resolve({ success: true });
-        };
-
-        request.onerror = () => {
-          // harusnya nampilin error message
-          // sekarang baru console log doang
-          console.log("error");
-          resolve({ success: false, error: request.error?.message ?? "IndexedDB error" });
-        }
-      })
+      return { success: true }; // local save already done
     }
 
-    // Get the canvas ID (either provided or get/create default)
     let targetCanvasId = canvasId;
     if (!targetCanvasId) {
       targetCanvasId = await getOrCreateCanvas(user.id);
@@ -177,7 +174,6 @@ export async function saveCanvas(
     }
 
     if (shapesData.shapes.length > 0) {
-      // Delete existing shapes for this canvas
       await supabase.from("shapes").delete().eq("canvas_id", targetCanvasId);
 
       const shapesToInsert = shapesData.shapes.map((shape) => ({
@@ -185,23 +181,18 @@ export async function saveCanvas(
         shape_data: shape
       }));
 
-      const connectorsToInsert = shapesData.connectors.map((connector) => ({
+      const connectorsToInsert = shapesData.connectors.map((c) => ({
         canvas_id: targetCanvasId,
-        shape_data: connector
+        shape_data: c
       }));
 
       const allData = [...shapesToInsert, ...connectorsToInsert];
+      const { error: insertError } = await supabase.from("shapes").insert(allData);
 
-      console.log(allData);
-
-      const { error: insertError } = await supabase
-        .from("shapes")
-        .insert(allData);
       if (insertError) {
         return { success: false, error: insertError.message };
       }
     } else {
-      // If no shapes, delete all shapes for this canvas
       await supabase.from("shapes").delete().eq("canvas_id", targetCanvasId);
     }
 
@@ -238,23 +229,17 @@ export async function loadCanvas(
 
           canvasRes.onerror = () => resolve({ success: false, error: "Failed to get canvas data" });
           viewportRes.onerror = () => resolve({ success: false, error: "Failed to get canvas viewport" });
-          
-          canvasRes.onsuccess = () => {
-            const record = canvasRes.result as CanvasDataRecord;
-            if (record) resolve({ success: true, data: record.canvasData, canvasId: record.local_canvas });
-            else resolve({ success: false, error: "No offline canvas found" });
-          }
 
           tx.oncomplete = () => {
             const canvasRecord = canvasRes.result as CanvasDataRecord | undefined;
             const viewportRecord = viewportRes.result as Viewport | undefined;
 
-            if(!canvasRecord){
-              resolve({success: false, error: "No offline canvas found"});
+            if (!canvasRecord) {
+              resolve({ success: false, error: "No offline canvas found" });
               return
             }
 
-            if(viewportRecord) canvasRecord.canvasData.viewport = viewportRecord;
+            if (viewportRecord) canvasRecord.canvasData.viewport = viewportRecord;
 
             resolve({
               success: true,
@@ -264,6 +249,23 @@ export async function loadCanvas(
           }
         }
       })
+    }
+
+    const request = indexedDB.open("CanvasDB");
+    let viewport = { x: 0, y: 0, scale: 1 };
+
+    request.onsuccess = () => {
+      const db = request.result;
+      const tx = db.transaction("Viewport", "readonly");
+
+      const viewportStore = tx.objectStore("Viewport");
+      const viewportRes = viewportStore.get("local");
+
+      tx.oncomplete = () => {
+        const viewportRecord = viewportRes.result as Viewport | undefined;
+
+        if (viewportRecord) viewport = viewportRecord;
+      }
     }
 
     let targetCanvasId = canvasId;
@@ -287,10 +289,10 @@ export async function loadCanvas(
     const lines: ShapeType[] = data.filter((row) => row.shape_data["shape"] === "line").map((row) => row.shape_data);
     const connectors: ArrowType[] = data.filter((row) => row.shape_data["shape"] === "connector").map((row) => row.shape_data);
     const todos: ShapeType[] = data.filter((row) => row.shape_data["shape"] === "todo").map((row) => row.shape_data);
-    console.log("lines to load:",lines);
+    console.log("lines to load:", lines);
     const shapes = [...rects, ...lines, ...todos];
 
-    return { success: true, data: { shapes, connectors }, canvasId: targetCanvasId };
+    return { success: true, data: { shapes, connectors, viewport }, canvasId: targetCanvasId };
   } catch (error: any) {
     console.error("loadCanvas error:", error);
     return { success: false, error: String(error) };
@@ -346,10 +348,10 @@ export async function getCanvasCollaborators(canvasId: string) {
 
   try {
     const { data, error } = await supabase
-    .from('canvas_collaborators')
-    .select('user_id, role')
-    .eq('canvas_id', canvasId)
-    .order('added_at', { ascending: false });
+      .from('canvas_collaborators')
+      .select('user_id, role')
+      .eq('canvas_id', canvasId)
+      .order('added_at', { ascending: false });
 
     if (error) {
       console.error('Error fetching collaborators:', error);

@@ -1,7 +1,8 @@
 import { Circle, Group, Rect, Text } from "react-konva";
 import type { RectType, ShapeType, ToolType } from "../types";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Konva from "konva";
+import { shapes } from "konva/lib/Shape";
 
 interface Props {
   rect: RectType;
@@ -16,6 +17,11 @@ interface Props {
   onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   getBorder: (color: string) => string | undefined;
   onAddTodo: (parent: RectType | null) => void;
+  global_shape: ShapeType[];
+  getChildCounts: (
+    rect: RectType,
+    shapes: ShapeType[]
+  ) => { completed: number; not_completed: number };
 }
 
 const Rectangle = ({
@@ -31,7 +37,11 @@ const Rectangle = ({
   onTransformEnd,
   getBorder,
   onAddTodo,
+  global_shape,
+  getChildCounts,
 }: Props) => {
+  // test
+  const counts = getChildCounts(rect, global_shape);
   // hover to show todo
   const [isHovered, setisHovered] = useState(false);
 
@@ -103,7 +113,8 @@ const Rectangle = ({
         <Text
           x={0}
           y={50}
-          text={rect.description}
+          // text={rect.description}
+          text={counts.completed.toString()}
           fontSize={14}
           fontFamily="Inter"
           fontStyle="normal"
@@ -117,6 +128,13 @@ const Rectangle = ({
           listening={false}
         />
         <Text
+          x={19}
+          y={20}
+          text={counts.completed.toString()}
+          fontSize={10}
+          fill="black"
+        />
+        <Text
           text={formatted}
           x={-12}
           y={rect.height - 30}
@@ -124,7 +142,7 @@ const Rectangle = ({
           fontFamily="Inter"
           fontSize={10}
           align="right"
-          fill="blue"
+          fill="black"
           opacity={0.8}
           listening={false}
         ></Text>

@@ -16,6 +16,11 @@ interface Props {
   // briant added these
   getBorder: (color: string) => string | undefined;
   onAddTodo: (parent: RectType | null) => void;
+  allShapes: ShapeType[];
+  getChildCounts: (
+    rect: RectType,
+    shapes: ShapeType[]
+  ) => { completed: number; not_completed: number };
 }
 
 const RectLayer = ({
@@ -31,6 +36,8 @@ const RectLayer = ({
   onTransformEnd,
   getBorder,
   onAddTodo,
+  allShapes,
+  getChildCounts,
 }: Props) => {
   return (
     <>
@@ -49,6 +56,8 @@ const RectLayer = ({
           onShapeClick={onShapeClick}
           getBorder={getBorder}
           onAddTodo={onAddTodo}
+          global_shape={allShapes}
+          getChildCounts={getChildCounts}
         />
       ))}
     </>

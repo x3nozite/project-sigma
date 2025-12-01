@@ -42,6 +42,7 @@ import {
   handleTransfromEnd,
 } from "./canvas_tools/selectTool.ts";
 import TextLayer from "./TextLayer.tsx";
+import { countChildren } from "./utilities/countChild.ts";
 
 interface Props {
   shapes: ShapeType[];
@@ -57,8 +58,8 @@ interface Props {
   onShapeClick: (shape: ShapeType | null) => void;
   // add todo from rectangle
   onAddTodo: (parent: RectType | null) => void;
-  stageCoor: { x: number, y: number };
-  setStageCoor: React.Dispatch<React.SetStateAction<{ x: number, y: number }>>;
+  stageCoor: { x: number; y: number };
+  setStageCoor: React.Dispatch<React.SetStateAction<{ x: number; y: number }>>;
 }
 
 const bbox_id = "1234567890";
@@ -77,7 +78,7 @@ const ShapeCanvas = ({
   onShapeClick,
   onAddTodo,
   stageCoor,
-  setStageCoor
+  setStageCoor,
 }: Props) => {
   const mainLayer = useRef<Konva.Layer | null>(null!);
   const prevShape = useRef<Konva.Shape | null>(null!);
@@ -221,7 +222,6 @@ const ShapeCanvas = ({
       });
     });
 
-
     function handleKeyDown(e: KeyboardEvent) {
       switch (e.key) {
         case "1":
@@ -260,14 +260,19 @@ const ShapeCanvas = ({
       transformerRef.current.nodes(nodes);
 
       requestAnimationFrame(() => {
-
         const bbox = boundBoxRef.current;
         if (!bbox || !stageRef.current || !transformerRef.current) return;
 
-        const width = transformerRef.current.width() / stageRef.current.scaleX();
-        const height = transformerRef.current.height() / stageRef.current.scaleY();
-        const x = (transformerRef.current.x() - stageCoor.x) / stageRef.current.scaleX();
-        const y = (transformerRef.current.y() - stageCoor.y) / stageRef.current.scaleY();
+        const width =
+          transformerRef.current.width() / stageRef.current.scaleX();
+        const height =
+          transformerRef.current.height() / stageRef.current.scaleY();
+        const x =
+          (transformerRef.current.x() - stageCoor.x) /
+          stageRef.current.scaleX();
+        const y =
+          (transformerRef.current.y() - stageCoor.y) /
+          stageRef.current.scaleY();
 
         bbox.show();
         bbox.x(x);
@@ -280,7 +285,7 @@ const ShapeCanvas = ({
 
         const currentNodes = transformerRef.current.nodes();
         transformerRef.current.nodes([...currentNodes, bbox]);
-      })
+      });
     } else if (transformerRef.current) {
       transformerRef.current.nodes([]);
       const bbox = boundBoxRef.current;
@@ -292,8 +297,7 @@ const ShapeCanvas = ({
       const bbox = boundBoxRef.current;
       bbox?.hide();
     }
-  }, [selectedIds, tool, stageCoor])
-
+  }, [selectedIds, tool, stageCoor]);
 
   useEffect(() => {
     // When switching away from select → clear the selection
@@ -403,7 +407,7 @@ const ShapeCanvas = ({
               tool,
               strokeColor,
               setShapes,
-              setMouseHeldDown,
+              setMouseHeldDown
             );
           if (tool === "eraser") handleEraseLinesMouseDown(setMouseHeldDown);
           if (tool === "select")
@@ -468,7 +472,6 @@ const ShapeCanvas = ({
           <ArrowLayer connectors={connectors} mainLayer={mainLayer} />
         </Layer>
 
-
         <Layer ref={mainLayer}>
           <Rect
             id={bbox_id}
@@ -489,12 +492,15 @@ const ShapeCanvas = ({
             }}
           />
           <TextLayer
-            texts={shapes.filter((s: ShapeType): s is TextType => s.shape === "text")}
+            texts={shapes.filter(
+              (s: ShapeType): s is TextType => s.shape === "text"
+            )}
           />
           <RectLayer
             shapes={shapes.filter(
               (s: ShapeType): s is RectType => s.shape === "rect"
             )}
+            allShapes={shapes}
             setShapes={setShapes}
             onDragStart={(e) => handleDragStart(e, tool, tempLayer)}
             onDragMove={(e) => {
@@ -513,6 +519,7 @@ const ShapeCanvas = ({
             onShapeClick={onShapeClick}
             getBorder={getBorder}
             onAddTodo={onAddTodo}
+            getChildCounts={countChildren}
           />
           <TodoLayer
             todos={shapes.filter(

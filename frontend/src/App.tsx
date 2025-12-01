@@ -141,6 +141,9 @@ function App() {
   //   setInstruments(data ?? []);
   // }
 
+  // canvas color
+  const [canvasCol, setcanvasCol] = useState("#ffffff");
+
   const openTodoForm = (parent: RectType | null) => {
     setSelectedParent(parent);
     setShowTodoForm(true);
@@ -604,9 +607,29 @@ function App() {
                   <DropdownMenu.Label className="py-0.5 pl-2 text-sm text-gray-400">
                     Canvas Theme
                   </DropdownMenu.Label>
-                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700">
-                    Change Color Here
-                  </DropdownMenu.Item>
+                  <DropdownMenu.RadioGroup
+                    value={canvasCol}
+                    onValueChange={setcanvasCol}
+                    className="py-1 pl-2 "
+                  >
+                    <div className="flex flex-row gap-2 items-center justify-around">
+                      <DropdownMenu.RadioItem value="#ffffff" className="group">
+                        <div className="p-4 relative bg-white border-2 border-slate-200 rounded-lg group-data-[state=checked]:ring-2 group-data-[state=checked]:ring-slate-400"></div>
+                      </DropdownMenu.RadioItem>
+                      <DropdownMenu.RadioItem value="#fff7ed" className="group">
+                        <div className="p-4 bg-orange-50 border-orange-200 border-2 rounded-lg group-data-[state=checked]:ring-2 group-data-[state=checked]:ring-orange-400"></div>
+                        <DropdownMenu.ItemIndicator></DropdownMenu.ItemIndicator>
+                      </DropdownMenu.RadioItem>
+                      <DropdownMenu.RadioItem value="#f5f3ff" className="group">
+                        <div className="p-4 bg-violet-50 border-2 border-indigo-200 rounded-lg group-data-[state=checked]:ring-2 group-data-[state=checked]:ring-violet-400"></div>
+                        <DropdownMenu.ItemIndicator></DropdownMenu.ItemIndicator>
+                      </DropdownMenu.RadioItem>
+                      <DropdownMenu.RadioItem value="#f0fdfa" className="group">
+                        <div className="p-4 bg-teal-50 border-2 border-cyan-200 rounded-lg group-data-[state=checked]:ring-2 group-data-[state=checked]:ring-teal-400"></div>
+                        <DropdownMenu.ItemIndicator></DropdownMenu.ItemIndicator>
+                      </DropdownMenu.RadioItem>
+                    </div>
+                  </DropdownMenu.RadioGroup>
                 </DropdownMenu.Content>
               </DropdownMenu.Portal>
             </DropdownMenu.Root>
@@ -937,22 +960,24 @@ function App() {
             initialData={selectedShape}
           />
         )}
-        <ShapeCanvas
-          shapes={shapes}
-          setShapes={setShapes}
-          tool={tool}
-          setTool={setTool}
-          setZoomValue={setZoomValue}
-          zoom={zoomValue}
-          connectors={connectors}
-          addConnector={addConnector}
-          setConnectors={setConnectors}
-          strokeColor={strokeColor}
-          onShapeClick={openForm}
-          onAddTodo={openTodoForm}
-          stageCoor={stageCoor}
-          setStageCoor={setStageCoor}
-        />
+        <div style={{ background: canvasCol }}>
+          <ShapeCanvas
+            shapes={shapes}
+            setShapes={setShapes}
+            tool={tool}
+            setTool={setTool}
+            setZoomValue={setZoomValue}
+            zoom={zoomValue}
+            connectors={connectors}
+            addConnector={addConnector}
+            setConnectors={setConnectors}
+            strokeColor={strokeColor}
+            onShapeClick={openForm}
+            onAddTodo={openTodoForm}
+            stageCoor={stageCoor}
+            setStageCoor={setStageCoor}
+          />
+        </div>
       </div>
 
       <ul>

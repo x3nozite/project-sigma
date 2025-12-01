@@ -35,17 +35,18 @@ function SignIn() {
   };
 
   const handleSignIn = async () => {
-    try {
-      const { error: _error } = await supabase.auth.signInWithPassword({
+
+      const { data: _data,error: _error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
+      if (_error) {
+        alert(_error.message);
+        console.error(_error);
+        return;
+      }
       alert("Login successful!");
       navigate("/");
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong!");
-    }
   };
   console.log(session);
   return (

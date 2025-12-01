@@ -227,17 +227,35 @@ const ShapeCanvas = ({
         case "1":
           setTool("hand");
           break;
+        case "z":
+          setTool("hand");
+          break;
         case "2":
+          setTool(tool === "select" ? "hand" : "select");
+          break;
+        case "x":
           setTool(tool === "select" ? "hand" : "select");
           break;
         case "3":
           setTool(tool === "draw" ? "hand" : "draw");
           break;
+        case "c":
+          setTool(tool === "draw" ? "hand" : "draw");
+          break;
         case "4":
+          setTool(tool === "eraser" ? "hand" : "eraser");
+          break;
+        case "v":
           setTool(tool === "eraser" ? "hand" : "eraser");
           break;
         case "p":
           setTool(tool === "draw" ? "hand" : "draw");
+          break;
+        case "q":
+          onShapeClick(null);
+          break;
+        case "w":
+          onAddTodo(null);
           break;
         default:
           break;

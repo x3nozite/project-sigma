@@ -57,9 +57,6 @@ async function getOrCreateCanvas(userId: string): Promise<string | null> {
     .from("canvas")
     .insert({
       owner_id: userId,
-      viewport_x: 0,
-      viewport_y: 0,
-      viewport_zoom: 100,
     })
     .select("canvas_id")
     .single();

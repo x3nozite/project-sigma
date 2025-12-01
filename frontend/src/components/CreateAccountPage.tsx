@@ -17,7 +17,7 @@ const schema = z
       .min(8, "Password at least 8 characters long"),
     confirmPassword: z.string(),
   })
-  .superRefine(({ confirmPassword, password }, ctx) => {
+  .superRefine(async ({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password) {
       ctx.addIssue({
         code: "custom",
@@ -35,7 +35,6 @@ export async function checkEmailExists(email: string) {
     .select("id")
     .eq("email", email)
     .single();
-
   return !!data; // converts to boolean (true if exists)
 }
 
@@ -45,7 +44,6 @@ export async function checkUsernameExists(username: string) {
     .select("id")
     .eq("username", username)
     .single();
-
   return !!data; // converts to boolean (true if exists)
 }
 
@@ -57,17 +55,24 @@ function CreateAccount() {
     formState: { errors, isSubmitting },
   } = useForm<userFields>({
     resolver: zodResolver(schema),
+    mode: "onSubmit",
   });
 
   const navigate = useNavigate();
   const handleCreateAccount: SubmitHandler<userFields> = async (data) => {
-    if (data.password !== data.confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
-
     try {
       const { username, email, password } = data;
+      const emailExists = await checkEmailExists(email);
+      const usernameExists = await checkUsernameExists(username);
+      if (emailExists) {
+        setError("email", { message: "Email already exists" });
+        return;
+      }
+      if (usernameExists) {
+        setError("username", { message: "Username already exists!" });
+        return;
+      }
+
       const { data: signUpData, error } = await supabase.auth.signUp({
         email,
         password,
@@ -85,7 +90,6 @@ function CreateAccount() {
         return;
       }
 
-      console.log("Success: ", signUpData);
       alert("Account created successfully, please verify email");
       navigate("/signin");
     } catch (error) {

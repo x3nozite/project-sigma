@@ -168,8 +168,7 @@ const Rectangle = ({
         <Text
           x={0}
           y={50}
-          // text={rect.description}
-          text={counts.completed.toString()}
+          text={rect.description}
           fontSize={14}
           fontFamily="Inter"
           fontStyle="normal"
@@ -181,13 +180,6 @@ const Rectangle = ({
           width={rect.width}
           height={rect.height * 0.7}
           listening={false}
-        />
-        <Text
-          x={19}
-          y={20}
-          text={total.toString()}
-          fontSize={10}
-          fill="black"
         />
         <Text
           text={formatted}
@@ -215,9 +207,10 @@ const Rectangle = ({
             width={100}
             height={30}
             fontFamily="Inter"
-            align="left"
+            align="center"
             fill="white"
-            x={17}
+            fontStyle="bold"
+            x={10}
             y={rect.height - 42}
             padding={10}
           ></Text>

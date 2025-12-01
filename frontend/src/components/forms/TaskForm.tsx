@@ -6,14 +6,12 @@ import { z } from "zod";
 import type { ShapeType } from "../types";
 
 const schema = z.object({
-  title: z
-    .string()
-    .min(3, "Title must be at least 3 characters")
-    .max(50, "Title must be at most 50 characters"),
-  description: z
-    .string()
-    .min(10, "Description must be at least 10 characters")
-    .max(100, "Description must be at most 100 characters"),
+  title: z.string(),
+  // .min(3, "Title must be at least 3 characters")
+  // .max(50, "Title must be at most 50 characters"),
+  description: z.string(),
+  // .min(10, "Description must be at least 10 characters")
+  // .max(100, "Description must be at most 100 characters"),
   color: z.string(),
   date: z.string(),
   time: z.string(),

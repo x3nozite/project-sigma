@@ -6,10 +6,9 @@ import { z } from "zod";
 import type { RectType } from "../types";
 
 const schema = z.object({
-  title: z
-    .string()
-    .min(3, "Title must be at least 3 characters")
-    .max(50, "Title must be at most 50 characters"),
+  title: z.string(),
+  // .min(3, "Title must be at least 3 characters")
+  // .max(50, "Title must be at most 50 characters"),
   assignee: z.string(),
   date: z.string(),
   completed: z.boolean(),

@@ -28,7 +28,7 @@ interface UserProfile {
 
 type CollaboratorRole = 'owner' | 'editor' | 'viewer';
 
-export interface CanvasCollaborator {
+export interface CanvasUsers {
   user_id: string;
   role: CollaboratorRole;
 }
@@ -320,7 +320,7 @@ export async function addCollaborator(
 
     return {
       success: true,
-      collaborator: data as CanvasCollaborator,
+      collaborator: data as CanvasUsers,
     };
   } catch (error: any) {
     return {
@@ -355,7 +355,7 @@ export async function getCanvasCollaborators(canvasId: string) {
       return [];
     }
 
-    return data as CanvasCollaborator[];
+    return data as CanvasUsers[];
   } catch (error) {
     console.error("Error:", error);
   }

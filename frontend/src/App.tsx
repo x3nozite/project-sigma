@@ -41,7 +41,6 @@ import {
   getUserProfile,
   getUserCanvases,
   createNewCanvas,
-  //type CanvasCollaborator,
 } from "./services/DBFunction";
 import { useIndexedDBInit } from "./services/useIndexedDb";
 import { useAutosaveCanvas } from "./services/autosaveCanvas";
@@ -70,7 +69,7 @@ function App() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [currentCanvasId, setCurrentCanvasId] = useState<string | null>(null);
   const [canvasList, setCanvasList] = useState<any[]>([]);
-  // const [collaborators, setCollaborators] = useState<CanvasCollaborator[]>([]);
+  // const [canvasUsers, setCanvasUsers] = useState<CanvasUsers[]>([]);
 
   useAutosaveCanvas({ shapes, connectors }, 600, () =>
     saveCanvas(

@@ -42,6 +42,59 @@ const Rectangle = ({
 }: Props) => {
   // test
   const counts = getChildCounts(rect, global_shape);
+  const total = counts.completed + counts.not_completed;
+
+  // handle completed change
+  if (counts.completed === total) {
+    rect.completed = true;
+  } else {
+    rect.completed = false;
+  }
+
+  const getCompletionColor = () => {
+    if (total === 0)
+      return {
+        completeColor: "purple",
+        completeText: "No Task Yet",
+      };
+    else if (counts.completed === 0)
+      return {
+        completeColor: "#ff2056",
+        completeText: "Not Started",
+      };
+    else if (counts.completed === total)
+      return {
+        completeColor: "#00bc7d",
+        completeText: "Completed",
+      };
+    else
+      return {
+        completeColor: "#ff6900",
+        completeText: "In Progress",
+      };
+    // if (counts.completed === total)
+    //   return {
+    //     completeColor: "#00bc7d",
+    //     completeText: "Completed",
+    //   };
+    // else if (counts.completed < total)
+    //   return {
+    //     completeColor: "#ff6900",
+    //     completeText: "In Progress",
+    //   };
+    // else if (counts.completed < counts.not_completed)
+    //   return {
+    //     completeColor: "#ff2056",
+    //     completeText: "Not Started",
+    //   };
+    // else if (total === 0)
+    //   return {
+    //     completeColor: "purple",
+    //     completeText: "Overdue",
+    //   };
+  };
+
+  const { completeColor, completeText } = getCompletionColor();
   // hover to show todo
   const [isHovered, setisHovered] = useState(false);
 
@@ -58,6 +111,8 @@ const Rectangle = ({
       year: "numeric",
     })
     .replace(/, (?=\d{4})/, " ");
+
+  // logic for status
 
   return (
     <Group
@@ -130,7 +185,7 @@ const Rectangle = ({
         <Text
           x={19}
           y={20}
-          text={counts.completed.toString()}
+          text={total.toString()}
           fontSize={10}
           fill="black"
         />
@@ -148,7 +203,7 @@ const Rectangle = ({
         ></Text>
         <Group>
           <Rect
-            fill="#efb100"
+            fill={completeColor}
             width={100}
             height={30}
             x={10}
@@ -156,7 +211,7 @@ const Rectangle = ({
             cornerRadius={10}
           ></Rect>
           <Text
-            text={rect.status}
+            text={completeText}
             width={100}
             height={30}
             fontFamily="Inter"

@@ -6,14 +6,16 @@ export const countChildren = (rect: RectType, shapes: ShapeType[]) => {
   rect.children.forEach((childId) => {
     const child = shapes.find((c) => "group-" + c.id === childId);
     if (!child) return;
-    if (
-      child.behavior === "node" &&
-      child.shape === "todo" &&
-      child.completed
-    ) {
-      completed++;
-    } else {
-      not_completed++;
+    if (child.behavior === "node") {
+      if (child.shape === "todo") {
+        if (child.completed) completed++;
+        else not_completed++;
+      }
+      if (child.shape === "rect") {
+        const childCounts = countChildren(child, shapes);
+        completed += childCounts.completed;
+        not_completed += childCounts.not_completed;
+      }
     }
   });
   return { completed, not_completed };

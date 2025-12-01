@@ -165,8 +165,14 @@ function App() {
 
     const newTodo: TodoType = {
       id: "todo-" + Date.now().toString(),
-      x: parent ? parent.x + 400 : (stageCoor.x * (-1) + (window.innerWidth - 200) / 2) * (100 / zoomValue),
-      y: parent ? parent.y : (stageCoor.y * (-1) + (window.innerHeight - 200) / 2) * (100 / zoomValue),
+      x: parent
+        ? parent.x + 400
+        : (stageCoor.x * -1 + (window.innerWidth - 200) / 2) *
+          (100 / zoomValue),
+      y: parent
+        ? parent.y
+        : (stageCoor.y * -1 + (window.innerHeight - 200) / 2) *
+          (100 / zoomValue),
       color: newFields.color, // default is green
       isCollapsed: false,
       scaleX: 1,
@@ -208,15 +214,16 @@ function App() {
       shape: "rect",
       id: "rect-" + Date.now().toString(),
       behavior: "node",
-      x: (stageCoor.x * (-1) + (window.innerWidth - 200) / 2) * (100 / zoomValue),
-      y: (stageCoor.y * (-1) + (window.innerHeight - 200) / 2) * (100 / zoomValue),
+      x: (stageCoor.x * -1 + (window.innerWidth - 200) / 2) * (100 / zoomValue),
+      y:
+        (stageCoor.y * -1 + (window.innerHeight - 200) / 2) * (100 / zoomValue),
       width: 300,
       height: 200,
       color: newTask.color,
       title: newTask.title,
       description: newTask.description,
       dueDate: newTask.date,
-      status: "In Progress",
+      completed: false,
       isCollapsed: false,
       children: [],
       parents: "",
@@ -248,8 +255,9 @@ function App() {
   const addText = () => {
     const newText = {
       id: "text-" + Date.now().toString(),
-      x: (stageCoor.x * (-1) + (window.innerWidth - 200) / 2) * (100 / zoomValue),
-      y: (stageCoor.y * (-1) + (window.innerHeight - 200) / 2) * (100 / zoomValue),
+      x: (stageCoor.x * -1 + (window.innerWidth - 200) / 2) * (100 / zoomValue),
+      y:
+        (stageCoor.y * -1 + (window.innerHeight - 200) / 2) * (100 / zoomValue),
       fontSize: 20,
       text: "Placeholder Text",
       shape: "text",
@@ -265,12 +273,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-            ...r,
-            title: newData.title,
-            description: newData.description,
-            color: newData.color,
-            dueDate: newData.date,
-          }
+              ...r,
+              title: newData.title,
+              description: newData.description,
+              color: newData.color,
+              dueDate: newData.date,
+            }
           : r
       )
     );
@@ -484,10 +492,11 @@ function App() {
                                     className={`
                                         flex items-center justify-between p-4 rounded-lg border-2 
                                         hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-all
-                                        ${currentCanvasId === canvas.canvas_id
-                                        ? "bg-blue-100 border-blue-400"
-                                        : "bg-gray-50 border-gray-200"
-                                      }
+                                        ${
+                                          currentCanvasId === canvas.canvas_id
+                                            ? "bg-blue-100 border-blue-400"
+                                            : "bg-gray-50 border-gray-200"
+                                        }
                                       `}
                                   >
                                     <div className="flex items-center gap-3">

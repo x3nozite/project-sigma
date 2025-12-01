@@ -18,7 +18,7 @@ export type RectType = BaseShape & {
   title: string;
   description: string;
   dueDate: string;
-  status: string;
+  completed: boolean;
   children: string[];
   parents: string;
 };
@@ -74,7 +74,7 @@ export type TextType = {
   behavior: "decor";
   scaleX: number;
   scaleY: number;
-}
+};
 
 export type ToolType = "hand" | "eraser" | "draw" | "select";
 

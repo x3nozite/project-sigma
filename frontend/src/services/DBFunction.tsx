@@ -296,7 +296,7 @@ export async function loadCanvas(
   }
 }
 
-export async function addCollaborator(
+export async function addCanvasUser(
   canvasId: string,
   userId: string | undefined,
   role: CollaboratorRole
@@ -330,7 +330,7 @@ export async function addCollaborator(
   }
 }
 
-export async function checkCollaboratorExists(canvasId: string, userId: string | undefined) {
+export async function checkCanvasUserExists(canvasId: string, userId: string | undefined) {
   const { data } = await supabase
     .from('canvas_collaborators')
     .select('canvas_id')
@@ -341,7 +341,7 @@ export async function checkCollaboratorExists(canvasId: string, userId: string |
   return !!data; //converts data to boolean
 }
 
-export async function getCanvasCollaborators(canvasId: string) {
+export async function getCanvasUsers(canvasId: string) {
 
   try {
     const { data, error } = await supabase

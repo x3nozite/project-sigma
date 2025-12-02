@@ -26,7 +26,7 @@ interface UserProfile {
   updated_at: string;
 }
 
-type CollaboratorRole = 'owner' | 'editor' | 'viewer';
+type CollaboratorRole = "owner" | "editor" | "viewer";
 
 export interface CanvasUsers {
   user_id: string;
@@ -125,7 +125,7 @@ export async function saveCanvas(
       const canvasData = {
         local_canvas: "local",
         canvasData: shapesData,
-        updatedAt: Date.now()
+        updatedAt: Date.now(),
       };
 
       const viewportData = {
@@ -133,7 +133,7 @@ export async function saveCanvas(
         x: shapesData.viewport.x,
         y: shapesData.viewport.y,
         scale: shapesData.viewport.scale,
-        updatedAt: Date.now()
+        updatedAt: Date.now(),
       };
 
       request.onsuccess = () => {
@@ -146,7 +146,7 @@ export async function saveCanvas(
         viewportStore.put(viewportData);
 
         tx.oncomplete = () => resolve(true);
-        tx.onerror = () => resolve(true); // even if it fails, don't block cloud save
+        tx.onerror = () => resolve(true); 
       };
 
       request.onerror = () => resolve(true);
@@ -156,7 +156,7 @@ export async function saveCanvas(
     const user = auth?.user;
 
     if (!user) {
-      return { success: true }; // local save already done
+      return { success: true };
     }
 
     let targetCanvasId = canvasId;
@@ -172,16 +172,18 @@ export async function saveCanvas(
 
       const shapesToInsert = shapesData.shapes.map((shape) => ({
         canvas_id: targetCanvasId,
-        shape_data: shape
+        shape_data: shape,
       }));
 
       const connectorsToInsert = shapesData.connectors.map((c) => ({
         canvas_id: targetCanvasId,
-        shape_data: c
+        shape_data: c,
       }));
 
       const allData = [...shapesToInsert, ...connectorsToInsert];
-      const { error: insertError } = await supabase.from("shapes").insert(allData);
+      const { error: insertError } = await supabase
+        .from("shapes")
+        .insert(allData);
 
       if (insertError) {
         return { success: false, error: insertError.message };
@@ -197,6 +199,40 @@ export async function saveCanvas(
   }
 }
 
+const loadViewport = async (): Promise<Viewport> => {
+  return new Promise((resolve) => {
+    const request = indexedDB.open("CanvasDB");
+
+    request.onsuccess = () => {
+      const db = request.result;
+      const tx = db.transaction("Viewport", "readonly");
+      const store = tx.objectStore("Viewport");
+      const res = store.get("local");
+
+      tx.oncomplete = () => {
+        const vp = res.result as Viewport | undefined;
+        if (vp) resolve(vp);
+        else resolve({ x: 0, y: 0, scale: 1 });
+      };
+    };
+
+    request.onerror = () => {
+      resolve({ x: 0, y: 0, scale: 1 });
+    };
+  });
+};
+
+export function filterValidConnectors(
+  connectors: ArrowType[],
+  shapes: ShapeType[]
+) {
+  const shapeIds = new Set(shapes.map((s) => s.id));
+
+  return connectors.filter(
+    (c) => c.from && c.to && shapeIds.has(c.from) && shapeIds.has(c.to)
+  );
+}
+
 export async function loadCanvas(
   canvasId?: string | null
 ): Promise<
@@ -207,6 +243,7 @@ export async function loadCanvas(
     const {
       data: { user },
     } = await supabase.auth.getUser();
+    const viewport = await loadViewport();
 
     if (!user) {
       return new Promise((resolve) => {
@@ -221,46 +258,51 @@ export async function loadCanvas(
           const viewportStore = tx.objectStore("Viewport");
           const viewportRes = viewportStore.get("local");
 
-          canvasRes.onerror = () => resolve({ success: false, error: "Failed to get canvas data" });
-          viewportRes.onerror = () => resolve({ success: false, error: "Failed to get canvas viewport" });
+          canvasRes.onerror = () =>
+            resolve({ success: false, error: "Failed to get canvas data" });
+          viewportRes.onerror = () =>
+            resolve({ success: false, error: "Failed to get canvas viewport" });
 
           tx.oncomplete = () => {
-            const canvasRecord = canvasRes.result as CanvasDataRecord | undefined;
+            const canvasRecord = canvasRes.result as
+              | CanvasDataRecord
+              | undefined;
             const viewportRecord = viewportRes.result as Viewport | undefined;
 
             if (!canvasRecord) {
               resolve({ success: false, error: "No offline canvas found" });
-              return
+              return;
             }
 
-            if (viewportRecord) canvasRecord.canvasData.viewport = viewportRecord;
+            if (viewportRecord)
+              canvasRecord.canvasData.viewport = viewportRecord;
 
             resolve({
               success: true,
               data: canvasRecord.canvasData,
-              canvasId: canvasRecord.local_canvas
-            })
-          }
-        }
-      })
+              canvasId: canvasRecord.local_canvas,
+            });
+          };
+        };
+      });
     }
 
-    const request = indexedDB.open("CanvasDB");
-    let viewport = { x: 0, y: 0, scale: 1 };
+    // const request = indexedDB.open("CanvasDB");
+    // let viewport = { x: 0, y: 0, scale: 1 };
 
-    request.onsuccess = () => {
-      const db = request.result;
-      const tx = db.transaction("Viewport", "readonly");
+    // request.onsuccess = () => {
+    //   const db = request.result;
+    //   const tx = db.transaction("Viewport", "readonly");
 
-      const viewportStore = tx.objectStore("Viewport");
-      const viewportRes = viewportStore.get("local");
+    //   const viewportStore = tx.objectStore("Viewport");
+    //   const viewportRes = viewportStore.get("local");
 
-      tx.oncomplete = () => {
-        const viewportRecord = viewportRes.result as Viewport | undefined;
+    //   tx.oncomplete = () => {
+    //     const viewportRecord = viewportRes.result as Viewport | undefined;
 
-        if (viewportRecord) viewport = viewportRecord;
-      }
-    }
+    //     if (viewportRecord) viewport = viewportRecord;
+    //   }
+    // }
 
     let targetCanvasId = canvasId;
     if (!targetCanvasId) {
@@ -279,14 +321,41 @@ export async function loadCanvas(
       return { success: false, error: error.message };
     }
 
-    const rects: ShapeType[] = data.filter((row) => row.shape_data["shape"] === "rect").map((row) => row.shape_data);
-    const lines: ShapeType[] = data.filter((row) => row.shape_data["shape"] === "line").map((row) => row.shape_data);
-    const connectors: ArrowType[] = data.filter((row) => row.shape_data["shape"] === "connector").map((row) => row.shape_data);
-    const todos: ShapeType[] = data.filter((row) => row.shape_data["shape"] === "todo").map((row) => row.shape_data);
+    const rects: ShapeType[] = data
+      .filter((row) => row.shape_data["shape"] === "rect")
+      .map((row) => row.shape_data);
+    const lines: ShapeType[] = data
+      .filter((row) => row.shape_data["shape"] === "line")
+      .map((row) => row.shape_data);
+    // const connectors: ArrowType[] = data.filter((row) => row.shape_data["shape"] === "connector").map((row) => row.shape_data);
+    const todos: ShapeType[] = data
+      .filter((row) => row.shape_data["shape"] === "todo")
+      .map((row) => row.shape_data);
     console.log("lines to load:", lines);
+    const connectors: ArrowType[] = data
+      .filter((row) => row.shape_data["shape"] === "connector")
+      .map((row) => row.shape_data);
+
     const shapes = [...rects, ...lines, ...todos];
 
-    return { success: true, data: { shapes, connectors, viewport }, canvasId: targetCanvasId };
+    const uniqueShapes = Array.from(
+      new Map(shapes.map((s) => [s.id, s])).values()
+    );
+
+    const uniqueConnectors = Array.from(
+      new Map(connectors.map((c) => [c.id, c])).values()
+    );
+
+    const filteredConnectors = filterValidConnectors(
+      uniqueConnectors,
+      uniqueShapes
+    );
+
+    return {
+      success: true,
+      data: { shapes: uniqueShapes, connectors: filteredConnectors, viewport },
+      canvasId: targetCanvasId,
+    };
   } catch (error: any) {
     console.error("loadCanvas error:", error);
     return { success: false, error: String(error) };
@@ -300,7 +369,7 @@ export async function addCanvasUser(
 ) {
   try {
     const { data, error } = await supabase
-      .from('canvas_collaborators')
+      .from("canvas_collaborators")
       .insert([
         {
           canvas_id: canvasId,
@@ -322,33 +391,35 @@ export async function addCanvasUser(
   } catch (error: any) {
     return {
       success: false,
-      error: error.message || 'Failed to add collaborator',
+      error: error.message || "Failed to add collaborator",
     };
   }
 }
 
-export async function checkCanvasUserExists(canvasId: string, userId: string | undefined) {
+export async function checkCanvasUserExists(
+  canvasId: string,
+  userId: string | undefined
+) {
   const { data } = await supabase
-    .from('canvas_collaborators')
-    .select('canvas_id')
-    .eq('canvas_id', canvasId)
-    .eq('user_id', userId)
+    .from("canvas_collaborators")
+    .select("canvas_id")
+    .eq("canvas_id", canvasId)
+    .eq("user_id", userId)
     .single();
 
   return !!data; //converts data to boolean
 }
 
 export async function getCanvasUsers(canvasId: string) {
-
   try {
     const { data, error } = await supabase
-      .from('canvas_collaborators')
-      .select('user_id, role')
-      .eq('canvas_id', canvasId)
-      .order('added_at', { ascending: false });
+      .from("canvas_collaborators")
+      .select("user_id, role")
+      .eq("canvas_id", canvasId)
+      .order("added_at", { ascending: false });
 
     if (error) {
-      console.error('Error fetching collaborators:', error);
+      console.error("Error fetching collaborators:", error);
       return [];
     }
 

@@ -77,7 +77,7 @@ function App() {
   const [showNameModal, setShowNameModal] = useState(false);
   const [newCanvasName, setNewCanvasName] = useState("");
 
-  useAutosaveCanvas({ shapes, connectors }, 600, () =>
+  useAutosaveCanvas({ shapes, connectors }, 1000, () =>
     saveCanvas(
       {
         shapes,
@@ -93,6 +93,54 @@ function App() {
 
     (async () => {
       await init();
+
+      if (!session) {
+        const local = await loadCanvas("local");
+        if (!mounted) return;
+
+        if (local.success) {
+          setShapes(local.data.shapes);
+          setConnectors(local.data.connectors);
+          setStageCoor({
+            x: local.data.viewport.x,
+            y: local.data.viewport.y,
+          });
+          setZoomValue(Math.round(local.data.viewport.scale * 100));
+          setCurrentCanvasId("local");
+        } else {
+          setShapes([]);
+          setConnectors([]);
+          setCurrentCanvasId(null);
+        }
+
+        setCanvasList([]);
+        return;
+      }
+
+      const cloud = await loadCanvas(null);
+      if (!mounted) return;
+
+      if (cloud.success) {
+        setShapes(cloud.data.shapes);
+        setConnectors(cloud.data.connectors);
+        setStageCoor({
+          x: cloud.data.viewport.x,
+          y: cloud.data.viewport.y,
+        });
+        setZoomValue(Math.round(cloud.data.viewport.scale * 100));
+        setCurrentCanvasId(cloud.canvasId);
+
+        await saveCanvas(
+          {
+            shapes: cloud.data.shapes,
+            connectors: cloud.data.connectors,
+            viewport: cloud.data.viewport,
+          },
+          cloud.canvasId
+        );
+      } else {
+        console.error("Failed to load cloud canvas:", cloud.error);
+      }
 
       const canvasRes = await loadCanvas(null);
       if (!mounted) return;
@@ -112,8 +160,6 @@ function App() {
       } else {
         console.error("Failed to load canvas:", canvasRes.error);
       }
-
-      if (!session) return;
       const listRes = await getUserCanvases(session.user.id);
       if (!mounted) return;
 
@@ -341,9 +387,35 @@ function App() {
     setTool(tool === "select" ? "hand" : "select");
   };
 
+  const clearIndexedDBShapes = (): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open("CanvasDB");
+
+      request.onsuccess = () => {
+        const db = request.result;
+        const tx = db.transaction("Canvas", "readwrite");
+        const store = tx.objectStore("Canvas");
+
+        store.clear();
+
+        tx.oncomplete = () => {
+          console.log("IndexedDB shapes cleared");
+          resolve();
+        };
+        tx.onerror = () => {
+          console.error("Failed to clear IndexedDB shapes");
+          reject();
+        };
+      };
+
+      request.onerror = () => reject();
+    });
+  };
+
   const clearCanvas = async () => {
     setShapes([]);
     setConnectors([]);
+    await clearIndexedDBShapes();
     const response = await deleteCanvas(currentCanvasId);
     if (!response.success) {
       console.error("Failed to delete canvas from supabase", response.error);
@@ -356,6 +428,7 @@ function App() {
   const signOut = async () => {
     setIsLoading(true);
     try {
+      await clearIndexedDBShapes();
       await supabase.auth.signOut();
       await new Promise((resolve) => setTimeout(resolve, 2000));
     } catch (error) {
@@ -476,6 +549,7 @@ function App() {
 
     await handleLoad(canvasId);
   };
+
   return (
     <>
       <div className="relative w-full h-screen overflow-hidden ">
@@ -574,7 +648,6 @@ function App() {
                                 )}
                               </div>
                             </div>
-                            
                           </AlertDialog.Description>
                           <div className="flex justify-end mt-6">
                             <AlertDialog.Cancel asChild>
@@ -1034,50 +1107,49 @@ function App() {
           <li key={instrument.name}>{instrument.name}</li>
         ))}
       </ul>
-        <AlertDialog.Root open={showNameModal} onOpenChange={setShowNameModal}>
-          <AlertDialog.Portal>
-            <AlertDialog.Overlay className="fixed bg-black opacity-50 inset-0 z-100" />
+      <AlertDialog.Root open={showNameModal} onOpenChange={setShowNameModal}>
+        <AlertDialog.Portal>
+          <AlertDialog.Overlay className="fixed bg-black opacity-50 inset-0 z-100" />
 
-            <AlertDialog.Content className="bg-white min-w-md max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 rounded-lg z-101">
-              <AlertDialog.Title className="text-xl font-bold mb-2">
-                New Canvas
-              </AlertDialog.Title>
+          <AlertDialog.Content className="bg-white min-w-md max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 rounded-lg z-101">
+            <AlertDialog.Title className="text-xl font-bold mb-2">
+              New Canvas
+            </AlertDialog.Title>
 
-              <AlertDialog.Description className="my-3 text-gray-700">
-                Enter a name for your new canvas.
-              </AlertDialog.Description>
+            <AlertDialog.Description className="my-3 text-gray-700">
+              Enter a name for your new canvas.
+            </AlertDialog.Description>
 
-              <input
-                autoFocus
-                value={newCanvasName}
-                onChange={(e) => setNewCanvasName(e.target.value)}
-                placeholder="Canvas name..."
-                className="w-full border border-gray-300 p-2 rounded-lg mb-4"
-              />
+            <input
+              autoFocus
+              value={newCanvasName}
+              onChange={(e) => setNewCanvasName(e.target.value)}
+              placeholder="Canvas name..."
+              className="w-full border border-gray-300 p-2 rounded-lg mb-4"
+            />
 
-              <div className="flex justify-end gap-4">
-                <AlertDialog.Cancel asChild>
-                  <button className="hover:underline decoration-1 hover:cursor-pointer">
-                    Cancel
-                  </button>
-                </AlertDialog.Cancel>
+            <div className="flex justify-end gap-4">
+              <AlertDialog.Cancel asChild>
+                <button className="hover:underline decoration-1 hover:cursor-pointer">
+                  Cancel
+                </button>
+              </AlertDialog.Cancel>
 
-                <AlertDialog.Action asChild>
-                  <button
-                    className="bg-blue-200 text-blue-600 px-3 py-1 rounded-lg hover:bg-blue-500 hover:text-white"
-                    onClick={() => {
-                      handleCreateNewCanvas(newCanvasName);
-                      setNewCanvasName("");
-                    }}
-                  >
-                    Create Canvas
-                  </button>
-                </AlertDialog.Action>
-              </div>
-            </AlertDialog.Content>
-          </AlertDialog.Portal>
-        </AlertDialog.Root>
-
+              <AlertDialog.Action asChild>
+                <button
+                  className="bg-blue-200 text-blue-600 px-3 py-1 rounded-lg hover:bg-blue-500 hover:text-white"
+                  onClick={() => {
+                    handleCreateNewCanvas(newCanvasName);
+                    setNewCanvasName("");
+                  }}
+                >
+                  Create Canvas
+                </button>
+              </AlertDialog.Action>
+            </div>
+          </AlertDialog.Content>
+        </AlertDialog.Portal>
+      </AlertDialog.Root>
     </>
   );
 }

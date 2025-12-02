@@ -74,6 +74,8 @@ function App() {
   const [canvasList, setCanvasList] = useState<any[]>([]);
   // const [canvasUsers, setCanvasUsers] = useState<CanvasUsers[]>([]);
   const { pushUndo } = useUndoRedo();
+  const [showNameModal, setShowNameModal] = useState(false);
+  const [newCanvasName, setNewCanvasName] = useState("");
 
   useAutosaveCanvas({ shapes, connectors }, 600, () =>
     saveCanvas(
@@ -417,7 +419,7 @@ function App() {
     }
   };
 
-  const handleCreateNewCanvas = async () => {
+  const handleCreateNewCanvas = async (name: string) => {
     if (!session) {
       console.warn("No session");
       return;
@@ -443,7 +445,7 @@ function App() {
 
       const result = await createNewCanvas(
         session.user.id,
-        `Canvas ${canvasList.length + 1}`
+        name || `Canvas ${canvasList.length + 1}`
       );
 
       if (result.success && result.canvasId) {
@@ -519,57 +521,60 @@ function App() {
                             <HiOutlineFolderOpen />
                             My Canvases
                           </AlertDialog.Title>
-                          <AlertDialog.Description className="my-4">
-                            <div className="grid grid-cols-1 gap-3">
-                              {canvasList.length === 0 ? (
-                                <p className="text-gray-500 text-center py-8">
-                                  No canvases yet. Create your first one!
-                                </p>
-                              ) : (
-                                canvasList.map((canvas) => (
-                                  <div
-                                    key={canvas.canvas_id}
-                                    onClick={() => {
-                                      handleSwitchCanvas(canvas.canvas_id);
-                                    }}
-                                    className={`
-                                        flex items-center justify-between p-4 rounded-lg border-2 
-                                        hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-all
-                                        ${
-                                          currentCanvasId === canvas.canvas_id
-                                            ? "bg-blue-100 border-blue-400"
-                                            : "bg-gray-50 border-gray-200"
-                                        }
-                                      `}
-                                  >
-                                    <div className="flex items-center gap-3">
-                                      <HiOutlineFolder className="w-5 h-5 text-blue-600" />
-                                      <div>
-                                        <span className="font-medium text-gray-800">
-                                          {canvas.canvas_name || "Untitled"}
-                                        </span>
-                                        {canvas.created_at && (
-                                          <p className="text-xs text-gray-500 mt-1">
-                                            Created:{" "}
-                                            {new Date(
-                                              canvas.created_at
-                                            ).toLocaleDateString()}
-                                          </p>
-                                        )}
-                                      </div>
-                                    </div>
-                                    {currentCanvasId === canvas.canvas_id && (
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-xs text-blue-600 font-medium">
-                                          Current
-                                        </span>
-                                        <HiOutlineCheck className="w-5 h-5 text-blue-600" />
-                                      </div>
-                                    )}
+                          <AlertDialog.Description asChild>
+                            <div className="my-4">
+                              <div className="grid grid-cols-1 gap-3">
+                                {canvasList.length === 0 ? (
+                                  <div className="text-gray-500 text-center py-8">
+                                    No canvases yet. Create your first one!
                                   </div>
-                                ))
-                              )}
+                                ) : (
+                                  canvasList.map((canvas) => (
+                                    <div
+                                      key={canvas.canvas_id}
+                                      onClick={() => {
+                                        handleSwitchCanvas(canvas.canvas_id);
+                                      }}
+                                      className={`
+                                          flex items-center justify-between p-4 rounded-lg border-2 
+                                          hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-all
+                                          ${
+                                            currentCanvasId === canvas.canvas_id
+                                              ? "bg-blue-100 border-blue-400"
+                                              : "bg-gray-50 border-gray-200"
+                                          }
+                                        `}
+                                    >
+                                      <div className="flex items-center gap-3">
+                                        <HiOutlineFolder className="w-5 h-5 text-blue-600" />
+                                        <div>
+                                          <span className="font-medium text-gray-800">
+                                            {canvas.canvas_name || "Untitled"}
+                                          </span>
+                                          {canvas.created_at && (
+                                            <div className="text-xs text-gray-500 mt-1">
+                                              Created:{" "}
+                                              {new Date(
+                                                canvas.created_at
+                                              ).toLocaleDateString()}
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                      {currentCanvasId === canvas.canvas_id && (
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-xs text-blue-600 font-medium">
+                                            Current
+                                          </span>
+                                          <HiOutlineCheck className="w-5 h-5 text-blue-600" />
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))
+                                )}
+                              </div>
                             </div>
+                            
                           </AlertDialog.Description>
                           <div className="flex justify-end mt-6">
                             <AlertDialog.Cancel asChild>
@@ -595,7 +600,7 @@ function App() {
                   <DropdownMenu.Item className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700">
                     <div
                       className="flex items-center gap-2"
-                      onClick={handleCreateNewCanvas}
+                      onClick={() => setShowNameModal(true)}
                     >
                       <HiOutlinePlus />
                       <span>{isLoading ? "Creating" : "New Canvas"}</span>
@@ -738,7 +743,8 @@ function App() {
                           </div>
                           <div className="flex flex-col items-center justify-center">
                             <span className="text-sm font-medium">
-                              {session?.user?.user_metadata.name || session?.user.user_metadata.username}
+                              {session?.user?.user_metadata.name ||
+                                session?.user.user_metadata.username}
                             </span>
                             <span className="text-xs font-light">
                               {session?.user?.email}
@@ -1028,6 +1034,50 @@ function App() {
           <li key={instrument.name}>{instrument.name}</li>
         ))}
       </ul>
+        <AlertDialog.Root open={showNameModal} onOpenChange={setShowNameModal}>
+          <AlertDialog.Portal>
+            <AlertDialog.Overlay className="fixed bg-black opacity-50 inset-0 z-100" />
+
+            <AlertDialog.Content className="bg-white min-w-md max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 rounded-lg z-101">
+              <AlertDialog.Title className="text-xl font-bold mb-2">
+                New Canvas
+              </AlertDialog.Title>
+
+              <AlertDialog.Description className="my-3 text-gray-700">
+                Enter a name for your new canvas.
+              </AlertDialog.Description>
+
+              <input
+                autoFocus
+                value={newCanvasName}
+                onChange={(e) => setNewCanvasName(e.target.value)}
+                placeholder="Canvas name..."
+                className="w-full border border-gray-300 p-2 rounded-lg mb-4"
+              />
+
+              <div className="flex justify-end gap-4">
+                <AlertDialog.Cancel asChild>
+                  <button className="hover:underline decoration-1 hover:cursor-pointer">
+                    Cancel
+                  </button>
+                </AlertDialog.Cancel>
+
+                <AlertDialog.Action asChild>
+                  <button
+                    className="bg-blue-200 text-blue-600 px-3 py-1 rounded-lg hover:bg-blue-500 hover:text-white"
+                    onClick={() => {
+                      handleCreateNewCanvas(newCanvasName);
+                      setNewCanvasName("");
+                    }}
+                  >
+                    Create Canvas
+                  </button>
+                </AlertDialog.Action>
+              </div>
+            </AlertDialog.Content>
+          </AlertDialog.Portal>
+        </AlertDialog.Root>
+
     </>
   );
 }

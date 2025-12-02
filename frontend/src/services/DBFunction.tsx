@@ -79,9 +79,6 @@ export async function createNewCanvas(
       .insert({
         owner_id: userId,
         canvas_name: name || `Canvas ${Date.now()}`,
-        viewport_x: 0,
-        viewport_y: 0,
-        viewport_zoom: 100,
       })
       .select("canvas_id")
       .single();

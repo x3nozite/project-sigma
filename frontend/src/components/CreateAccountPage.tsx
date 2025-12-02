@@ -30,27 +30,6 @@ const schema = z
 
 export type userFields = z.infer<typeof schema>;
 
-<<<<<<< Updated upstream
-export async function checkEmailExists(email: string) {
-  const { data } = await supabase
-    .from("users")
-    .select("id")
-    .eq("email", email)
-    .maybeSingle();
-  return !!data; // converts to boolean (true if exists)
-}
-
-export async function checkUsernameExists(username: string) {
-  const { data } = await supabase
-    .from("users")
-    .select("id")
-    .eq("username", username)
-    .maybeSingle();
-  return !!data; // converts to boolean (true if exists)
-}
-
-=======
->>>>>>> Stashed changes
 function CreateAccount() {
   const {
     register,

@@ -78,7 +78,7 @@ function App() {
   const [newCanvasName, setNewCanvasName] = useState("");
 
   useAutosaveCanvas({ shapes, connectors }, 1000, () => {
-    if (!currentCanvasId) return;
+    if (!currentCanvasId || shapes.length === 0) return;
     saveCanvas(
       {
         shapes,

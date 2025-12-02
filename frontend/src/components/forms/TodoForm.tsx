@@ -32,13 +32,19 @@ export default function TodoForm({
   onCloseForm,
   initialTodo,
 }: Props) {
-  const today = new Date();
-  const formattedToday = today.toISOString().split("T")[0];
   const isEditing =
     initialTodo &&
     initialTodo.behavior === "node" &&
     initialTodo.shape === "todo";
 
+  let formatted: string;
+  if (isEditing) {
+    const date = new Date(initialTodo.dueDate);
+    formatted = date.toISOString().split("T")[0];
+  } else {
+    const today = new Date();
+    formatted = today.toISOString().split("T")[0];
+  }
   const {
     register,
     handleSubmit,
@@ -49,14 +55,14 @@ export default function TodoForm({
       ? {
           title: initialTodo.title,
           assignee: initialTodo.assignee,
-          date: initialTodo.dueDate,
+          date: formatted,
           completed: initialTodo.completed,
           color: initialTodo.color,
         }
       : {
           title: "My Newest Todo",
           assignee: "Guest",
-          date: formattedToday,
+          date: formatted,
           completed: false,
           color: parent?.color,
         },

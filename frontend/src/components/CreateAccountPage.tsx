@@ -6,6 +6,7 @@ import loginimage from "../assets/loginImage.webp";
 import { HiArrowLeft } from "react-icons/hi";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { checkEmailExists, checkUsernameExists } from "./utilities/checkUser";
 
 // schema for validation
 const schema = z
@@ -29,6 +30,7 @@ const schema = z
 
 export type userFields = z.infer<typeof schema>;
 
+<<<<<<< Updated upstream
 export async function checkEmailExists(email: string) {
   const { data } = await supabase
     .from("users")
@@ -47,6 +49,8 @@ export async function checkUsernameExists(username: string) {
   return !!data; // converts to boolean (true if exists)
 }
 
+=======
+>>>>>>> Stashed changes
 function CreateAccount() {
   const {
     register,
@@ -73,7 +77,7 @@ function CreateAccount() {
         return;
       }
 
-      const { data: signUpData, error } = await supabase.auth.signUp({
+      const { error: _error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -82,11 +86,11 @@ function CreateAccount() {
           },
         },
       });
-      if (error) {
+      if (_error) {
         setError("root", {
-          message: error.message,
+          message: _error.message,
         });
-        alert("Error creating account: " + error.message);
+        alert("Error creating account: " + _error.message);
         return;
       }
 

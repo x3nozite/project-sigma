@@ -158,7 +158,7 @@ const Rectangle = ({
           lineHeight={1.25}
           padding={10}
           width={rect.width}
-          height={rect.height * 0.7}
+          height={rect.height * 0.6}
           listening={false}
         />
         <Text

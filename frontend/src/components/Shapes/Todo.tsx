@@ -191,6 +191,9 @@ const Todo = ({
               x={60}
               y={8}
               text={todo.title}
+              ellipsis={true}
+              width={todo.width - 70}
+              height={30}
               fontSize={20}
               fontStyle="bold"
             />

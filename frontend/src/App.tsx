@@ -738,7 +738,7 @@ function App() {
                           </div>
                           <div className="flex flex-col items-center justify-center">
                             <span className="text-sm font-medium">
-                              {session?.user?.user_metadata.name}
+                              {session?.user?.user_metadata.name || session?.user.user_metadata.username}
                             </span>
                             <span className="text-xs font-light">
                               {session?.user?.email}

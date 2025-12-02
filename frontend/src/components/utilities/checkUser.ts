@@ -5,7 +5,7 @@ export async function checkEmailExists(email: string) {
     .from("users")
     .select("id")
     .eq("email", email)
-    .single();
+    .maybeSingle();
 
   return !!data; // converts to boolean (true if exists)
 }
@@ -15,6 +15,6 @@ export async function checkUsernameExists(username: string) {
     .from("users")
     .select("id")
     .eq("username", username)
-    .single();
+    .maybeSingle();
   return !!data; // converts to boolean (true if exists)
 }

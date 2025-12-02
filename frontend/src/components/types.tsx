@@ -79,3 +79,9 @@ export type TextType = {
 export type ToolType = "hand" | "eraser" | "draw" | "select";
 
 export type ShapeType = RectType | TodoType | LineType | TextType;
+
+export type UndoEntry = {
+  kind: "shape" | "edge";
+  items: (ShapeType | ArrowType)[];
+  action: "add" | "update" | "delete";
+};

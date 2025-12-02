@@ -45,6 +45,7 @@ import {
 import { useIndexedDBInit } from "./services/useIndexedDb";
 import { useAutosaveCanvas } from "./services/autosaveCanvas";
 import Konva from "konva";
+import { useUndoRedo } from "./context/UndoRedo/UndoRedoHelper";
 
 function App() {
   const { init } = useIndexedDBInit();
@@ -70,6 +71,7 @@ function App() {
   const [currentCanvasId, setCurrentCanvasId] = useState<string | null>(null);
   const [canvasList, setCanvasList] = useState<any[]>([]);
   // const [canvasUsers, setCanvasUsers] = useState<CanvasUsers[]>([]);
+  const { pushUndo } = useUndoRedo();
 
   useAutosaveCanvas({ shapes, connectors }, 600, () =>
     saveCanvas(
@@ -195,7 +197,7 @@ function App() {
     };
 
     setShapes([...shapes, newTodo]);
-
+    let newItems: (ShapeType | ArrowType)[] = [newTodo];
     if (parent) {
       setShapes((prev) =>
         prev.map((s) =>
@@ -205,7 +207,11 @@ function App() {
         )
       );
       addConnector(newTodo, parent);
+      const newConnector = connectors.find(conn => conn.from === "group-" + newTodo.id && conn.to === "group-" + parent.id);
+      if (newConnector) newItems = [...newItems, newConnector]
     }
+
+    pushUndo({ items: newItems, action: "add" });
   };
 
   const addRect = (newTask: taskFields) => {
@@ -233,6 +239,8 @@ function App() {
     };
 
     setShapes([...shapes, newRect]);
+
+    pushUndo({ items: [newRect], action: "add" });
   };
 
   const addConnector = (
@@ -267,6 +275,7 @@ function App() {
       scaleY: 1,
     } as const;
     setShapes([...shapes, newText]);
+    pushUndo({ items: [newText], action: "add" });
   };
 
   const updateRect = (shape: ShapeType, newData: taskFields) => {

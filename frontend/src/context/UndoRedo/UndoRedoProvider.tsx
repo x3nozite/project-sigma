@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import type { UndoEntry } from "../components/types";
+import type { UndoEntry } from "../../components/types";
 import { UndoRedoContext } from "./UndoRedoContext";
 
 export function UndoRedoProvider({ children }: { children: ReactNode }) {
@@ -9,6 +9,8 @@ export function UndoRedoProvider({ children }: { children: ReactNode }) {
   function pushUndo(entry: UndoEntry) {
     setUndoStack(prev => [...prev, entry]);
     setRedoStack([]);
+
+    console.log("test push undo");
   }
 
   function undo() {

@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type { UndoEntry } from "../components/types";
+import type { UndoEntry } from "../../components/types";
 
 interface UndoRedoType {
   undoStack: UndoEntry[];

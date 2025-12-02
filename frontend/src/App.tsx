@@ -77,7 +77,8 @@ function App() {
   const [showNameModal, setShowNameModal] = useState(false);
   const [newCanvasName, setNewCanvasName] = useState("");
 
-  useAutosaveCanvas({ shapes, connectors }, 1000, () =>
+  useAutosaveCanvas({ shapes, connectors }, 1000, () => {
+    if (!currentCanvasId) return;
     saveCanvas(
       {
         shapes,
@@ -86,7 +87,7 @@ function App() {
       },
       currentCanvasId
     )
-  );
+  });
 
   useEffect(() => {
     let mounted = true;
@@ -428,8 +429,12 @@ function App() {
   const signOut = async () => {
     setIsLoading(true);
     try {
+      setCurrentCanvasId(null);
+      setShapes([]);
+      setConnectors([]);
       await clearIndexedDBShapes();
       await supabase.auth.signOut();
+
       await new Promise((resolve) => setTimeout(resolve, 2000));
     } catch (error) {
       // console.log(error);

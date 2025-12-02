@@ -346,14 +346,14 @@ export async function loadCanvas(
       new Map(connectors.map((c) => [c.id, c])).values()
     );
 
-    const filteredConnectors = filterValidConnectors(
-      uniqueConnectors,
-      uniqueShapes
-    );
+    // const filteredConnectors = filterValidConnectors(
+    //   uniqueConnectors,
+    //   uniqueShapes
+    // );
 
     return {
       success: true,
-      data: { shapes: uniqueShapes, connectors: filteredConnectors, viewport },
+      data: { shapes: uniqueShapes, connectors: uniqueConnectors, viewport },
       canvasId: targetCanvasId,
     };
   } catch (error: any) {

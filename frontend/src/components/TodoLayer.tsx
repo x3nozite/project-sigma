@@ -1,9 +1,11 @@
 import type Konva from "konva/lib/_CoreInternals";
 import Todo from "./Shapes/Todo";
-import type { ShapeType, TodoType, ToolType } from "./types";
+import type { ShapeType, TodoType, ToolType, RectType } from "./types";
+import { shapes } from "konva/lib/Shape";
 
 interface Props {
   todos: TodoType[];
+  shapes: ShapeType[];
   setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>;
   onDragStart: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragMove: (e: Konva.KonvaEventObject<DragEvent>) => void;
@@ -12,6 +14,7 @@ interface Props {
   handleEraserClick: (todoId: string) => void;
   onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   getBorder: (color: string) => string | undefined;
+  onTodoClick: (parent: RectType | null, currTodo: TodoType | null) => void;
 }
 
 const TodoLayer = ({
@@ -24,6 +27,8 @@ const TodoLayer = ({
   handleEraserClick,
   onTransformEnd,
   getBorder,
+  onTodoClick,
+  shapes,
 }: Props) => {
   return (
     <>
@@ -39,6 +44,8 @@ const TodoLayer = ({
           handleEraserClick={handleEraserClick}
           onTransformEnd={onTransformEnd}
           getBorder={getBorder}
+          onTodoClick={onTodoClick}
+          shapes={shapes}
         />
       ))}
     </>

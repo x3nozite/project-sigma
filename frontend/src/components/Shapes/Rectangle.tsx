@@ -1,5 +1,5 @@
 import { Circle, Group, Rect, Text } from "react-konva";
-import type { RectType, ShapeType, ToolType } from "../types";
+import type { RectType, ShapeType, TodoType, ToolType } from "../types";
 import { useState, useMemo } from "react";
 import Konva from "konva";
 import { shapes } from "konva/lib/Shape";
@@ -16,7 +16,7 @@ interface Props {
   handleEraserClick: (rectId: string) => void;
   onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   getBorder: (color: string) => string | undefined;
-  onAddTodo: (parent: RectType | null) => void;
+  onAddTodo: (parent: RectType | null, currTodo: TodoType | null) => void;
   global_shape: ShapeType[];
   getChildCounts: (
     rect: RectType,
@@ -72,26 +72,6 @@ const Rectangle = ({
         completeColor: "#ff6900",
         completeText: "In Progress",
       };
-    // if (counts.completed === total)
-    //   return {
-    //     completeColor: "#00bc7d",
-    //     completeText: "Completed",
-    //   };
-    // else if (counts.completed < total)
-    //   return {
-    //     completeColor: "#ff6900",
-    //     completeText: "In Progress",
-    //   };
-    // else if (counts.completed < counts.not_completed)
-    //   return {
-    //     completeColor: "#ff2056",
-    //     completeText: "Not Started",
-    //   };
-    // else if (total === 0)
-    //   return {
-    //     completeColor: "purple",
-    //     completeText: "Overdue",
-    //   };
   };
 
   const { completeColor, completeText } = getCompletionColor();
@@ -221,7 +201,7 @@ const Rectangle = ({
             y={rect.height / 2}
             onClick={(e) => {
               e.cancelBubble = true;
-              onAddTodo(rect);
+              onAddTodo(rect, null);
             }}
           >
             <Circle radius={16} fill="white" stroke={rect.color} />

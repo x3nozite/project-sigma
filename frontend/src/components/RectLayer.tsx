@@ -1,5 +1,5 @@
 import Konva from "konva";
-import type { RectType, ShapeType, ToolType } from "./types";
+import type { RectType, ShapeType, TodoType, ToolType } from "./types";
 import Rectangle from "./Shapes/Rectangle";
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
   onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   // briant added these
   getBorder: (color: string) => string | undefined;
-  onAddTodo: (parent: RectType | null) => void;
+  onAddTodo: (parent: RectType | null, currTodo: TodoType | null) => void;
   allShapes: ShapeType[];
   getChildCounts: (
     rect: RectType,

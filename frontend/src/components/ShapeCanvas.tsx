@@ -57,9 +57,10 @@ interface Props {
   strokeColor?: string;
   onShapeClick: (shape: ShapeType | null) => void;
   // add todo from rectangle
-  onAddTodo: (parent: RectType | null) => void;
+  onAddTodo: (parent: RectType | null, currTodo: TodoType | null) => void;
   stageCoor: { x: number; y: number };
   setStageCoor: React.Dispatch<React.SetStateAction<{ x: number; y: number }>>;
+  isFormOpen: boolean;
 }
 
 const bbox_id = "1234567890";
@@ -79,6 +80,7 @@ const ShapeCanvas = ({
   onAddTodo,
   stageCoor,
   setStageCoor,
+  isFormOpen,
 }: Props) => {
   const mainLayer = useRef<Konva.Layer | null>(null!);
   const prevShape = useRef<Konva.Shape | null>(null!);
@@ -223,6 +225,7 @@ const ShapeCanvas = ({
     });
 
     function handleKeyDown(e: KeyboardEvent) {
+      if (isFormOpen) return;
       switch (e.key) {
         case "1":
           setTool("hand");
@@ -255,7 +258,7 @@ const ShapeCanvas = ({
           onShapeClick(null);
           break;
         case "w":
-          onAddTodo(null);
+          onAddTodo(null, null);
           break;
         default:
           break;
@@ -565,6 +568,8 @@ const ShapeCanvas = ({
             }}
             handleEraserClick={handleEraserClick}
             getBorder={getBorder}
+            onTodoClick={onAddTodo}
+            shapes={shapes}
           />
         </Layer>
         <Layer ref={tempLayer}></Layer>

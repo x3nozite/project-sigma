@@ -1,10 +1,12 @@
 import { Path, Circle, Group, Rect, Text } from "react-konva";
-import type { ShapeType, TodoType, ToolType } from "../types";
+import type { ShapeType, TodoType, ToolType, RectType } from "../types";
 import { useState } from "react";
 import Konva from "konva";
+import { shapes } from "konva/lib/Shape";
 
 interface Props {
   todo: TodoType;
+  shapes: ShapeType[];
   setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>;
   onDragStart: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onDragMove: (e: Konva.KonvaEventObject<DragEvent>) => void;
@@ -13,6 +15,7 @@ interface Props {
   handleEraserClick: (todoId: string) => void;
   onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   getBorder: (color: string) => string | undefined;
+  onTodoClick: (parent: RectType | null, currTodo: TodoType | null) => void;
 }
 
 const Todo = ({
@@ -24,6 +27,8 @@ const Todo = ({
   tool,
   onTransformEnd,
   handleEraserClick,
+  onTodoClick,
+  shapes,
 }: Props) => {
   // For the checkbox
   const [isHovered, setisHovered] = useState(false);
@@ -141,6 +146,19 @@ const Todo = ({
       onTransformEnd={onTransformEnd}
       onClick={() => {
         handleEraserClick(todo.id);
+      }}
+      onDblClick={() => {
+        if (tool === "hand") {
+          if (!shapes) return;
+          let parent: RectType | null = null;
+          if (todo.parents) {
+            const found = shapes.find((s) => s.id === todo.parents);
+            if (found && found?.shape === "rect") {
+              parent = found as RectType;
+            }
+          }
+          onTodoClick(parent, todo);
+        }
       }}
     >
       <Group visible={!todo.isCollapsed}>

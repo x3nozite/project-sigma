@@ -11,12 +11,12 @@ import {
 } from "react-icons/hi";
 import { RiCursorFill } from "react-icons/ri";
 import { BsEraser } from "react-icons/bs";
-import type { RectType, ToolType } from "../../../types";
+import type { RectType, TodoType, ToolType } from "../../../types";
 
 interface Props {
   onEraserClick: () => void;
   onShapeClick: () => void;
-  onTodoClick: (parent?: RectType) => void;
+  onTodoClick: (parent?: RectType, currTodo?: TodoType) => void;
   onTextClick: () => void;
   onClearClick: () => void;
   onDrawClick: () => void;

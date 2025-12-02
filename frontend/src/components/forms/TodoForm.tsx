@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { z } from "zod";
-import type { RectType } from "../types";
+import type { RectType, ShapeType } from "../types";
 
 const schema = z.object({
   title: z.string(),
@@ -19,13 +19,25 @@ export type todoFields = z.infer<typeof schema>;
 
 interface Props {
   onAddTodo: (field: todoFields, parent: RectType | null) => void;
+  onUpdateTodo: (shape: ShapeType, newData: todoFields) => void;
   onCloseForm: () => void;
   parent: RectType | null;
+  initialTodo: ShapeType | null;
 }
 
-export default function TodoForm({ onAddTodo, parent, onCloseForm }: Props) {
+export default function TodoForm({
+  onAddTodo,
+  onUpdateTodo,
+  parent,
+  onCloseForm,
+  initialTodo,
+}: Props) {
   const today = new Date();
   const formattedToday = today.toISOString().split("T")[0];
+  const isEditing =
+    initialTodo &&
+    initialTodo.behavior === "node" &&
+    initialTodo.shape === "todo";
 
   const {
     register,
@@ -33,22 +45,37 @@ export default function TodoForm({ onAddTodo, parent, onCloseForm }: Props) {
     setError,
     formState: { isSubmitting },
   } = useForm<todoFields>({
-    defaultValues: {
-      title: "My Newest Todo",
-      assignee: "Guest",
-      date: formattedToday,
-      completed: false,
-      color: parent?.color,
-    },
+    defaultValues: isEditing
+      ? {
+          title: initialTodo.title,
+          assignee: initialTodo.assignee,
+          date: initialTodo.dueDate,
+          completed: initialTodo.completed,
+          color: initialTodo.color,
+        }
+      : {
+          title: "My Newest Todo",
+          assignee: "Guest",
+          date: formattedToday,
+          completed: false,
+          color: parent?.color,
+        },
+
     resolver: zodResolver(schema),
   });
 
-  const [selCol, setSelCol] = useState(parent?.color ?? "#ff2056");
+  const [selCol, setSelCol] = useState(
+    isEditing ? initialTodo.color : parent?.color ?? "#ff2056"
+  );
 
   const onSubmit: SubmitHandler<todoFields> = async (data) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      onAddTodo(data, parent);
+      if (isEditing) onUpdateTodo(initialTodo, data);
+      else {
+        console.log("init: " + initialTodo);
+        onAddTodo(data, parent);
+      }
       onCloseForm();
     } catch (error) {
       setError("root", {

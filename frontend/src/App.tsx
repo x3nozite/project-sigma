@@ -59,12 +59,14 @@ function App() {
   });
   const [showForm, setShowForm] = useState(false);
   const [showTodoForm, setShowTodoForm] = useState(false);
+  const [isFormOpen, setisFormOpen] = useState(false);
   const [shapes, setShapes] = useState<ShapeType[]>([]);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
   const [tool, setTool] = useState<ToolType>("hand");
   const [strokeColor, setStrokeColor] = useState<string>("#000000");
   const navigate = useNavigate();
   const [selectedShape, setSelectedShape] = useState<ShapeType | null>(null);
+  const [selectedTodo, setSelectedTodo] = useState<TodoType | null>(null);
   const [selectedParent, setSelectedParent] = useState<RectType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -146,23 +148,33 @@ function App() {
   // canvas color
   const [canvasCol, setcanvasCol] = useState("#ffffff");
 
-  const openTodoForm = (parent: RectType | null) => {
+  const openTodoForm = (parent: RectType | null, currTodo: TodoType | null) => {
     setSelectedParent(parent);
+    console.log("parent: " + parent);
+    setSelectedTodo(currTodo);
+    console.log(currTodo);
+    setisFormOpen(true);
     setShowTodoForm(true);
   };
 
   const closeTodoForm = () => {
+    setSelectedParent(null);
+    setSelectedTodo(null);
+    setisFormOpen(false);
     setShowTodoForm(false);
   };
 
   const openForm = (shape: ShapeType | null) => {
     setSelectedShape(shape);
+    console.log("shape: " + shape);
     setShowForm(true);
+    setisFormOpen(true);
   };
 
   const closeForm = () => {
     setSelectedShape(null);
     setShowForm(false);
+    setisFormOpen(false);
   };
 
   const addTodo = (newFields: todoFields, parent: RectType | null) => {
@@ -173,11 +185,11 @@ function App() {
       x: parent
         ? parent.x + 400
         : (stageCoor.x * -1 + (window.innerWidth - 200) / 2) *
-        (100 / zoomValue),
+          (100 / zoomValue),
       y: parent
         ? parent.y
         : (stageCoor.y * -1 + (window.innerHeight - 200) / 2) *
-        (100 / zoomValue),
+          (100 / zoomValue),
       color: newFields.color, // default is green
       isCollapsed: false,
       scaleX: 1,
@@ -207,8 +219,12 @@ function App() {
         )
       );
       addConnector(newTodo, parent);
-      const newConnector = connectors.find(conn => conn.from === "group-" + newTodo.id && conn.to === "group-" + parent.id);
-      if (newConnector) newItems = [...newItems, newConnector]
+      const newConnector = connectors.find(
+        (conn) =>
+          conn.from === "group-" + newTodo.id &&
+          conn.to === "group-" + parent.id
+      );
+      if (newConnector) newItems = [...newItems, newConnector];
     }
 
     pushUndo({ items: newItems, action: "add" });
@@ -283,13 +299,30 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-            ...r,
-            title: newData.title,
-            description: newData.description,
-            color: newData.color,
-            dueDate: newData.date,
-          }
+              ...r,
+              title: newData.title,
+              description: newData.description,
+              color: newData.color,
+              dueDate: newData.date,
+            }
           : r
+      )
+    );
+  };
+
+  const updateTodo = (shape: ShapeType, newData: todoFields) => {
+    setShapes((prev) =>
+      prev.map((t) =>
+        t.id === shape.id
+          ? {
+              ...t,
+              title: newData.title,
+              assignee: newData.assignee,
+              dueDate: newData.date,
+              completed: newData.completed,
+              color: newData.color,
+            }
+          : t
       )
     );
   };
@@ -502,10 +535,11 @@ function App() {
                                     className={`
                                         flex items-center justify-between p-4 rounded-lg border-2 
                                         hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-all
-                                        ${currentCanvasId === canvas.canvas_id
-                                        ? "bg-blue-100 border-blue-400"
-                                        : "bg-gray-50 border-gray-200"
-                                      }
+                                        ${
+                                          currentCanvasId === canvas.canvas_id
+                                            ? "bg-blue-100 border-blue-400"
+                                            : "bg-gray-50 border-gray-200"
+                                        }
                                       `}
                                   >
                                     <div className="flex items-center gap-3">
@@ -651,7 +685,7 @@ function App() {
             /> */}
             <AppToolbar
               onShapeClick={() => openForm(null)}
-              onTodoClick={() => openTodoForm(null)}
+              onTodoClick={() => openTodoForm(null, null)}
               onTextClick={addText}
               onEraserClick={toggleEraser}
               onClearClick={clearCanvas}
@@ -954,8 +988,10 @@ function App() {
         {showTodoForm && (
           <TodoForm
             parent={selectedParent}
+            onUpdateTodo={updateTodo}
             onAddTodo={addTodo}
             onCloseForm={closeTodoForm}
+            initialTodo={selectedTodo}
           />
         )}
         {showForm && (
@@ -982,6 +1018,7 @@ function App() {
             onAddTodo={openTodoForm}
             stageCoor={stageCoor}
             setStageCoor={setStageCoor}
+            isFormOpen={isFormOpen}
           />
         </div>
       </div>

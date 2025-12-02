@@ -513,6 +513,13 @@ const ShapeCanvas = ({
             texts={shapes.filter(
               (s: ShapeType): s is TextType => s.shape === "text"
             )}
+            onEraserClick={handleEraserClick}
+            onDragEnd={(e) => {
+              handleDragEnd(e, mainLayer, tool, prevShape, setShapes);
+            }}
+            onTransformEnd={(e) => {
+              handleTransfromEnd(e, setShapes);
+            }}
           />
           <RectLayer
             shapes={shapes.filter(

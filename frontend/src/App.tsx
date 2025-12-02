@@ -171,11 +171,11 @@ function App() {
       x: parent
         ? parent.x + 400
         : (stageCoor.x * -1 + (window.innerWidth - 200) / 2) *
-          (100 / zoomValue),
+        (100 / zoomValue),
       y: parent
         ? parent.y
         : (stageCoor.y * -1 + (window.innerHeight - 200) / 2) *
-          (100 / zoomValue),
+        (100 / zoomValue),
       color: newFields.color, // default is green
       isCollapsed: false,
       scaleX: 1,
@@ -194,8 +194,6 @@ function App() {
       parents: parent ? parent.id : "",
     };
 
-    console.log(stageCoor.x);
-    console.log(stageCoor.y);
     setShapes([...shapes, newTodo]);
 
     if (parent) {
@@ -276,12 +274,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-              ...r,
-              title: newData.title,
-              description: newData.description,
-              color: newData.color,
-              dueDate: newData.date,
-            }
+            ...r,
+            title: newData.title,
+            description: newData.description,
+            color: newData.color,
+            dueDate: newData.date,
+          }
           : r
       )
     );
@@ -495,11 +493,10 @@ function App() {
                                     className={`
                                         flex items-center justify-between p-4 rounded-lg border-2 
                                         hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-all
-                                        ${
-                                          currentCanvasId === canvas.canvas_id
-                                            ? "bg-blue-100 border-blue-400"
-                                            : "bg-gray-50 border-gray-200"
-                                        }
+                                        ${currentCanvasId === canvas.canvas_id
+                                        ? "bg-blue-100 border-blue-400"
+                                        : "bg-gray-50 border-gray-200"
+                                      }
                                       `}
                                   >
                                     <div className="flex items-center gap-3">

@@ -57,7 +57,7 @@ export function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: R
   setShapes(prevShapes => {
     const newShapes = [...prevShapes];
     const index = newShapes.findIndex(r => "group-" + r.id === id);
-    if (index !== -1 && newShapes[index].behavior === "node") {
+    if (index !== -1 && newShapes[index].shape !== "line") {
       newShapes[index] = {
         ...newShapes[index],
         x: e.target.x(),
@@ -76,6 +76,7 @@ export function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: R
     }
     return newShapes;
   })
+
 }
 
 export function handleStageDragStart(e: Konva.KonvaEventObject<DragEvent>, mainLayer: RefObject<Konva.Layer | null>, arrowLayer: RefObject<Konva.Layer | null>) {

@@ -31,6 +31,8 @@ import {
   HiOutlineFolderOpen,
   HiOutlineCheck,
   HiOutlinePlus,
+  HiOutlinePencil,
+  HiOutlineX,
 } from "react-icons/hi";
 import { DropdownMenu, AlertDialog } from "radix-ui";
 import AppToolbar from "./components/ui/buttons/tools/AppToolbar";
@@ -41,6 +43,8 @@ import {
   getUserProfile,
   getUserCanvases,
   createNewCanvas,
+  updateCanvasName,
+  deleteCanvasById,
 } from "./services/DBFunction";
 import { useIndexedDBInit } from "./services/useIndexedDb";
 import { useAutosaveCanvas } from "./services/autosaveCanvas";
@@ -76,9 +80,15 @@ function App() {
   const { pushUndo } = useUndoRedo();
   const [showNameModal, setShowNameModal] = useState(false);
   const [newCanvasName, setNewCanvasName] = useState("");
+  const [editingCanvasId, setEditingCanvasId] = useState<string | null>(null);
+  const [editingCanvasName, setEditingCanvasName] = useState("");
 
   useAutosaveCanvas({ shapes, connectors }, 1000, () => {
     if (!currentCanvasId || shapes.length === 0) return;
+    console.log("Autosaving:", {
+      shapes: shapes.length,
+      connectors: connectors.length,
+    });
     saveCanvas(
       {
         shapes,
@@ -86,7 +96,7 @@ function App() {
         viewport: { x: stageCoor.x, y: stageCoor.y, scale: zoomValue / 100 },
       },
       currentCanvasId
-    )
+    );
   });
 
   useEffect(() => {
@@ -109,8 +119,8 @@ function App() {
           setZoomValue(Math.round(local.data.viewport.scale * 100));
           setCurrentCanvasId("local");
         } else {
-          setShapes([]);
           setConnectors([]);
+          setShapes([]);
           setCurrentCanvasId(null);
         }
 
@@ -429,9 +439,9 @@ function App() {
   const signOut = async () => {
     setIsLoading(true);
     try {
-      setCurrentCanvasId(null);
-      setShapes([]);
-      setConnectors([]);
+      // setConnectors([]);
+      // setShapes([]);
+      // setCurrentCanvasId(null);
       await clearIndexedDBShapes();
       await supabase.auth.signOut();
 
@@ -555,6 +565,71 @@ function App() {
     await handleLoad(canvasId);
   };
 
+  const handleEditCanvasName = async (canvasId: string) => {
+    if (!editingCanvasName.trim()) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const result = await updateCanvasName(canvasId, editingCanvasName);
+
+      if (result.success) {
+        setCanvasList((prev) =>
+          prev.map((canvas) =>
+            canvas.canvas_id === canvasId
+              ? { ...canvas, canvas_name: editingCanvasName }
+              : canvas
+          )
+        );
+        setEditingCanvasId(null);
+        setEditingCanvasName("");
+      } else {
+        console.error("Failed to update canvas name:", result.error);
+      }
+    } catch (error) {
+      console.error("Error updating canvas name:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteCanvas = async (canvasId: string, canvasName: string) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${canvasName}"? This action cannot be undone.`
+    );
+
+    if (!confirmed) return;
+
+    setIsLoading(true);
+    try {
+      const result = await deleteCanvasById(canvasId);
+
+      if (result.success) {
+        setCanvasList((prev) => prev.filter((c) => c.canvas_id !== canvasId));
+
+        if (currentCanvasId === canvasId) {
+          const remainingCanvases = canvasList.filter(
+            (c) => c.canvas_id !== canvasId
+          );
+          if (remainingCanvases.length > 0) {
+            await handleSwitchCanvas(remainingCanvases[0].canvas_id);
+          } else {
+            setShapes([]);
+            setConnectors([]);
+            setCurrentCanvasId(null);
+          }
+        }
+      } else {
+        console.error("Failed to delete canvas:", result.error);
+      }
+    } catch (error) {
+      console.error("Error deleting canvas:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="relative w-full h-screen overflow-hidden ">
@@ -611,25 +686,64 @@ function App() {
                                   canvasList.map((canvas) => (
                                     <div
                                       key={canvas.canvas_id}
-                                      onClick={() => {
-                                        handleSwitchCanvas(canvas.canvas_id);
-                                      }}
                                       className={`
-                                          flex items-center justify-between p-4 rounded-lg border-2 
-                                          hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-all
-                                          ${
-                                            currentCanvasId === canvas.canvas_id
-                                              ? "bg-blue-100 border-blue-400"
-                                              : "bg-gray-50 border-gray-200"
-                                          }
-                                        `}
+                                        flex items-center justify-between p-4 rounded-lg border-2 
+                                        transition-all
+                                        ${
+                                          currentCanvasId === canvas.canvas_id
+                                            ? "bg-blue-100 border-blue-400"
+                                            : "bg-gray-50 border-gray-200"
+                                        }
+                                      `}
                                     >
-                                      <div className="flex items-center gap-3">
+                                      <div
+                                        className="flex items-center gap-3 flex-1 cursor-pointer hover:opacity-80"
+                                        onClick={() => {
+                                          if (
+                                            editingCanvasId !== canvas.canvas_id
+                                          ) {
+                                            handleSwitchCanvas(
+                                              canvas.canvas_id
+                                            );
+                                          }
+                                        }}
+                                      >
                                         <HiOutlineFolder className="w-5 h-5 text-blue-600" />
-                                        <div>
-                                          <span className="font-medium text-gray-800">
-                                            {canvas.canvas_name || "Untitled"}
-                                          </span>
+                                        <div className="flex-1">
+                                          {editingCanvasId ===
+                                          canvas.canvas_id ? (
+                                            <input
+                                              type="text"
+                                              value={editingCanvasName}
+                                              onChange={(e) =>
+                                                setEditingCanvasName(
+                                                  e.target.value
+                                                )
+                                              }
+                                              onKeyDown={(e) => {
+                                                if (e.key === " ") {
+                                                  e.stopPropagation();
+                                                }
+                                                if (e.key === "Enter") {
+                                                  handleEditCanvasName(
+                                                    canvas.canvas_id
+                                                  );
+                                                } else if (e.key === "Escape") {
+                                                  setEditingCanvasId(null);
+                                                  setEditingCanvasName("");
+                                                }
+                                              }}
+                                              className="font-medium text-gray-800 border-2 border-blue-400 rounded px-2 py-1 w-full"
+                                              autoFocus
+                                              onClick={(e) =>
+                                                e.stopPropagation()
+                                              }
+                                            />
+                                          ) : (
+                                            <span className="font-medium text-gray-800">
+                                              {canvas.canvas_name || "Untitled"}
+                                            </span>
+                                          )}
                                           {canvas.created_at && (
                                             <div className="text-xs text-gray-500 mt-1">
                                               Created:{" "}
@@ -640,14 +754,75 @@ function App() {
                                           )}
                                         </div>
                                       </div>
-                                      {currentCanvasId === canvas.canvas_id && (
-                                        <div className="flex items-center gap-2">
-                                          <span className="text-xs text-blue-600 font-medium">
+
+                                      <div className="flex items-center gap-2">
+                                        {currentCanvasId ===
+                                          canvas.canvas_id && (
+                                          <span className="text-xs text-blue-600 font-medium mr-2">
                                             Current
                                           </span>
-                                          <HiOutlineCheck className="w-5 h-5 text-blue-600" />
-                                        </div>
-                                      )}
+                                        )}
+
+                                        {editingCanvasId ===
+                                        canvas.canvas_id ? (
+                                          <>
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleEditCanvasName(
+                                                  canvas.canvas_id
+                                                );
+                                              }}
+                                              className="p-2 hover:bg-green-100 rounded transition-colors"
+                                              title="Save"
+                                            >
+                                              <HiOutlineCheck className="w-4 h-4 text-green-600" />
+                                            </button>
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setEditingCanvasId(null);
+                                                setEditingCanvasName("");
+                                              }}
+                                              className="p-2 hover:bg-gray-200 rounded transition-colors"
+                                              title="Cancel"
+                                            >
+                                              ✕
+                                            </button>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setEditingCanvasId(
+                                                  canvas.canvas_id
+                                                );
+                                                setEditingCanvasName(
+                                                  canvas.canvas_name || ""
+                                                );
+                                              }}
+                                              className="p-2 hover:bg-blue-100 rounded transition-colors"
+                                              title="Edit name"
+                                            >
+                                              <HiOutlinePencil className="w-4 h-4 text-blue-600" />
+                                            </button>
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeleteCanvas(
+                                                  canvas.canvas_id,
+                                                  canvas.canvas_name
+                                                );
+                                              }}
+                                              className="p-2 hover:bg-red-100 rounded transition-colors"
+                                              title="Delete canvas"
+                                            >
+                                              <HiOutlineTrash className="w-4 h-4 text-red-600" />
+                                            </button>
+                                          </>
+                                        )}
+                                      </div>
                                     </div>
                                   ))
                                 )}

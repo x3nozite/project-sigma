@@ -43,6 +43,7 @@ import {
 } from "./canvas_tools/selectTool.ts";
 import TextLayer from "./TextLayer.tsx";
 import { countChildren } from "./utilities/countChild.ts";
+import { useUndoRedo } from "../context/UndoRedo/UndoRedoHelper.tsx";
 
 interface Props {
   shapes: ShapeType[];
@@ -102,6 +103,7 @@ const ShapeCanvas = ({
   const isSelecting = useRef(false);
   const transformerRef = useRef<Konva.Transformer>(null);
   const boundBoxRef = useRef<Konva.Rect>(null);
+  const { pushUndo, undo } = useUndoRedo();
 
   useEffect(() => {
     if (!mainLayer.current) return;
@@ -226,6 +228,11 @@ const ShapeCanvas = ({
 
     function handleKeyDown(e: KeyboardEvent) {
       if (isFormOpen) return;
+      // Ctrl + Z
+      if ((e.ctrlKey || e.metaKey) && e.key === "z") {
+        undo(shapes, connectors, setShapes, setConnectors); // or whatever your undo function is
+        return;
+      }
       switch (e.key) {
         case "1":
           setTool("hand");

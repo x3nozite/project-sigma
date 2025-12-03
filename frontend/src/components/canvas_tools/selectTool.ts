@@ -2,7 +2,7 @@ import type { KonvaEventObject } from "konva/lib/Node";
 import Konva from "konva";
 import type React from "react";
 import type { RefObject } from "react";
-import type { SelectionRectType, ShapeType } from "../types";
+import type { SelectionRectType, ShapeType, UndoEntry } from "../types";
 import { getRelativePointerPosition } from "./drawTool";
 import { lineIntersectsRect } from "../utilities/lineIntersect";
 
@@ -139,9 +139,15 @@ export const handleStageSelectClick = (e: KonvaEventObject<MouseEvent>, selectio
   else if (metaPressed && !isSelected) setSelectedIds([...selectedIds, clickedId]);
 };
 
-export const handleTransfromEnd = (e: Konva.KonvaEventObject<DragEvent>, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>) => {
+export const handleTransfromEnd = (e: Konva.KonvaEventObject<DragEvent>, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, shapes: ShapeType[], pushUndo: (entry: UndoEntry) => void, groupId: string | null) => {
   const id = e.target.id();
   const node = e.target;
+
+  const shapeInArray = shapes.find((s => "group-" + s.id === node.id()));
+  if (shapeInArray) {
+    if (groupId) pushUndo({ id: groupId, items: [shapeInArray], action: "update" });
+    else pushUndo({ items: [shapeInArray], action: "update" });
+  }
 
   setShapes(prevShapes => {
     const newShapes = [...prevShapes];

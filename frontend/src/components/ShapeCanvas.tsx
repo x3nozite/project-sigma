@@ -104,6 +104,7 @@ const ShapeCanvas = ({
   const transformerRef = useRef<Konva.Transformer>(null);
   const boundBoxRef = useRef<Konva.Rect>(null);
   const { pushUndo, undo } = useUndoRedo();
+  const currentUndoGroup = useRef<string | null>(null);
 
   useEffect(() => {
     if (!mainLayer.current) return;
@@ -287,6 +288,8 @@ const ShapeCanvas = ({
 
       transformerRef.current.nodes(nodes);
 
+      currentUndoGroup.current = crypto.randomUUID();
+
       requestAnimationFrame(() => {
         const bbox = boundBoxRef.current;
         if (!bbox || !stageRef.current || !transformerRef.current) return;
@@ -317,12 +320,14 @@ const ShapeCanvas = ({
     } else if (transformerRef.current) {
       transformerRef.current.nodes([]);
       const bbox = boundBoxRef.current;
+      currentUndoGroup.current = null;
       bbox?.hide();
     }
 
     if (tool !== "select") {
       transformerRef.current?.nodes([]);
       const bbox = boundBoxRef.current;
+      currentUndoGroup.current = null;
       bbox?.hide();
     }
   }, [selectedIds, tool, stageCoor]);
@@ -465,8 +470,10 @@ const ShapeCanvas = ({
             );
         }}
         onPointerUp={() => {
-          if (tool === "draw")
+          if (tool === "draw") {
             handleStageMouseUp(mouseHeldDown, setMouseHeldDown);
+            pushUndo({ action: "add", items: [shapes[shapes.length - 1]] })
+          }
           if (tool === "eraser") handleEraseLinesMouseUp(setMouseHeldDown);
           if (tool === "select")
             handleSelectMouseUp(
@@ -513,10 +520,10 @@ const ShapeCanvas = ({
               (s: ShapeType): s is LineType => s.shape === "line"
             )}
             onDragEnd={(e) => {
-              handleDragEnd(e, mainLayer, tool, prevShape, setShapes);
+              handleDragEnd(e, mainLayer, tool, prevShape, setShapes, shapes, pushUndo, currentUndoGroup.current);
             }}
             onTransformEnd={(e) => {
-              handleTransfromEnd(e, setShapes);
+              handleTransfromEnd(e, setShapes, shapes, pushUndo, currentUndoGroup.current);
             }}
           />
           <TextLayer
@@ -525,10 +532,10 @@ const ShapeCanvas = ({
             )}
             onEraserClick={handleEraserClick}
             onDragEnd={(e) => {
-              handleDragEnd(e, mainLayer, tool, prevShape, setShapes);
+              handleDragEnd(e, mainLayer, tool, prevShape, setShapes, shapes, pushUndo, currentUndoGroup.current);
             }}
             onTransformEnd={(e) => {
-              handleTransfromEnd(e, setShapes);
+              handleTransfromEnd(e, setShapes, shapes, pushUndo, currentUndoGroup.current);
             }}
           />
           <RectLayer
@@ -543,10 +550,10 @@ const ShapeCanvas = ({
               arrowMovement(connectors, mainLayer, tempLayer, arrowLayer);
             }}
             onDragEnd={(e) => {
-              handleDragEnd(e, mainLayer, tool, prevShape, setShapes);
+              handleDragEnd(e, mainLayer, tool, prevShape, setShapes, shapes, pushUndo, currentUndoGroup.current);
             }}
             onTransformEnd={(e) => {
-              handleTransfromEnd(e, setShapes);
+              handleTransfromEnd(e, setShapes, shapes, pushUndo, currentUndoGroup.current);
             }}
             tool={tool}
             collapseChild={collapseChild}
@@ -568,10 +575,10 @@ const ShapeCanvas = ({
               arrowMovement(connectors, mainLayer, tempLayer, arrowLayer);
             }}
             onDragEnd={(e) => {
-              handleDragEnd(e, mainLayer, tool, prevShape, setShapes);
+              handleDragEnd(e, mainLayer, tool, prevShape, setShapes, shapes, pushUndo, currentUndoGroup.current);
             }}
             onTransformEnd={(e) => {
-              handleTransfromEnd(e, setShapes);
+              handleTransfromEnd(e, setShapes, shapes, pushUndo, currentUndoGroup.current);
             }}
             handleEraserClick={handleEraserClick}
             getBorder={getBorder}

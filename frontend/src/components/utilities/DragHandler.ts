@@ -1,7 +1,7 @@
 import Konva from "konva";
 import type { Vector2d } from "konva/lib/types";
 import type { RefObject } from "react";
-import type { ShapeType } from "../types";
+import type { ShapeType, UndoEntry } from "../types";
 
 export function handleDragStart(e: Konva.KonvaEventObject<DragEvent>, tool: string, tempLayer: RefObject<Konva.Layer | null>) {
   if (tool === "eraser") return;
@@ -40,12 +40,18 @@ export function handleDragMove(e: Konva.KonvaEventObject<DragEvent>, mainLayer: 
   }
 }
 
-export function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: RefObject<Konva.Layer | null>, tool: string, prevShape: RefObject<Konva.Shape | null>, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>) {
+export function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: RefObject<Konva.Layer | null>, tool: string, prevShape: RefObject<Konva.Shape | null>, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, shapes: ShapeType[], pushUndo: (entry: UndoEntry) => void, groupId: string | null) {
   if (tool === "eraser") return;
   const shape = e.target;
   const stage = shape.getStage();
   const pointerPos = stage?.getPointerPosition();
   const shapeOnPointer = mainLayer.current?.getIntersection(pointerPos as Vector2d);
+
+  const shapeInArray = shapes.find((s => "group-" + s.id === shape.id()));
+  if (shapeInArray) {
+    if (groupId) pushUndo({ id: groupId, items: [shapeInArray], action: "update" });
+    else pushUndo({ items: [shapeInArray], action: "update" });
+  }
 
   if (shapeOnPointer && !shapeOnPointer.getAttr("temporary")) {
     prevShape.current?.fire("drop", { evt: e.evt, source: e.target }, true);

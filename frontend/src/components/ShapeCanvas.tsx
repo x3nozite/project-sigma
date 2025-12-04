@@ -187,13 +187,6 @@ const ShapeCanvas = ({
 
         shape.fill("white");
 
-        const dx = shapeGroup.x() - sourceShape.x();
-        const dy = shapeGroup.y() - sourceShape.y();
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const vectorX = dx / dist;
-        const vectorY = dy / dist;
-        const offset = 100;
-
         setShapes((prev: ShapeType[]) => {
           return prev.map((shape) => {
             if (
@@ -202,9 +195,7 @@ const ShapeCanvas = ({
             ) {
               return {
                 ...shape,
-                parents: shapeGroup.id(),
-                x: shape.x + -offset * vectorX,
-                y: shape.y + -offset * vectorY,
+                parents: shapeGroup.id()
               };
             }
             if (

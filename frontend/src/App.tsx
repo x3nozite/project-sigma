@@ -121,36 +121,11 @@ function App() {
         } else {
           setConnectors([]);
           setShapes([]);
-          setCurrentCanvasId(null);
         }
 
+        setCurrentCanvasId("local");
         setCanvasList([]);
         return;
-      }
-
-      const cloud = await loadCanvas(null);
-      if (!mounted) return;
-
-      if (cloud.success) {
-        setShapes(cloud.data.shapes);
-        setConnectors(cloud.data.connectors);
-        setStageCoor({
-          x: cloud.data.viewport.x,
-          y: cloud.data.viewport.y,
-        });
-        setZoomValue(Math.round(cloud.data.viewport.scale * 100));
-        setCurrentCanvasId(cloud.canvasId);
-
-        await saveCanvas(
-          {
-            shapes: cloud.data.shapes,
-            connectors: cloud.data.connectors,
-            viewport: cloud.data.viewport,
-          },
-          cloud.canvasId
-        );
-      } else {
-        console.error("Failed to load cloud canvas:", cloud.error);
       }
 
       const canvasRes = await loadCanvas(null);
@@ -431,11 +406,18 @@ function App() {
   const clearCanvas = async () => {
     setShapes([]);
     setConnectors([]);
-    await clearIndexedDBShapes();
-    const response = await deleteCanvas(currentCanvasId);
-    if (!response.success) {
-      console.error("Failed to delete canvas from supabase", response.error);
+
+    if(currentCanvasId === "local"){
+      await clearIndexedDBShapes();
     }
+    else if(currentCanvasId){
+      const response = await deleteCanvas(currentCanvasId);
+      if (!response.success) {
+        console.error("Failed to delete canvas from supabase", response.error);
+    }
+    }
+    
+
   };
   // if (!session) {
   //   return <Auth supabase={supabase} appearance={{ theme: ThemeSupa }}></Auth>
@@ -447,8 +429,21 @@ function App() {
       // setConnectors([]);
       // setShapes([]);
       // setCurrentCanvasId(null);
-      await clearIndexedDBShapes();
+      // await clearIndexedDBShapes();
       await supabase.auth.signOut();
+
+      const local = await loadCanvas("local");
+      if (local.success) {
+        setShapes(local.data.shapes);
+        setConnectors(local.data.connectors);
+        setStageCoor(local.data.viewport);
+        setZoomValue(Math.round(local.data.viewport.scale * 100));
+        setCurrentCanvasId("local");
+      } else {
+        setShapes([]);
+        setConnectors([]);
+        setCurrentCanvasId(null);
+      }
 
       await new Promise((resolve) => setTimeout(resolve, 2000));
     } catch (error) {
@@ -543,6 +538,7 @@ function App() {
 
       if (result.success && result.canvasId) {
         setShapes([]);
+        setConnectors([]);
         setCurrentCanvasId(result.canvasId);
 
         const listRes = await getUserCanvases(session.user.id);

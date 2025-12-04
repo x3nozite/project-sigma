@@ -118,42 +118,46 @@ export async function saveCanvas(
   canvasId?: string | null
 ): Promise<{ success: boolean; error?: string; canvasId?: string }> {
   try {
-    // --- ALWAYS SAVE TO INDEXEDDB ---
-    await new Promise((resolve) => {
-      const request = indexedDB.open("CanvasDB");
-
-      const canvasData = {
-        local_canvas: "local",
-        canvasData: shapesData,
-        updatedAt: Date.now(),
-      };
-
-      const viewportData = {
-        canvas_viewport: "local",
-        x: shapesData.viewport.x,
-        y: shapesData.viewport.y,
-        scale: shapesData.viewport.scale,
-        updatedAt: Date.now(),
-      };
-
-      request.onsuccess = () => {
-        const db = request.result;
-        const tx = db.transaction(["Canvas", "Viewport"], "readwrite");
-        const canvasStore = tx.objectStore("Canvas");
-        const viewportStore = tx.objectStore("Viewport");
-
-        canvasStore.put(canvasData);
-        viewportStore.put(viewportData);
-
-        tx.oncomplete = () => resolve(true);
-        tx.onerror = () => resolve(true);
-      };
-
-      request.onerror = () => resolve(true);
-    });
-
     const { data: auth } = await supabase.auth.getUser();
     const user = auth?.user;
+    // --- SAVE TO INDEXEDDB if not logged in---
+    if(!user)
+    {
+      await new Promise((resolve) => {
+        const request = indexedDB.open("CanvasDB");
+
+        const canvasData = {
+          local_canvas: "local",
+          canvasData: shapesData,
+          updatedAt: Date.now(),
+        };
+
+        const viewportData = {
+          canvas_viewport: "local",
+          x: shapesData.viewport.x,
+          y: shapesData.viewport.y,
+          scale: shapesData.viewport.scale,
+          updatedAt: Date.now(),
+        };
+
+        request.onsuccess = () => {
+          const db = request.result;
+          const tx = db.transaction(["Canvas", "Viewport"], "readwrite");
+          const canvasStore = tx.objectStore("Canvas");
+          const viewportStore = tx.objectStore("Viewport");
+
+          canvasStore.put(canvasData);
+          viewportStore.put(viewportData);
+
+          tx.oncomplete = () => resolve(true);
+          tx.onerror = () => resolve(true);
+        };
+
+        request.onerror = () => resolve(true);
+      });
+
+      return { success: true, canvasId: "local" };
+    }  
 
     if (!user) {
       return { success: true };

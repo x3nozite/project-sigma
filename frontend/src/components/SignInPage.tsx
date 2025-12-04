@@ -43,6 +43,9 @@ function SignIn() {
     try {
       const { data: _data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
+        options: {
+          redirectTo: import.meta.env.VITE_REDIRECT_URL
+        }
       });
       if (error) {
         console.error("cant handle oauth:", error);

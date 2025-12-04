@@ -209,7 +209,7 @@ function App() {
 
   const openTodoForm = (parent: RectType | null, currTodo: TodoType | null) => {
     setSelectedParent(parent);
-    console.log("parent: " + parent);
+    //console.log("parent: " + parent);
     setSelectedTodo(currTodo);
     console.log(currTodo);
     setisFormOpen(true);

@@ -33,12 +33,9 @@ export function UndoRedoProvider({ children }: { children: ReactNode }) {
             setShapes(prev =>
               prev.map(shape => {
                 if (shape.shape === "todo") {
-                  console.log("parent: " + shape.parents);
-                  console.log(element.to);
                   return { ...shape, parents: (shape.parents === element.to) ? "" : shape.parents }
                 };
                 if (shape.shape !== "rect") return shape;
-                console.log("test");
                 return {
                   ...shape,
                   children: shape.children.filter(child => child !== element.from),

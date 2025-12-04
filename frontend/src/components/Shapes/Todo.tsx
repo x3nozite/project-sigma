@@ -152,7 +152,7 @@ const Todo = ({
           if (!shapes) return;
           let parent: RectType | null = null;
           if (todo.parents) {
-            const found = shapes.find((s) => s.id === todo.parents);
+            const found = shapes.find((s) => "group-" + s.id === todo.parents);
             if (found && found?.shape === "rect") {
               parent = found as RectType;
             }

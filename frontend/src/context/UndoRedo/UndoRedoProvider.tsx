@@ -42,7 +42,7 @@ export function UndoRedoProvider({ children }: { children: ReactNode }) {
                 return {
                   ...shape,
                   children: shape.children.filter(child => child !== element.from),
-                  parents: ("group-" + shape.parents === element.to) ? "" : shape.parents
+                  parents: (shape.parents === element.to) ? "" : shape.parents
                 };
               })
             );

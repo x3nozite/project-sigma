@@ -330,6 +330,10 @@ const ShapeCanvas = ({
     }
   }, [tool]);
 
+  useEffect(() => {
+    arrowMovement(connectors, mainLayer, tempLayer, arrowLayer);
+  }, [shapes, connectors])
+
   const checkParentVisible = (shape: ShapeType) => {
     if (shape.behavior !== "node") return;
     //find parent

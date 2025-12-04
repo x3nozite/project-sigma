@@ -367,7 +367,6 @@ export async function loadCanvas(
     const todos: ShapeType[] = data
       .filter((row) => row.shape_data["shape"] === "todo")
       .map((row) => row.shape_data);
-    console.log("lines to load:", lines);
     const connectors: ArrowType[] = data
       .filter((row) => row.shape_data["shape"] === "connector")
       .map((row) => row.shape_data);

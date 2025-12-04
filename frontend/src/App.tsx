@@ -166,7 +166,7 @@ function App() {
         });
         setZoomValue(Math.round(canvasRes.data.viewport.scale * 100));
 
-        console.log("canvas id: ", canvasRes.canvasId);
+        // console.log("canvas id: ", canvasRes.canvasId);
         // console.log("shapes: ", canvasRes.data.shapes);
       } else {
         console.error("Failed to load canvas:", canvasRes.error);

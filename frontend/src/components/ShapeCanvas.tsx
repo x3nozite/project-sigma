@@ -391,17 +391,34 @@ const ShapeCanvas = ({
     });
   };
 
+  const removeParentStatus = (shapeId: string) => {
+    setShapes(prev => prev.map(shape => {
+      if (shape.shape === "rect" && shape.children.includes(shapeId)) {
+        return { ...shape, children: shape.children.filter(c => c !== "group-" + shapeId) };
+      }
+      return shape;
+    }))
+  }
+
   const handleEraserClick = (shapeId: string) => {
     if (tool === "eraser") {
+      const groupId = crypto.randomUUID();
       connectors.forEach((connector) => {
         if (
           connector.to === "group-" + shapeId ||
           connector.from === "group-" + shapeId
         ) {
+          const connectorToDelete = { ...connector };
+          pushUndo({ id: groupId, before: connectorToDelete, after: connectorToDelete, action: "delete" })
           setConnectors((prev) => prev.filter((c) => c.id !== connector.id));
         }
       });
+
+      const shapeToDelete: ShapeType | undefined = shapes.find(s => s.id === shapeId);
+      if (shapeToDelete) pushUndo({ id: groupId, before: { ...shapeToDelete }, after: { ...shapeToDelete }, action: "delete" })
+
       changeChildToOrphan(shapeId);
+      removeParentStatus(shapeId);
       setShapes((prev: ShapeType[]) => prev.filter((r) => r.id !== shapeId));
     }
   };
@@ -459,7 +476,7 @@ const ShapeCanvas = ({
               mouseHeldDown
             );
           if (tool === "eraser")
-            handleEraseLinesMouseMove(stageRef, tool, setShapes, mouseHeldDown);
+            handleEraseLinesMouseMove(stageRef, tool, setShapes, mouseHeldDown, shapes, pushUndo);
           if (tool === "select")
             handleSelectMouseMove(
               stageRef,

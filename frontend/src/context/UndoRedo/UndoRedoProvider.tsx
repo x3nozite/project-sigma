@@ -52,6 +52,21 @@ export function UndoRedoProvider({ children }: { children: ReactNode }) {
         setShapes(prev =>
           prev.map(shape => shape.id === element.id ? { ...shape, ...element } : shape)
         )
+      } else {
+        if (element.shape === "connector") {
+          setConnectors(prev => [...prev, element]);
+
+          setShapes(prev => prev.map(shape => {
+            if (shape.shape !== "rect" && shape.shape !== "todo") return shape;
+            if ("group-" + shape.id === element.from) return { ...shape, parents: element.to };
+            if (shape.shape === "rect" && "group-" + shape.id === element.to) return { ...shape, children: [...shape.children, element.from] };
+
+
+            return shape;
+          }))
+        } else {
+          setShapes(prev => [...prev, element])
+        }
       }
 
       collected.push(entry);
@@ -62,9 +77,6 @@ export function UndoRedoProvider({ children }: { children: ReactNode }) {
     }
     setUndoStack(tempStack);
     setRedoStack(prev => [...prev, ...collected]);
-
-    if (last.action === "delete") return;
-
   }
 
   function redo(setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>) {
@@ -120,10 +132,26 @@ export function UndoRedoProvider({ children }: { children: ReactNode }) {
 
       } else if (entry.action === "delete") {
         if (element.shape === "connector") {
-          // delete → redo means add connector back
-          setConnectors(prev => [...prev, element]);
+          setConnectors(prev => prev.filter(c => c.id !== element.id));
+          setShapes(prev =>
+            prev.map(shape => {
+              if (shape.shape !== "rect" && shape.shape !== "todo") return shape;
+
+              // remove child reference if it was in children
+              if (shape.shape === "rect" && shape.children.includes(element.to)) {
+                return { ...shape, children: shape.children.filter(c => c !== element.to) };
+              }
+
+              // remove parent reference if it was pointing to from
+              if (shape.parents === element.from) {
+                return { ...shape, parents: "" };
+              }
+
+              return shape;
+            })
+          );
         } else {
-          setShapes(prev => [...prev, element]);
+          setShapes(prev => prev.filter(s => s.id !== element.id))
         }
       }
 

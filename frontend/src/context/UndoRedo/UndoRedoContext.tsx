@@ -6,7 +6,7 @@ interface UndoRedoType {
   redoStack: UndoEntry[];
   pushUndo: (entry: UndoEntry) => void;
   undo: (shapes: ShapeType[], connectors: ArrowType[], setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>) => void;
-  redo: () => void;
+  redo: (setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>) => void;
 }
 
 export const UndoRedoContext = createContext<UndoRedoType | null>(null)

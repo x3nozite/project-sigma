@@ -143,11 +143,7 @@ export const handleTransfromEnd = (e: Konva.KonvaEventObject<DragEvent>, setShap
   const id = e.target.id();
   const node = e.target;
 
-  const shapeInArray = shapes.find((s => "group-" + s.id === node.id()));
-  if (shapeInArray) {
-    if (groupId) pushUndo({ id: groupId, items: [shapeInArray], action: "update" });
-    else pushUndo({ items: [shapeInArray], action: "update" });
-  }
+  const beforeChanges = shapes.find(s => "group-" + s.id === id);
 
   setShapes(prevShapes => {
     const newShapes = [...prevShapes];
@@ -165,4 +161,9 @@ export const handleTransfromEnd = (e: Konva.KonvaEventObject<DragEvent>, setShap
     }
     return newShapes;
   })
+  const shapeInArray = shapes.find(s => "group-" + s.id === id);
+  if (shapeInArray) {
+    const afterChanges = { ...shapeInArray, x: node.x(), y: node.y(), scaleX: node.scaleX(), scaleY: node.scaleY() };
+    if (beforeChanges && afterChanges) pushUndo(({ action: "update", before: beforeChanges, after: afterChanges, id: (groupId) ? groupId : undefined }));
+  }
 }

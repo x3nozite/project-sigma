@@ -47,15 +47,12 @@ export function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: R
   const pointerPos = stage?.getPointerPosition();
   const shapeOnPointer = mainLayer.current?.getIntersection(pointerPos as Vector2d);
 
-  const shapeInArray = shapes.find((s => "group-" + s.id === shape.id()));
-  if (shapeInArray) {
-    if (groupId) pushUndo({ id: groupId, items: [shapeInArray], action: "update" });
-    else pushUndo({ items: [shapeInArray], action: "update" });
-  }
-
   if (shapeOnPointer && !shapeOnPointer.getAttr("temporary")) {
     prevShape.current?.fire("drop", { evt: e.evt, source: e.target }, true);
   }
+
+  const beforeChanges = shapes.find(s => "group-" + s.id === shape.id());
+
   shape.moveTo(mainLayer.current);
   prevShape.current = null;
 
@@ -63,26 +60,39 @@ export function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: R
   setShapes(prevShapes => {
     const newShapes = [...prevShapes];
     const index = newShapes.findIndex(r => "group-" + r.id === id);
-    if (index !== -1 && newShapes[index].shape !== "line") {
-      newShapes[index] = {
-        ...newShapes[index],
-        x: e.target.x(),
-        y: e.target.y()
-      };
-    } else if (index !== -1 && newShapes[index].shape === "line") {
-      const lines = e.target as Konva.Line;
+    if (index !== -1) {
+      if (newShapes[index].shape !== "line") {
 
-      const dx = lines.x();
-      const dy = lines.y();
-      newShapes[index] = {
-        ...newShapes[index], points: newShapes[index].points.map((p: number, i: number) => (i % 2 === 0 ? p + dx : p + dy))
-      };
+        newShapes[index] = {
+          ...newShapes[index],
+          x: e.target.x(),
+          y: e.target.y()
+        };
+      } else if (newShapes[index].shape === "line") {
+        const lines = e.target as Konva.Line;
 
-      lines.x(0); lines.y(0);
+        const dx = lines.x();
+        const dy = lines.y();
+        newShapes[index] = {
+          ...newShapes[index], points: newShapes[index].points.map((p: number, i: number) => (i % 2 === 0 ? p + dx : p + dy))
+        };
+
+        lines.x(0); lines.y(0);
+      }
+
     }
     return newShapes;
   })
 
+  let afterChanges;
+
+  if (beforeChanges) {
+    if (beforeChanges.shape === "line")
+      afterChanges = { ...beforeChanges, points: beforeChanges.points.map((p: number, i: number) => (i % 2 === 0 ? p + (e.target as Konva.Line).x() : p + (e.target as Konva.Line).y())) };
+    else afterChanges = { ...beforeChanges, x: e.target.x(), y: e.target.y() };
+  }
+
+  if (beforeChanges && afterChanges) pushUndo({ action: "update", before: beforeChanges, after: afterChanges, id: (groupId) ? groupId : undefined });
 }
 
 export function handleStageDragStart(e: Konva.KonvaEventObject<DragEvent>, mainLayer: RefObject<Konva.Layer | null>, arrowLayer: RefObject<Konva.Layer | null>) {

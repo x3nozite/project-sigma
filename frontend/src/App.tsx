@@ -85,10 +85,6 @@ function App() {
 
   useAutosaveCanvas({ shapes, connectors }, 1000, () => {
     if (!currentCanvasId || shapes.length === 0) return;
-    console.log("Autosaving:", {
-      shapes: shapes.length,
-      connectors: connectors.length,
-    });
     saveCanvas(
       {
         shapes,
@@ -243,7 +239,6 @@ function App() {
     };
 
     setShapes([...shapes, newTodo]);
-    let newItems: (ShapeType | ArrowType)[] = [newTodo];
     if (parent) {
       setShapes((prev) =>
         prev.map((s) =>
@@ -258,10 +253,10 @@ function App() {
           conn.from === "group-" + newTodo.id &&
           conn.to === "group-" + parent.id
       );
-      if (newConnector) newItems = [...newItems, newConnector];
+      if (newConnector) pushUndo({ before: newConnector, after: newConnector, action: "add", id: newTodo.id })
     }
 
-    pushUndo({ items: newItems, action: "add" });
+    pushUndo({ before: newTodo, after: newTodo, action: "add", id: newTodo.id });
   };
 
   const addRect = (newTask: taskFields) => {
@@ -290,7 +285,7 @@ function App() {
 
     setShapes([...shapes, newRect]);
 
-    pushUndo({ items: [newRect], action: "add" });
+    pushUndo({ before: newRect, after: newRect, action: "add" });
   };
 
   const addConnector = (
@@ -312,7 +307,7 @@ function App() {
       newConnector
     ]);
 
-    pushUndo({ items: [newConnector], action: "add" });
+    pushUndo({ before: newConnector, after: newConnector, action: "add" });
 
   };
 
@@ -330,7 +325,7 @@ function App() {
       scaleY: 1,
     } as const;
     setShapes([...shapes, newText]);
-    pushUndo({ items: [newText], action: "add" });
+    pushUndo({ before: newText, after: newText, action: "add" });
   };
 
   const updateRect = (shape: ShapeType, newData: taskFields) => {
@@ -407,16 +402,16 @@ function App() {
     setShapes([]);
     setConnectors([]);
 
-    if(currentCanvasId === "local"){
+    if (currentCanvasId === "local") {
       await clearIndexedDBShapes();
     }
-    else if(currentCanvasId){
+    else if (currentCanvasId) {
       const response = await deleteCanvas(currentCanvasId);
       if (!response.success) {
         console.error("Failed to delete canvas from supabase", response.error);
+      }
     }
-    }
-    
+
 
   };
   // if (!session) {

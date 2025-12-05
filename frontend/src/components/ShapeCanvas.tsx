@@ -103,7 +103,7 @@ const ShapeCanvas = ({
   const isSelecting = useRef(false);
   const transformerRef = useRef<Konva.Transformer>(null);
   const boundBoxRef = useRef<Konva.Rect>(null);
-  const { pushUndo, undo } = useUndoRedo();
+  const { pushUndo, undo, redo } = useUndoRedo();
   const currentUndoGroup = useRef<string | null>(null);
 
   useEffect(() => {
@@ -221,8 +221,12 @@ const ShapeCanvas = ({
     function handleKeyDown(e: KeyboardEvent) {
       if (isFormOpen) return;
       // Ctrl + Z
-      if ((e.ctrlKey || e.metaKey) && e.key === "z") {
+      if ((e.ctrlKey && !e.shiftKey) && e.key === "z") {
         undo(shapes, connectors, setShapes, setConnectors); // or whatever your undo function is
+        return;
+      }
+      if ((e.ctrlKey && e.shiftKey) && e.key.toLowerCase() === "z") {
+        redo(setShapes, setConnectors);
         return;
       }
       switch (e.key) {
@@ -467,7 +471,7 @@ const ShapeCanvas = ({
         onPointerUp={() => {
           if (tool === "draw") {
             handleStageMouseUp(mouseHeldDown, setMouseHeldDown);
-            pushUndo({ action: "add", items: [shapes[shapes.length - 1]] })
+            pushUndo({ action: "add", before: shapes[shapes.length - 1], after: shapes[shapes.length - 1] })
           }
           if (tool === "eraser") handleEraseLinesMouseUp(setMouseHeldDown);
           if (tool === "select")

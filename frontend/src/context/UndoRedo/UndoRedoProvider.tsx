@@ -90,14 +90,14 @@ export function UndoRedoProvider({ children }: { children: ReactNode }) {
               if (shape.shape === "todo") {
                 return {
                   ...shape,
-                  parents: (shape.id === element.to) ? element.from : shape.parents
+                  parents: ("group-" + shape.id === element.to) ? element.from : shape.parents
                 };
               }
               if (shape.shape !== "rect") return shape;
 
               return {
                 ...shape,
-                children: shape.id === element.to
+                children: "group-" + shape.id === element.to
                   ? [...shape.children, element.from]
                   : shape.children
               };
@@ -138,15 +138,6 @@ export function UndoRedoProvider({ children }: { children: ReactNode }) {
     setRedoStack(tempStack);
     setUndoStack(prev => [...prev, ...collected]);
   }
-  // function redo() {
-  //   const last = redoStack.at(-1);
-  //   if (!last) return;
-  //
-  //   // TODO: redo changes
-  //
-  //   setRedoStack(prev => prev.slice(0, -1));
-  //   setUndoStack(prev => [...prev, last]);
-  // }
 
   return (
     <UndoRedoContext.Provider value={{ undoStack, redoStack, pushUndo, undo, redo }}>

@@ -247,13 +247,7 @@ function App() {
             : s
         )
       );
-      addConnector(newTodo, parent);
-      const newConnector = connectors.find(
-        (conn) =>
-          conn.from === "group-" + newTodo.id &&
-          conn.to === "group-" + parent.id
-      );
-      if (newConnector) pushUndo({ before: newConnector, after: newConnector, action: "add", id: newTodo.id })
+      addConnector(newTodo, parent, newTodo.id);
     }
 
     pushUndo({ before: newTodo, after: newTodo, action: "add", id: newTodo.id });
@@ -290,7 +284,8 @@ function App() {
 
   const addConnector = (
     from: Konva.Node | ShapeType,
-    to: Konva.Node | ShapeType
+    to: Konva.Node | ShapeType,
+    pushId?: string
   ) => {
     const fromId = from instanceof Konva.Node ? from.id() : "group-" + from.id;
     const toId = to instanceof Konva.Node ? to.id() : "group-" + to.id;
@@ -307,7 +302,7 @@ function App() {
       newConnector
     ]);
 
-    pushUndo({ before: newConnector, after: newConnector, action: "add" });
+    pushUndo({ before: newConnector, after: newConnector, action: "add", id: (pushId) ? pushId : undefined });
 
   };
 

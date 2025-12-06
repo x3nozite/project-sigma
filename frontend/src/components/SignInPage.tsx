@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { supabase } from "../supabase-client";
 // import { SubmitHandler } from "react-hook-form";
-import { useSession } from "../context/SessionContext";
 import loginimage from "../assets/loginImage.webp";
 import { HiArrowLeft } from "react-icons/hi";
 import { z } from "zod";
@@ -25,7 +23,6 @@ export type signInFields = z.infer<typeof schema>;
 // );
 
 function SignIn() {
-  const { session } = useSession();
   const navigate = useNavigate();
 
   const {

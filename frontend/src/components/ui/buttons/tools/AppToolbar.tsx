@@ -5,11 +5,9 @@ import {
   HiOutlinePencil,
   HiOutlineAnnotation,
   HiOutlinePhotograph,
-  HiSelector,
   HiOutlineBookOpen,
   HiOutlineCursorClick,
 } from "react-icons/hi";
-import { RiCursorFill } from "react-icons/ri";
 import { BsEraser } from "react-icons/bs";
 import type { RectType, TodoType, ToolType } from "../../../types";
 

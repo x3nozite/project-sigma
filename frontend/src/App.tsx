@@ -32,7 +32,6 @@ import {
   HiOutlineCheck,
   HiOutlinePlus,
   HiOutlinePencil,
-  HiOutlineX,
 } from "react-icons/hi";
 import { DropdownMenu, AlertDialog } from "radix-ui";
 import AppToolbar from "./components/ui/buttons/tools/AppToolbar";

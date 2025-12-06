@@ -1,8 +1,7 @@
 import { Circle, Group, Rect, Text } from "react-konva";
 import type { RectType, ShapeType, TodoType, ToolType } from "../types";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import Konva from "konva";
-import { shapes } from "konva/lib/Shape";
 
 interface Props {
   rect: RectType;

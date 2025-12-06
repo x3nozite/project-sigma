@@ -121,8 +121,7 @@ export async function saveCanvas(
     const { data: auth } = await supabase.auth.getUser();
     const user = auth?.user;
     // --- SAVE TO INDEXEDDB if not logged in---
-    if(!user)
-    {
+    if (!user) {
       await new Promise((resolve) => {
         const request = indexedDB.open("CanvasDB");
 
@@ -157,7 +156,7 @@ export async function saveCanvas(
       });
 
       return { success: true, canvasId: "local" };
-    }  
+    }
 
     if (!user) {
       return { success: true };
@@ -377,13 +376,13 @@ export async function loadCanvas(
 
     const shapes = [...rects, ...lines, ...todos];
 
-    const validShapes = shapes.filter(s => {
-      const isValid = s.id && s.shape && s.behavior !== undefined;
-      if (!isValid) {
-        console.warn('Removing invalid shape:', s);
-      }
-      return isValid;
-    });
+    // const validShapes = shapes.filter(s => {
+    //   const isValid = s.id && s.shape && s.behavior !== undefined;
+    //   if (!isValid) {
+    //     console.warn('Removing invalid shape:', s);
+    //   }
+    //   return isValid;
+    // });
 
     const uniqueShapes = Array.from(
       new Map(shapes.map((s) => [s.id, s])).values()
@@ -402,7 +401,7 @@ export async function loadCanvas(
     const validConnectors = uniqueConnectors.filter(conn => {
       const hasFrom = shapeIdSet.has(conn.from);
       const hasTo = shapeIdSet.has(conn.to);
-      
+
       if (!hasFrom || !hasTo) {
         console.warn('Removing orphaned connector:', {
           id: conn.id,
@@ -413,7 +412,7 @@ export async function loadCanvas(
         });
         return false;
       }
-      
+
       return true;
     });
 

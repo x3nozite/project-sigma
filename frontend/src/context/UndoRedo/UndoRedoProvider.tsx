@@ -11,7 +11,7 @@ export function UndoRedoProvider({ children }: { children: ReactNode }) {
     setRedoStack([]);
   }
 
-  function undo(shapes: ShapeType[], connectors: ArrowType[], setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>) {
+  function undo(setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>) {
     const last = undoStack.at(-1);
     if (!last) return;
 

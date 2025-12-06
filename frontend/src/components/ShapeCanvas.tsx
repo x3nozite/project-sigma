@@ -222,7 +222,7 @@ const ShapeCanvas = ({
       if (isFormOpen) return;
       // Ctrl + Z
       if ((e.ctrlKey && !e.shiftKey) && e.key === "z") {
-        undo(shapes, connectors, setShapes, setConnectors); // or whatever your undo function is
+        undo(setShapes, setConnectors); // or whatever your undo function is
         return;
       }
       if ((e.ctrlKey && e.shiftKey) && e.key.toLowerCase() === "z") {

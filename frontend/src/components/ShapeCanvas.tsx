@@ -338,6 +338,19 @@ const ShapeCanvas = ({
     arrowMovement(connectors, mainLayer, tempLayer, arrowLayer);
   }, [shapes, connectors])
 
+  useEffect(() => {
+    const handleResize = () => {
+      const stage = stageRef.current;
+      if (!stage) return;
+      stage.width(window.innerWidth);
+      stage.height(window.innerHeight);
+      stage.draw(); // important to update canvas pixels
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const checkParentVisible = (shape: ShapeType) => {
     if (shape.behavior !== "node") return;
     //find parent

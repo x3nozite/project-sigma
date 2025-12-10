@@ -160,20 +160,20 @@ export const handleTransfromEnd = (e: Konva.KonvaEventObject<DragEvent>, setShap
         scaleY: node.scaleY(),
       }
     } else if (index !== -1 && newShapes[index].shape === "text") {
-      const newWidth = node.width() * node.scaleX();
-
-      newShapes[index] = {
-        ...newShapes[index],
-        x: node.x(),
-        y: node.y(),
-        width: newWidth,
-        scaleX: 1,
-        scaleY: 1,
-      };
-
-      // reset actual Konva node scale so text doesn't stretch
-      node.scaleX(1);
-      node.scaleY(1);
+      // const newWidth = node.width() * node.scaleX();
+      //
+      // newShapes[index] = {
+      //   ...newShapes[index],
+      //   x: node.x(),
+      //   y: node.y(),
+      //   width: newWidth,
+      //   scaleX: 1,
+      //   scaleY: 1,
+      // };
+      //
+      // // reset actual Konva node scale so text doesn't stretch
+      // node.scaleX(1);
+      // node.scaleY(1);
     }
     return newShapes;
   })

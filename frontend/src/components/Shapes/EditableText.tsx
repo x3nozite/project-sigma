@@ -13,25 +13,28 @@ interface Props {
   setIsEditingText: React.Dispatch<React.SetStateAction<boolean>>;
   isEditingText: boolean;
 }
+interface TextAreaProps {
+  textNode: Konva.Text;
+  onClose: () => void;
+  onChange: (value: string) => void;
+}
 
-const TextArea = ({ textNode, onClose, onChange }) => {
+const TextArea = ({ textNode, onClose, onChange }: TextAreaProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (!textareaRef.current) return;
 
     const textarea = textareaRef.current;
-    const stage = textNode.getStage();
     const textPosition = textNode.position();
-    const stageBox = stage.container().getBoundingClientRect();
     const areaPosition = {
       x: textPosition.x,
       y: textPosition.y,
     };
 
     // Match styles with the text node
-    textarea.value = textNode.text();
     textarea.style.position = "absolute";
+    textarea.value = textNode.text();
     textarea.style.top = `${areaPosition.y}px`;
     textarea.style.left = `${areaPosition.x}px`;
     textarea.style.width = `${textNode.width() - textNode.padding() * 2}px`;
@@ -45,11 +48,10 @@ const TextArea = ({ textNode, onClose, onChange }) => {
     textarea.style.background = "none";
     textarea.style.outline = "none";
     textarea.style.resize = "none";
-    textarea.style.lineHeight = textNode.lineHeight();
+    textarea.style.lineHeight = String(textNode.lineHeight());
     textarea.style.fontFamily = textNode.fontFamily();
     textarea.style.transformOrigin = "left top";
     textarea.style.textAlign = textNode.align();
-    textarea.style.color = textNode.fill();
 
     const rotation = textNode.rotation();
     let transform = "";
@@ -63,7 +65,7 @@ const TextArea = ({ textNode, onClose, onChange }) => {
 
     textarea.focus();
 
-    const handleOutsideClick = (e) => {
+    const handleOutsideClick = (e: MouseEvent) => {
       if (e.target !== textarea) {
         onChange(textarea.value);
         onClose();
@@ -71,7 +73,7 @@ const TextArea = ({ textNode, onClose, onChange }) => {
     };
 
     // Add event listeners
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         onChange(textarea.value);
@@ -114,7 +116,7 @@ const TextArea = ({ textNode, onClose, onChange }) => {
   );
 };
 
-const TextEditor = (props) => {
+const TextEditor = (props: TextAreaProps) => {
   return (
     <Html>
       <TextArea {...props} />
@@ -139,7 +141,7 @@ const EditableText = ({ initialText, onEraserClick, onDragEnd, onTransformEnd, s
         ref={textRef}
         key={"key-" + initialText.id}
         id={"group-" + initialText.id}
-        shapeId={initialText.id}
+        //shapeId={initialText.id}
         name="shape"
         x={initialText.x}
         y={initialText.y}
@@ -159,7 +161,7 @@ const EditableText = ({ initialText, onEraserClick, onDragEnd, onTransformEnd, s
         onDblTap={handleTextDblClick}
         visible={!isEditingText}
       />
-      {isEditingText && (
+      {isEditingText && textRef.current && (
         <TextEditor
           textNode={textRef.current}
           onChange={handleTextChange}

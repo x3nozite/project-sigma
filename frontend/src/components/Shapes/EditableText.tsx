@@ -1,11 +1,11 @@
+import { useCallback, useEffect, useRef } from "react"
+import { Text } from "react-konva";
+import type { ShapeType, TextType } from "../types";
 import Konva from "konva";
-import type { ShapeType, TextType } from "./types";
-import { useEffect, useRef } from "react";
 import { Html } from "react-konva-utils";
-import EditableText from "./Shapes/EditableText";
 
 interface Props {
-  texts: TextType[];
+  initialText: TextType;
   onEraserClick: (id: string) => void;
   onDragEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
@@ -122,22 +122,52 @@ const TextEditor = (props) => {
   );
 };
 
-const TextLayer = ({ texts, onEraserClick, onDragEnd, onTransformEnd, setShapes, setIsEditingText, isEditingText }: Props) => {
+const EditableText = ({ initialText, onEraserClick, onDragEnd, onTransformEnd, setShapes, setIsEditingText, isEditingText }: Props) => {
+  const textRef = useRef(null);
+
+  const handleTextDblClick = useCallback(() => {
+    setIsEditingText(true);
+  }, [setIsEditingText]);
+
+  const handleTextChange = useCallback((newText: string) => {
+    setShapes(prev => prev.map(shape => shape.id === initialText.id ? { ...shape, text: newText } : shape))
+  }, [initialText.id, setShapes])
+
   return (
     <>
-      {texts.map(text => (
-        <EditableText
-          initialText={text}
-          onEraserClick={onEraserClick}
-          onDragEnd={onDragEnd}
-          onTransformEnd={onTransformEnd}
-          setShapes={setShapes}
-          setIsEditingText={setIsEditingText}
-          isEditingText={isEditingText}
+      <Text
+        ref={textRef}
+        key={"key-" + initialText.id}
+        id={"group-" + initialText.id}
+        shapeId={initialText.id}
+        name="shape"
+        x={initialText.x}
+        y={initialText.y}
+        fontSize={initialText.fontSize}
+        fontFamily="Inter"
+        fontStyle="normal"
+        fill="black"
+        align="justify"
+        ellipsis={true}
+        lineHeight={1.25}
+        text={initialText.text}
+        draggable
+        onClick={() => onEraserClick(initialText.id)}
+        onDragEnd={onDragEnd}
+        onTransformEnd={onTransformEnd}
+        onDblClick={handleTextDblClick}
+        onDblTap={handleTextDblClick}
+        visible={!isEditingText}
+      />
+      {isEditingText && (
+        <TextEditor
+          textNode={textRef.current}
+          onChange={handleTextChange}
+          onClose={() => { setIsEditingText(false) }}
         />
-      ))}
+      )}
     </>
   )
 }
 
-export default TextLayer
+export default EditableText

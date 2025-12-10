@@ -317,6 +317,7 @@ function App() {
       behavior: "decor",
       scaleX: 1,
       scaleY: 1,
+      width: 16
     } as const;
     setShapes([...shapes, newText]);
     pushUndo({ before: newText, after: newText, action: "add" });

@@ -105,6 +105,7 @@ const ShapeCanvas = ({
   const boundBoxRef = useRef<Konva.Rect>(null);
   const { pushUndo, undo, redo } = useUndoRedo();
   const currentUndoGroup = useRef<string | null>(null);
+  const [isEditingText, setIsEditingText] = useState(false);
 
   useEffect(() => {
     if (!mainLayer.current) return;
@@ -219,7 +220,7 @@ const ShapeCanvas = ({
     });
 
     function handleKeyDown(e: KeyboardEvent) {
-      if (isFormOpen) return;
+      if (isFormOpen || isEditingText) return;
       // Ctrl + Z
       if ((e.ctrlKey && !e.shiftKey) && e.key === "z") {
         undo(setShapes, setConnectors); // or whatever your undo function is
@@ -279,11 +280,15 @@ const ShapeCanvas = ({
     if (selectedIds.length && transformerRef.current) {
       const nodes = selectedIds
         .map((id) => stageRef.current?.findOne<Konva.Shape>(`#group-${id}`))
-        .filter(Boolean) as Konva.Rect[];
+        .filter(Boolean) as Konva.Shape[];
 
       transformerRef.current.nodes(nodes);
 
       currentUndoGroup.current = crypto.randomUUID();
+
+      nodes.forEach(element => {
+        console.log(element.id());
+      });
 
       requestAnimationFrame(() => {
         const bbox = boundBoxRef.current;
@@ -566,6 +571,9 @@ const ShapeCanvas = ({
             onTransformEnd={(e) => {
               handleTransfromEnd(e, setShapes, shapes, pushUndo, currentUndoGroup.current);
             }}
+            setShapes={setShapes}
+            isEditingText={isEditingText}
+            setIsEditingText={setIsEditingText}
           />
           <RectLayer
             shapes={shapes.filter(

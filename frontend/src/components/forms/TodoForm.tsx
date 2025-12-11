@@ -102,10 +102,20 @@ export default function TodoForm({
 
   return (
     <>
-      <div className="absolute h-full w-full bg-black opacity-50 backdrop z-99"></div>
-      <div className="absolute bg-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-10 py-10 inset-0 flex flex-row justify-between w-150 h-fit max-h-200  items-start border-px rounded-lg shadow-2xl z-100">
+      <div className="fixed inset-0 bg-black opacity-50 z-40"></div>
+      <div
+        className="
+    fixed bg-white
+    top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+    w-[90%] max-w-sm sm:max-w-md
+    h-fit max-h-[90vh]
+    px-4 py-4 sm:px-8 sm:py-6
+    flex flex-row justify-between items-start
+    rounded-lg shadow-2xl z-50
+  "
+      >
         <div
-          className="absolute top-0 left-0 rounded-l-lg w-8 h-full"
+          className="absolute top-0 bottom-0 left-0 rounded-l-lg w-2 sm:w-3"
           style={{ backgroundColor: selCol }}
         ></div>
         <form onSubmit={handleSubmit(onSubmit)} className="w-full h-full">

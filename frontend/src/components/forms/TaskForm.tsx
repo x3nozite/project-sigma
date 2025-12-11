@@ -86,8 +86,18 @@ export default function TaskForm({
 
   return (
     <div>
-      <div className="absolute h-full w-full bg-black opacity-50 backdrop z-99"></div>
-      <div className="absolute bg-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-10 py-10 inset-0 flex flex-col justify-between w-150 h-fit max-h-200  items-start border-px rounded-lg shadow-2xl z-100">
+      <div className="fixed inset-0 bg-black opacity-50 z-40"></div>
+      <div
+        className="
+    fixed bg-white
+    top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+    w-[90%] max-w-sm sm:max-w-lg
+    max-h-[90vh]
+    px-4 py-4 sm:px-8 sm:py-6
+    flex flex-col justify-between items-start
+    rounded-lg shadow-2xl z-50
+  "
+      >
         <div
           className="absolute top-0 left-0 rounded-t-lg w-full h-5 "
           style={{ backgroundColor: selCol }}
@@ -143,32 +153,29 @@ export default function TaskForm({
             )}
           </div>
           <hr className="h-px w-full my-2 bg-gray-200 border-0" />
-          <div className="flex flex-row flex-auto gap-10 w-full mt-5 mb-5">
-            <div className="mb-5 flex flex-col gap-1 w-full">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 w-full mt-5 mb-5">
+            <div className="flex flex-col gap-1">
               <label className="text-lg font-semibold">Date</label>
               <input
                 {...register("date")}
                 type="date"
-                name="date"
-                className="border border-gray-300 bg-gray-100 rounded-lg p-2 shadow-xs hover:cursor-pointer"
+                className="border border-gray-300 bg-gray-100 rounded-lg p-2 shadow-xs"
               />
             </div>
-            <div className="mb-5 flex flex-col gap-1">
+            <div className="flex flex-col gap-1">
               <label className="text-lg font-semibold">Due Time</label>
               <input
                 {...register("time")}
                 type="time"
-                name="time"
-                className="border border-gray-300 bg-gray-100 rounded-lg p-2 shadow-xs hover:cursor-pointer"
+                className="border border-gray-300 bg-gray-100 rounded-lg p-2 shadow-xs"
               />
             </div>
-            <div className="mb-5 flex flex-col gap-1">
+            <div className="flex flex-col gap-1">
               <label className="text-lg font-semibold">Color</label>
               <select
                 {...register("color")}
                 onChange={(e) => setSelCol(e.target.value)}
-                name="color"
-                className="border border-gray-300 bg-gray-100 rounded-lg p-2 shadow-xs hover:cursor-pointer"
+                className="border border-gray-300 bg-gray-100 rounded-lg p-2 shadow-xs"
               >
                 <option value="#ff2056">Red</option>
                 <option value="#2b7fff">Blue</option>

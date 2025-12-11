@@ -664,7 +664,8 @@ function App() {
                       </AlertDialog.Trigger>
                       <AlertDialog.Portal>
                         <AlertDialog.Overlay className="fixed bg-black opacity-50 inset-0 z-100" />
-                        <AlertDialog.Content className="bg-white min-w-md max-w-2xl fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg z-101 max-h-96 overflow-y-auto">
+                        <AlertDialog.Content
+                          className="bg-white fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm sm:max-w-md lg:max-w-xl p-4 sm:p-6 rounded-lg z-101">
                           <AlertDialog.Title className="text-xl font-bold mb-4 flex items-center gap-2">
                             <HiOutlineFolderOpen />
                             My Canvases
@@ -867,7 +868,7 @@ function App() {
                       </AlertDialog.Trigger>
                       <AlertDialog.Portal>
                         <AlertDialog.Overlay className="fixed bg-black opacity-50 inset-0 z-100" />
-                        <AlertDialog.Content className="bg-white min-w-md max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 rounded-lg z-101">
+                        <AlertDialog.Content className="bg-white fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] max-w-sm sm:max-w-md p-4 sm:p-6 rounded-lg z-101">
                           <AlertDialog.Title className="text-xl font-bold mb-2">
                             Are you sure?
                           </AlertDialog.Title>
@@ -1300,7 +1301,7 @@ function App() {
         <AlertDialog.Portal>
           <AlertDialog.Overlay className="fixed bg-black opacity-50 inset-0 z-100" />
 
-          <AlertDialog.Content className="bg-white min-w-md max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 rounded-lg z-101">
+          <AlertDialog.Content className="bg-white fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm sm:max-w-md lg:max-w-lg p-4 sm:p-5 rounded-lg z-101">
             <AlertDialog.Title className="text-xl font-bold mb-2">
               New Canvas
             </AlertDialog.Title>

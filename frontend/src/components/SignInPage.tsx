@@ -24,9 +24,17 @@ export type signInFields = z.infer<typeof schema>;
 //   })
 // );
 
+const forgotPasswordSchema = z.object({
+  email: z.string().email("Invalid email address"),
+});
+
+type ForgotPasswordFields = z.infer<typeof forgotPasswordSchema>;
+
 function SignIn() {
   const { session } = useSession();
   const navigate = useNavigate();
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   const {
     register,
@@ -36,6 +44,14 @@ function SignIn() {
   } = useForm<signInFields>({
     resolver: zodResolver(schema),
     // mode: "onSubmit",
+  });
+
+  const {
+    register: registerForgot,
+    handleSubmit: handleSubmitForgot,
+    formState: { errors: errorsForgot, isSubmitting: isSubmittingForgot },
+  } = useForm<ForgotPasswordFields>({
+    resolver: zodResolver(forgotPasswordSchema),
   });
 
   const handleOAuthSignIn = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -98,6 +114,30 @@ function SignIn() {
       });
       alert("Error sign in!: " + error);
     }
+  };
+
+  const handleForgotPassword: SubmitHandler<ForgotPasswordFields> = async (
+    data
+  ) => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
+        redirectTo: `http://localhost:5173/#/reset-password`,
+      });
+
+      if (error) {
+        alert("Error: " + error.message);
+        return;
+      }
+
+      setEmailSent(true);
+    } catch (error) {
+      alert("Error sending reset email: " + error);
+    }
+  };
+
+  const closeForgotPasswordModal = () => {
+    setShowForgotPasswordModal(false);
+    setEmailSent(false);
   };
   // console.log(session);
   return (
@@ -162,7 +202,8 @@ function SignIn() {
                   <label htmlFor="" className="font-bold ">
                     Password
                   </label>
-                  <span className="text-sm opacity-70 hover:cursor-pointer">
+                  <span className="text-sm opacity-70 hover:cursor-pointer"
+                    onClick={() => setShowForgotPasswordModal(true)}>
                     Forgot Password?
                   </span>
                 </div>
@@ -210,6 +251,86 @@ function SignIn() {
       <div className="image-column bg-gray-200 h-full hidden lg:flex justify-center items-center">
         <img src={loginimage} alt="" className="object-cover w-full h-full" />
       </div>
+
+      {showForgotPasswordModal && (
+        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
+            <button
+              onClick={closeForgotPasswordModal}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl"
+            >
+              ×
+            </button>
+
+            {!emailSent ? (
+              <>
+                <h2 className="text-2xl font-bold mb-2">Forgot Password</h2>
+                <p className="text-gray-600 mb-6">
+                  Enter your email address and we'll send you a link to reset
+                  your password.
+                </p>
+                <form onSubmit={handleSubmitForgot(handleForgotPassword)}>
+                  <div className="mb-6 flex flex-col gap-y-2">
+                    <label htmlFor="forgot-email" className="font-bold">
+                      Email
+                    </label>
+                    <input
+                      {...registerForgot("email")}
+                      type="email"
+                      id="forgot-email"
+                      placeholder="Your Email"
+                      className="border border-gray-300 rounded-lg p-2 shadow-sm"
+                    />
+                    {errorsForgot.email && (
+                      <div className="text-red-500 text-sm">
+                        {errorsForgot.email?.message}
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isSubmittingForgot}
+                    className="w-full px-5 py-2.5 bg-blue-600 rounded-lg font-medium text-white hover:cursor-pointer hover:bg-blue-700 disabled:bg-blue-400"
+                  >
+                    {isSubmittingForgot ? "Sending..." : "Send Reset Link"}
+                  </button>
+                </form>
+              </>
+            ) : (
+              <div className="text-center">
+                <div className="success-icon mb-4">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                    <svg
+                      className="w-8 h-8 text-green-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <h2 className="text-2xl font-bold mb-2">Check your email</h2>
+                <p className="text-gray-600 mb-6">
+                  We've sent a password reset link to your email address. Please
+                  check your inbox and click the link to reset your password.
+                </p>
+                <button
+                  onClick={closeForgotPasswordModal}
+                  className="w-full px-5 py-2.5 bg-blue-600 rounded-lg font-medium text-white hover:cursor-pointer hover:bg-blue-700"
+                >
+                  Close
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

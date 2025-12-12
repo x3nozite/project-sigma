@@ -92,7 +92,7 @@ const Rectangle = ({
     .replace(/, (?=\d{4})/, " ");
 
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-  const showCircle = isMobile || isHovered || rect.completed;
+  const showCircle = isMobile || isHovered;
 
   return (
     <Group
@@ -169,12 +169,12 @@ const Rectangle = ({
         />
         <Text
           text={formatted}
-          x={-12}
-          y={rect.height - 30}
-          width={rect.width}
+          x={150}
+          y={170}
+          width={200}
           fontFamily="Inter"
           fontSize={10}
-          align="right"
+          align="left"
           fill="black"
           opacity={0.8}
           listening={false}
@@ -185,7 +185,7 @@ const Rectangle = ({
             width={100}
             height={30}
             x={10}
-            y={rect.height - 40}
+            y={160}
             cornerRadius={10}
           ></Rect>
           <Text
@@ -197,7 +197,7 @@ const Rectangle = ({
             fill="white"
             fontStyle="bold"
             x={10}
-            y={rect.height - 42}
+            y={158}
             padding={10}
           ></Text>
         </Group>
@@ -206,6 +206,10 @@ const Rectangle = ({
             x={rect.width + 5}
             y={rect.height / 2}
             onClick={(e) => {
+              e.cancelBubble = true;
+              onAddTodo(rect, null);
+            }}
+            onTap={(e) => {
               e.cancelBubble = true;
               onAddTodo(rect, null);
             }}
@@ -254,7 +258,7 @@ const Rectangle = ({
           fontStyle="bold"
           fontSize={16}
         ></Text>
-        <Group x={rect.width-45} y={10} width={20} height={40} 
+        <Group x={260} y={7} width={20} height={40} 
             onDblClick={(e) => {e.cancelBubble = true;}}
             onDblTap={(e) => {e.cancelBubble = true;}}
             onClick={(e) => {

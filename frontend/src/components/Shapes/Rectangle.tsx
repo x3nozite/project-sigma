@@ -133,6 +133,7 @@ const Rectangle = ({
           onShapeClick(rect);
         }
       }}
+      
     >
       <Group visible={!rect.isCollapsed}>
         <Rect
@@ -200,7 +201,7 @@ const Rectangle = ({
             padding={10}
           ></Text>
         </Group>
-        {isMobile && (
+        {showCircle && (
           <Group
             x={rect.width + 5}
             y={rect.height / 2}
@@ -253,59 +254,65 @@ const Rectangle = ({
           fontStyle="bold"
           fontSize={16}
         ></Text>
-        <Text
-          x={rect.width}
-          y={0}
-          width={10}
-          height={10}
-          fill="black"
-          text={rect.isCollapsed ? "+" : "-"}
-          fontSize={32}
-          align="right"
-          verticalAlign="top"
-          onClick={(e) => {
-            if (tool !== "eraser") {
-              const isCurrentlyCollapsed = rect.isCollapsed;
-              if (isCurrentlyCollapsed) {
-                collapseChild(rect, true);
-              } else {
-                collapseChild(rect, false);
-              }
+        <Group x={rect.width-45} y={10} width={20} height={40} 
+            onDblClick={(e) => {e.cancelBubble = true;}}
+            onDblTap={(e) => {e.cancelBubble = true;}}
+            onClick={(e) => {
+              if (tool !== "eraser") {
+                const isCurrentlyCollapsed = rect.isCollapsed;
+                if (isCurrentlyCollapsed) {
+                  collapseChild(rect, true);
+                } else {
+                  collapseChild(rect, false);
+                }
 
-              e.cancelBubble = true;
-              setShapes((prev) => {
-                return prev.map((r) => {
-                  if (r.shape === "rect" && r.id === rect.id) {
-                    return { ...r, isCollapsed: !r.isCollapsed };
-                  } else {
-                    return r;
-                  }
+                e.cancelBubble = true;
+                setShapes((prev) => {
+                  return prev.map((r) => {
+                    if (r.shape === "rect" && r.id === rect.id) {
+                      return { ...r, isCollapsed: !r.isCollapsed };
+                    } else {
+                      return r;
+                    }
+                  });
                 });
-              });
-            }
-          }}
-          onTap={(e) => {
-            if (tool !== "eraser") {
-              const isCurrentlyCollapsed = rect.isCollapsed;
-              if (isCurrentlyCollapsed) {
-                collapseChild(rect, true);
-              } else {
-                collapseChild(rect, false);
               }
+            }}
+            onTap={(e) => {
+              if (tool !== "eraser") {
+                const isCurrentlyCollapsed = rect.isCollapsed;
+                if (isCurrentlyCollapsed) {
+                  collapseChild(rect, true);
+                } else {
+                  collapseChild(rect, false);
+                }
 
-              e.cancelBubble = true;
-              setShapes((prev) => {
-                return prev.map((r) => {
-                  if (r.shape === "rect" && r.id === rect.id) {
-                    return { ...r, isCollapsed: !r.isCollapsed };
-                  } else {
-                    return r;
-                  }
+                e.cancelBubble = true;
+                setShapes((prev) => {
+                  return prev.map((r) => {
+                    if (r.shape === "rect" && r.id === rect.id) {
+                      return { ...r, isCollapsed: !r.isCollapsed };
+                    } else {
+                      return r;
+                    }
+                  });
                 });
-              });
-            }
-          }}
-        ></Text>
+              }
+            }}>
+          <Rect  width={30} height={30} listening={true}>
+          </Rect> 
+          <Text
+            width={30}
+            height={30}
+            x={0}
+            y={0}
+            fill="white"
+            text={rect.isCollapsed ? "+" : "-"}
+            fontSize={32}
+            align="center"
+            
+          ></Text>
+        </Group>
       </Group>
     </Group>
   );

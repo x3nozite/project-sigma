@@ -113,9 +113,47 @@ export async function getUserCanvases(
   }
 }
 
+export async function updateCanvasColor(
+  canvasId?: string | null,
+  canvasCol?: string
+) {
+  try {
+    const { error } = await supabase
+      .from("canvas")
+      .update({ background_color: canvasCol })
+      .eq("canvas_id", canvasId)
+
+    if (error){
+      console.error(error)
+    }
+
+  } catch (error) {
+    console.error("Error on update canvas color function: ", error)
+  }
+}
+
+export async function getCanvasColor(canvasId: string) {
+  try {
+    const { data, error } = await supabase
+      .from("canvas")
+      .select("background_color")
+      .eq("canvas_id", canvasId)
+      .single();
+  
+    if (error) {
+      console.error(error);
+      return null;
+    }
+  
+    return data.background_color;
+  } catch (error) {
+    console.error("Error on get canvas color function: ", error);
+  }
+}
+
 export async function saveCanvas(
   shapesData: CanvasData,
-  canvasId?: string | null
+  canvasId?: string | null,
 ): Promise<{ success: boolean; error?: string; canvasId?: string }> {
   try {
     const { data: auth } = await supabase.auth.getUser();
@@ -415,7 +453,6 @@ export async function loadCanvas(
 
       return true;
     });
-
     // const filteredConnectors = filterValidConnectors(
     //   uniqueConnectors,
     //   uniqueShapes

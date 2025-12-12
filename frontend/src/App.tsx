@@ -44,6 +44,8 @@ import {
   createNewCanvas,
   updateCanvasName,
   deleteCanvasById,
+  updateCanvasColor,
+  getCanvasColor,
 } from "./services/DBFunction";
 import { useIndexedDBInit } from "./services/useIndexedDb";
 import { useAutosaveCanvas } from "./services/autosaveCanvas";
@@ -82,6 +84,9 @@ function App() {
   const [editingCanvasId, setEditingCanvasId] = useState<string | null>(null);
   const [editingCanvasName, setEditingCanvasName] = useState("");
 
+  // canvas color
+  const [canvasCol, setcanvasCol] = useState<string>("#ffffff");
+
   useAutosaveCanvas({ shapes, connectors }, 1000, () => {
     if (!currentCanvasId || shapes.length === 0) return;
     saveCanvas(
@@ -99,6 +104,8 @@ function App() {
 
     (async () => {
       await init();
+
+
 
       if (!session) {
         const local = await loadCanvas("local");
@@ -122,6 +129,10 @@ function App() {
         setCanvasList([]);
         return;
       }
+
+
+      
+      
 
       const canvasRes = await loadCanvas(null);
       if (!mounted) return;
@@ -174,8 +185,27 @@ function App() {
   //   setInstruments(data ?? []);
   // }
 
-  // canvas color
-  const [canvasCol, setcanvasCol] = useState("#ffffff");
+  // useeffect for autosaving canvas color
+  useEffect(() => {
+    if (!currentCanvasId) return;
+
+    const timeout = setTimeout(() => {
+      updateCanvasColor(currentCanvasId, canvasCol);
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [canvasCol]);
+
+  // useeffect for getting canvas color for every canvas change
+  useEffect(() => {
+    if (!currentCanvasId) return;
+
+    (async () => {
+      const savedColor = await getCanvasColor(currentCanvasId);
+      if (savedColor) setcanvasCol(savedColor);
+    })();
+  }, [currentCanvasId]);
+  
 
   const openTodoForm = (parent: RectType | null, currTodo: TodoType | null) => {
     setSelectedParent(parent);

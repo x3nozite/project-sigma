@@ -318,7 +318,7 @@ function App() {
       y:
         (stageCoor.y * -1 + (window.innerHeight - 200) / 2) * (100 / zoomValue),
       fontSize: 20,
-      text: "Placeholder Text",
+      text: "Insert your text here",
       shape: "text",
       behavior: "decor",
       scaleX: 1,

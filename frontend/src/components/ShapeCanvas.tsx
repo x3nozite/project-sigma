@@ -83,6 +83,7 @@ const ShapeCanvas = ({
   setStageCoor,
   isFormOpen,
 }: Props) => {
+  Konva.pixelRatio = window.devicePixelRatio || 1;
   const mainLayer = useRef<Konva.Layer | null>(null!);
   const prevShape = useRef<Konva.Shape | null>(null!);
   const tempLayer = useRef<Konva.Layer | null>(null!);
@@ -196,7 +197,7 @@ const ShapeCanvas = ({
             ) {
               return {
                 ...shape,
-                parents: shapeGroup.id()
+                parents: shapeGroup.id(),
               };
             }
             if (
@@ -222,11 +223,11 @@ const ShapeCanvas = ({
     function handleKeyDown(e: KeyboardEvent) {
       if (isFormOpen || isEditingText) return;
       // Ctrl + Z
-      if ((e.ctrlKey && !e.shiftKey) && e.key === "z") {
+      if (e.ctrlKey && !e.shiftKey && e.key === "z") {
         undo(setShapes, setConnectors); // or whatever your undo function is
         return;
       }
-      if ((e.ctrlKey && e.shiftKey) && e.key.toLowerCase() === "z") {
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "z") {
         redo(setShapes, setConnectors);
         return;
       }
@@ -286,7 +287,7 @@ const ShapeCanvas = ({
 
       currentUndoGroup.current = crypto.randomUUID();
 
-      nodes.forEach(element => {
+      nodes.forEach((element) => {
         console.log(element.id());
       });
 
@@ -341,7 +342,7 @@ const ShapeCanvas = ({
 
   useEffect(() => {
     arrowMovement(connectors, mainLayer, tempLayer, arrowLayer);
-  }, [shapes, connectors])
+  }, [shapes, connectors]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -410,13 +411,18 @@ const ShapeCanvas = ({
   };
 
   const removeParentStatus = (shapeId: string) => {
-    setShapes(prev => prev.map(shape => {
-      if (shape.shape === "rect" && shape.children.includes(shapeId)) {
-        return { ...shape, children: shape.children.filter(c => c !== "group-" + shapeId) };
-      }
-      return shape;
-    }))
-  }
+    setShapes((prev) =>
+      prev.map((shape) => {
+        if (shape.shape === "rect" && shape.children.includes(shapeId)) {
+          return {
+            ...shape,
+            children: shape.children.filter((c) => c !== "group-" + shapeId),
+          };
+        }
+        return shape;
+      })
+    );
+  };
 
   const handleEraserClick = (shapeId: string) => {
     if (tool === "eraser") {
@@ -427,13 +433,26 @@ const ShapeCanvas = ({
           connector.from === "group-" + shapeId
         ) {
           const connectorToDelete = { ...connector };
-          pushUndo({ id: groupId, before: connectorToDelete, after: connectorToDelete, action: "delete" })
+          pushUndo({
+            id: groupId,
+            before: connectorToDelete,
+            after: connectorToDelete,
+            action: "delete",
+          });
           setConnectors((prev) => prev.filter((c) => c.id !== connector.id));
         }
       });
 
-      const shapeToDelete: ShapeType | undefined = shapes.find(s => s.id === shapeId);
-      if (shapeToDelete) pushUndo({ id: groupId, before: { ...shapeToDelete }, after: { ...shapeToDelete }, action: "delete" })
+      const shapeToDelete: ShapeType | undefined = shapes.find(
+        (s) => s.id === shapeId
+      );
+      if (shapeToDelete)
+        pushUndo({
+          id: groupId,
+          before: { ...shapeToDelete },
+          after: { ...shapeToDelete },
+          action: "delete",
+        });
 
       changeChildToOrphan(shapeId);
       removeParentStatus(shapeId);
@@ -494,7 +513,14 @@ const ShapeCanvas = ({
               mouseHeldDown
             );
           if (tool === "eraser")
-            handleEraseLinesMouseMove(stageRef, tool, setShapes, mouseHeldDown, shapes, pushUndo);
+            handleEraseLinesMouseMove(
+              stageRef,
+              tool,
+              setShapes,
+              mouseHeldDown,
+              shapes,
+              pushUndo
+            );
           if (tool === "select")
             handleSelectMouseMove(
               stageRef,
@@ -506,7 +532,11 @@ const ShapeCanvas = ({
         onPointerUp={() => {
           if (tool === "draw") {
             handleStageMouseUp(mouseHeldDown, setMouseHeldDown);
-            pushUndo({ action: "add", before: shapes[shapes.length - 1], after: shapes[shapes.length - 1] })
+            pushUndo({
+              action: "add",
+              before: shapes[shapes.length - 1],
+              after: shapes[shapes.length - 1],
+            });
           }
           if (tool === "eraser") handleEraseLinesMouseUp(setMouseHeldDown);
           if (tool === "select")
@@ -554,10 +584,25 @@ const ShapeCanvas = ({
               (s: ShapeType): s is LineType => s.shape === "line"
             )}
             onDragEnd={(e) => {
-              handleDragEnd(e, mainLayer, tool, prevShape, setShapes, shapes, pushUndo, currentUndoGroup.current);
+              handleDragEnd(
+                e,
+                mainLayer,
+                tool,
+                prevShape,
+                setShapes,
+                shapes,
+                pushUndo,
+                currentUndoGroup.current
+              );
             }}
             onTransformEnd={(e) => {
-              handleTransfromEnd(e, setShapes, shapes, pushUndo, currentUndoGroup.current);
+              handleTransfromEnd(
+                e,
+                setShapes,
+                shapes,
+                pushUndo,
+                currentUndoGroup.current
+              );
             }}
           />
           <TextLayer
@@ -566,10 +611,25 @@ const ShapeCanvas = ({
             )}
             onEraserClick={handleEraserClick}
             onDragEnd={(e) => {
-              handleDragEnd(e, mainLayer, tool, prevShape, setShapes, shapes, pushUndo, currentUndoGroup.current);
+              handleDragEnd(
+                e,
+                mainLayer,
+                tool,
+                prevShape,
+                setShapes,
+                shapes,
+                pushUndo,
+                currentUndoGroup.current
+              );
             }}
             onTransformEnd={(e) => {
-              handleTransfromEnd(e, setShapes, shapes, pushUndo, currentUndoGroup.current);
+              handleTransfromEnd(
+                e,
+                setShapes,
+                shapes,
+                pushUndo,
+                currentUndoGroup.current
+              );
             }}
             setShapes={setShapes}
             isEditingText={isEditingText}
@@ -588,10 +648,25 @@ const ShapeCanvas = ({
               arrowMovement(connectors, mainLayer, tempLayer, arrowLayer);
             }}
             onDragEnd={(e) => {
-              handleDragEnd(e, mainLayer, tool, prevShape, setShapes, shapes, pushUndo, currentUndoGroup.current);
+              handleDragEnd(
+                e,
+                mainLayer,
+                tool,
+                prevShape,
+                setShapes,
+                shapes,
+                pushUndo,
+                currentUndoGroup.current
+              );
             }}
             onTransformEnd={(e) => {
-              handleTransfromEnd(e, setShapes, shapes, pushUndo, currentUndoGroup.current);
+              handleTransfromEnd(
+                e,
+                setShapes,
+                shapes,
+                pushUndo,
+                currentUndoGroup.current
+              );
             }}
             tool={tool}
             collapseChild={collapseChild}
@@ -613,10 +688,25 @@ const ShapeCanvas = ({
               arrowMovement(connectors, mainLayer, tempLayer, arrowLayer);
             }}
             onDragEnd={(e) => {
-              handleDragEnd(e, mainLayer, tool, prevShape, setShapes, shapes, pushUndo, currentUndoGroup.current);
+              handleDragEnd(
+                e,
+                mainLayer,
+                tool,
+                prevShape,
+                setShapes,
+                shapes,
+                pushUndo,
+                currentUndoGroup.current
+              );
             }}
             onTransformEnd={(e) => {
-              handleTransfromEnd(e, setShapes, shapes, pushUndo, currentUndoGroup.current);
+              handleTransfromEnd(
+                e,
+                setShapes,
+                shapes,
+                pushUndo,
+                currentUndoGroup.current
+              );
             }}
             handleEraserClick={handleEraserClick}
             getBorder={getBorder}
@@ -635,7 +725,7 @@ const ShapeCanvas = ({
               "bottom-left",
               "bottom-right",
               "middle-left",
-              "middle-right"
+              "middle-right",
             ]}
             boundBoxFunc={(oldBox, newBox) => {
               if (newBox.width < 5 || newBox.height < 5) {

@@ -107,6 +107,9 @@ const Todo = ({
 
   const { statusColor, statusText, statusTextColor } = getStatusinfo();
 
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  const showCircle = isMobile || isHovered || todo.completed;
+
   // Setting checkbox
   const handleCheck = (id: string) => {
     setShapes((prevShapes) =>
@@ -146,7 +149,23 @@ const Todo = ({
       onClick={() => {
         handleEraserClick(todo.id);
       }}
+      onTap={() => {
+        handleEraserClick(todo.id);
+      }}
       onDblClick={() => {
+        if (tool === "hand") {
+          if (!shapes) return;
+          let parent: RectType | null = null;
+          if (todo.parents) {
+            const found = shapes.find((s) => "group-" + s.id === todo.parents);
+            if (found && found?.shape === "rect") {
+              parent = found as RectType;
+            }
+          }
+          onTodoClick(parent, todo);
+        }
+      }}
+      onDblTap={() => {
         if (tool === "hand") {
           if (!shapes) return;
           let parent: RectType | null = null;
@@ -219,7 +238,7 @@ const Todo = ({
                 />
               </Group>
             </Group>
-            {(isHovered || todo.completed) && (
+            {showCircle && (
               <Group x={26} y={36}>
                 <Circle
                   radius={16}
@@ -227,6 +246,7 @@ const Todo = ({
                   stroke={borderColor}
                   strokeWidth={1.5}
                   onClick={() => handleCheck(todo.id)}
+                  onTap={() => handleCheck(todo.id)}
                 />
                 {todo.completed && (
                   <Path

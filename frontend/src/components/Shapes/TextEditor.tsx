@@ -1,6 +1,5 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef } from "react";
 import Konva from "konva";
-import { Html } from "react-konva-utils";
 
 interface TextAreaProps {
   textNode: Konva.Text;
@@ -27,8 +26,7 @@ const TextArea = ({ textNode, onClose, onChange }: TextAreaProps) => {
     textarea.style.top = `${areaPosition.y}px`;
     textarea.style.left = `${areaPosition.x}px`;
     textarea.style.width = `${textNode.width() - textNode.padding() * 2}px`;
-    textarea.style.height = `${textNode.height()
-      }px`;
+    textarea.style.height = `${textNode.height()}px`;
     console.log(textNode.height());
     textarea.style.fontSize = `${textNode.fontSize()}px`;
     textarea.style.border = "1px solid #ccc";
@@ -51,7 +49,6 @@ const TextArea = ({ textNode, onClose, onChange }: TextAreaProps) => {
       transform += `rotateZ(${rotation}deg)`;
     }
     textarea.style.transform = transform;
-
 
     textarea.focus();
 
@@ -77,8 +74,9 @@ const TextArea = ({ textNode, onClose, onChange }: TextAreaProps) => {
     const handleInput = () => {
       textarea.style.width = `${textNode.width() - textNode.padding() * 2}px`;
       textarea.style.height = "auto";
-      textarea.style.height = `${textarea.scrollHeight + textNode.fontSize()
-        }px`;
+      textarea.style.height = `${
+        textarea.scrollHeight + textNode.fontSize()
+      }px`;
     };
 
     textarea.addEventListener("keydown", handleKeyDown);
@@ -113,4 +111,4 @@ const TextEditor = (props: TextAreaProps) => {
   );
 };
 
-export default TextEditor
+export default TextEditor;

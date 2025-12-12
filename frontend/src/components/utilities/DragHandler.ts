@@ -3,13 +3,23 @@ import type { Vector2d } from "konva/lib/types";
 import type { RefObject } from "react";
 import type { ShapeType, UndoEntry } from "../types";
 
-export function handleDragStart(e: Konva.KonvaEventObject<DragEvent>, tool: string, tempLayer: RefObject<Konva.Layer | null>) {
+export function handleDragStart(
+  e: Konva.KonvaEventObject<DragEvent>,
+  tool: string,
+  tempLayer: RefObject<Konva.Layer | null>
+) {
   if (tool === "eraser") return;
   const shape = e.target;
+  shape.cache();
   shape.moveTo(tempLayer.current);
 }
 
-export function handleDragMove(e: Konva.KonvaEventObject<DragEvent>, mainLayer: RefObject<Konva.Layer | null>, prevShape: RefObject<Konva.Shape | null>, tool: string) {
+export function handleDragMove(
+  e: Konva.KonvaEventObject<DragEvent>,
+  mainLayer: RefObject<Konva.Layer | null>,
+  prevShape: RefObject<Konva.Shape | null>,
+  tool: string
+) {
   if (tool === "eraser") return;
 
   const stage = e.target.getStage();
@@ -23,50 +33,53 @@ export function handleDragMove(e: Konva.KonvaEventObject<DragEvent>, mainLayer: 
     shape.fire("dragenter", { evt: e.evt, source: e.target }, true);
   } else if (prevShape.current && shape && prevShape.current !== shape) {
     // Leave the shape
-    prevShape.current.fire(
-      "dragleave",
-      { evt: e.evt, source: e.target },
-      true
-    );
+    prevShape.current.fire("dragleave", { evt: e.evt, source: e.target }, true);
     shape.fire("dragenter", { evt: e.evt }, true);
     prevShape.current = shape;
   } else if (prevShape.current && !shape) {
-    prevShape.current.fire(
-      "dragleave",
-      { evt: e.evt, source: e.target },
-      true
-    );
+    prevShape.current.fire("dragleave", { evt: e.evt, source: e.target }, true);
     prevShape.current = null;
   }
 }
 
-export function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: RefObject<Konva.Layer | null>, tool: string, prevShape: RefObject<Konva.Shape | null>, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, shapes: ShapeType[], pushUndo: (entry: UndoEntry) => void, groupId: string | null) {
+export function handleDragEnd(
+  e: Konva.KonvaEventObject<DragEvent>,
+  mainLayer: RefObject<Konva.Layer | null>,
+  tool: string,
+  prevShape: RefObject<Konva.Shape | null>,
+  setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>,
+  shapes: ShapeType[],
+  pushUndo: (entry: UndoEntry) => void,
+  groupId: string | null
+) {
   if (tool === "eraser") return;
+  e.target.clearCache();
   const shape = e.target;
   const stage = shape.getStage();
   const pointerPos = stage?.getPointerPosition();
-  const shapeOnPointer = mainLayer.current?.getIntersection(pointerPos as Vector2d);
+  const shapeOnPointer = mainLayer.current?.getIntersection(
+    pointerPos as Vector2d
+  );
 
   if (shapeOnPointer && !shapeOnPointer.getAttr("temporary")) {
     prevShape.current?.fire("drop", { evt: e.evt, source: e.target }, true);
   }
 
-  const beforeChanges = shapes.find(s => "group-" + s.id === shape.id());
+  const beforeChanges = shapes.find((s) => "group-" + s.id === shape.id());
 
   shape.moveTo(mainLayer.current);
   prevShape.current = null;
 
   const id = e.target.id();
-  setShapes(prevShapes => {
+  setShapes((prevShapes) => {
     const newShapes = [...prevShapes];
-    const index = newShapes.findIndex(r => "group-" + r.id === id);
+    const index = newShapes.findIndex((r) => "group-" + r.id === id);
     if (index !== -1) {
       if (newShapes[index].shape !== "line") {
-
         newShapes[index] = {
           ...newShapes[index],
           x: e.target.x(),
-          y: e.target.y()
+          y: e.target.y(),
         };
       } else if (newShapes[index].shape === "line") {
         const lines = e.target as Konva.Line;
@@ -74,28 +87,48 @@ export function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: R
         const dx = lines.x();
         const dy = lines.y();
         newShapes[index] = {
-          ...newShapes[index], points: newShapes[index].points.map((p: number, i: number) => (i % 2 === 0 ? p + dx : p + dy))
+          ...newShapes[index],
+          points: newShapes[index].points.map((p: number, i: number) =>
+            i % 2 === 0 ? p + dx : p + dy
+          ),
         };
 
-        lines.x(0); lines.y(0);
+        lines.x(0);
+        lines.y(0);
       }
-
     }
     return newShapes;
-  })
+  });
 
   let afterChanges;
 
   if (beforeChanges) {
     if (beforeChanges.shape === "line")
-      afterChanges = { ...beforeChanges, points: beforeChanges.points.map((p: number, i: number) => (i % 2 === 0 ? p + (e.target as Konva.Line).x() : p + (e.target as Konva.Line).y())) };
+      afterChanges = {
+        ...beforeChanges,
+        points: beforeChanges.points.map((p: number, i: number) =>
+          i % 2 === 0
+            ? p + (e.target as Konva.Line).x()
+            : p + (e.target as Konva.Line).y()
+        ),
+      };
     else afterChanges = { ...beforeChanges, x: e.target.x(), y: e.target.y() };
   }
 
-  if (beforeChanges && afterChanges) pushUndo({ action: "update", before: beforeChanges, after: afterChanges, id: (groupId) ? groupId : undefined });
+  if (beforeChanges && afterChanges)
+    pushUndo({
+      action: "update",
+      before: beforeChanges,
+      after: afterChanges,
+      id: groupId ? groupId : undefined,
+    });
 }
 
-export function handleStageDragStart(e: Konva.KonvaEventObject<DragEvent>, mainLayer: RefObject<Konva.Layer | null>, arrowLayer: RefObject<Konva.Layer | null>) {
+export function handleStageDragStart(
+  e: Konva.KonvaEventObject<DragEvent>,
+  mainLayer: RefObject<Konva.Layer | null>,
+  arrowLayer: RefObject<Konva.Layer | null>
+) {
   if (e.target !== e.target.getStage()) return;
   if (!mainLayer || !arrowLayer) return;
   // if (mainLayer) {
@@ -111,7 +144,11 @@ export function handleStageDragStart(e: Konva.KonvaEventObject<DragEvent>, mainL
   //   //arrowLayer.current?.cache({ width: stage?.width(), height: stage?.height() });
   // }
 }
-export function handleStageDragEnd(e: Konva.KonvaEventObject<DragEvent>, mainLayer: RefObject<Konva.Layer | null>, arrowLayer: RefObject<Konva.Layer | null>) {
+export function handleStageDragEnd(
+  e: Konva.KonvaEventObject<DragEvent>,
+  mainLayer: RefObject<Konva.Layer | null>,
+  arrowLayer: RefObject<Konva.Layer | null>
+) {
   if (e.target !== e.target.getStage()) return;
   if (!mainLayer || !arrowLayer) return;
   // if (mainLayer) {

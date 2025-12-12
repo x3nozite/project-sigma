@@ -39,18 +39,18 @@ function AppToolbar({
   setTool,
 }: Props) {
   return (
-    <Toolbar.Root className="flex w-100 max-w-100 rounded-lg bg-white border-2 border-zinc-300 shadow-sm p-2 justify-center max-sm:gap-1 ">
-      <Toolbar.ToggleGroup type="single">
+    <Toolbar.Root className="flex px-6 py-3 md:px-5 w-full mx-5 sm:px-5 sm:w-fit sm:py-2 rounded-lg bg-white border-2 border-zinc-300 shadow-sm  justify-center max-sm:gap-3 ">
+      <Toolbar.ToggleGroup type="single" className="flex gap-2 sm:gap-0.5">
         <Toolbar.ToggleItem value="task">
           <div
             className="add-shape relative group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 max-sm:w-8 max-sm:h-8 max-sm:p-[2px]"
             onClick={onShapeClick}
           >
-            <HiOutlineCube className="text-xl" />
-            <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+            <HiOutlineCube className="text-2xl" />
+            <span className="absolute pointer-events-none -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
               Add Task — Q
             </span>
-            <span className="hidden sm:inline absolute text-xs right-0 bottom-0 font-bold text-gray-300 group-data-[state=on]:text-blue-500">
+            <span className="hidden xl:inline absolute text-xs right-0 bottom-0 font-bold text-gray-300 group-data-[state=on]:text-blue-500">
               Q
             </span>
           </div>
@@ -60,11 +60,11 @@ function AppToolbar({
             className="add-shape relative group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 max-sm:w-8 max-sm:h-8 max-sm:p-[2px]"
             onClick={() => onTodoClick()}
           >
-            <HiOutlineBookOpen className="text-xl" />
-            <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+            <HiOutlineBookOpen className="text-2xl md:text-xl" />
+            <span className="absolute pointer-events-none -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
               Add To-do — W
             </span>
-            <span className="hidden sm:inline absolute text-xs right-0 bottom-0 font-bold text-gray-300 group-data-[state=on]:text-blue-500">
+            <span className="hidden xl:inline absolute text-xs right-0 bottom-0 font-bold text-gray-300 group-data-[state=on]:text-blue-500">
               W
             </span>
           </div>
@@ -74,8 +74,8 @@ function AppToolbar({
             onClick={() => onTextClick()}
             className="add-annotate group flex flex-col justify-center items-center  rounded-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 max-sm:w-8 max-sm:h-8 max-sm:p-[2px]"
           >
-            <HiOutlineAnnotation className="text-xl" />
-            <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+            <HiOutlineAnnotation className="text-2xl md:text-xl" />
+            <span className="absolute pointer-events-none -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
               Annotate
             </span>
           </div>
@@ -111,14 +111,15 @@ function AppToolbar({
         onValueChange={(value) => {
           if (value) setTool(value as ToolType);
         }}
+        className="flex gap-2 sm:gap-0.5"
       >
         <Toolbar.ToggleItem value="hand" className="group">
           <div className="pan-canvas relative flex flex-col justify-center items-center  rounded-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50  max-sm:w-8 max-sm:h-8 max-sm:p-[2px]">
-            <HiOutlineHand className="-rotate-[45deg] text-xl group-data-[state=on]:stroke-blue-500" />
-            <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+            <HiOutlineHand className="-rotate-[45deg] text-2xl md:text-xl group-data-[state=on]:stroke-blue-500 sm:text-xl" />
+            <span className="absolute pointer-events-none -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
               Hand — 1 or Z
             </span>
-            <span className="hidden sm:inline absolute text-xs right-0 bottom-0 font-bold text-gray-300 group-data-[state=on]:text-blue-500">
+            <span className="hidden xl:inline absolute text-xs right-0 bottom-0 font-bold text-gray-300 group-data-[state=on]:text-blue-500">
               1
             </span>
           </div>
@@ -130,11 +131,11 @@ function AppToolbar({
         >
           <div className="select-canvas relative flex flex-col justify-center items-center  rounded-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50  max-sm:w-8 max-sm:h-8 max-sm:p-[2px]">
             {/* <HiSelector className="-rotate-[45deg] text-xl  group-data-[state=on]:blue-500" /> */}
-            <HiOutlineCursorClick className="text-xl group-data-[state=on]:stroke-blue-500" />
-            <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+            <HiOutlineCursorClick className="text-2xl md:text-xl group-data-[state=on]:stroke-blue-500" />
+            <span className="absolute pointer-events-none -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
               Select — 2 or X
             </span>
-            <span className="hidden sm:inline absolute text-xs right-0 bottom-0 font-bold text-gray-300 group-data-[state=on]:text-blue-500">
+            <span className="hidden xl:inline absolute text-xs right-0 bottom-0 font-bold text-gray-300 group-data-[state=on]:text-blue-500">
               2
             </span>
           </div>
@@ -145,11 +146,11 @@ function AppToolbar({
           onClick={onDrawClick}
         >
           <div className="draw-canvas relative flex flex-col justify-center items-center rounded-sm border-none w-10 h-10 p-1 duration-50 text-gray-700 transition-colors hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2  focus:ring-offset-white focus:outline-none  disabled:pointer-events-auto disabled:opacity-50 max-sm:w-8 max-sm:h-8 max-sm:p-[2px]">
-            <HiOutlinePencil className="text-xl group-data-[state=on]:stroke-blue-500" />
-            <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+            <HiOutlinePencil className="text-2xl md:text-xl group-data-[state=on]:stroke-blue-500" />
+            <span className="absolute pointer-events-none -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
               Draw — 3 or C
             </span>
-            <span className="hidden sm:inline absolute text-xs right-0 bottom-0 font-bold text-gray-300 group-data-[state=on]:text-blue-500">
+            <span className="hidden xl:inline absolute text-xs right-0 bottom-0 font-bold text-gray-300 group-data-[state=on]:text-blue-500">
               3
             </span>
           </div>
@@ -165,13 +166,13 @@ function AppToolbar({
             }
           >
             <BsEraser
-              className="text-xl group-data-[state=on]:stroke-red-500 group-data-[state=on]:stroke-2"
+              className="text-2xl md:text-xl group-data-[state=on]:stroke-red-500 group-data-[state=on]:stroke-2"
               style={{ strokeWidth: 0.5 }}
             />
-            <span className="absolute -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+            <span className="absolute pointer-events-none -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
               Eraser — 4 or V
             </span>
-            <span className="hidden sm:inline absolute text-xs right-0 bottom-0 font-bold text-gray-300 group-data-[state=on]:text-red-500">
+            <span className="hidden xl:inline absolute text-xs right-0 bottom-0 font-bold text-gray-300 group-data-[state=on]:text-red-500">
               4
             </span>
           </div>

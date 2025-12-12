@@ -91,7 +91,8 @@ const Rectangle = ({
     })
     .replace(/, (?=\d{4})/, " ");
 
-  // logic for status
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  const showCircle = isMobile || isHovered || rect.completed;
 
   return (
     <Group
@@ -116,11 +117,16 @@ const Rectangle = ({
       onMouseLeave={() => {
         if (tool === "hand") setisHovered(false);
       }}
+      onTap={() => {
+        handleEraserClick(rect.id);
+      }}
+      onDblTap={() => {
+        if (tool === "hand") {
+          onShapeClick(rect);
+        }
+      }}
       onClick={() => {
         handleEraserClick(rect.id);
-        // if (tool === "hand") {
-        //   onShapeClick(rect);
-        // }
       }}
       onDblClick={() => {
         if (tool === "hand") {
@@ -194,7 +200,7 @@ const Rectangle = ({
             padding={10}
           ></Text>
         </Group>
-        {isHovered && (
+        {isMobile && (
           <Group
             x={rect.width + 5}
             y={rect.height / 2}
@@ -248,14 +254,37 @@ const Rectangle = ({
           fontSize={16}
         ></Text>
         <Text
-          x={rect.width * 0.9}
-          y={5}
-          fill="white"
+          x={rect.width}
+          y={0}
+          width={10}
+          height={10}
+          fill="black"
           text={rect.isCollapsed ? "+" : "-"}
           fontSize={32}
           align="right"
           verticalAlign="top"
           onClick={(e) => {
+            if (tool !== "eraser") {
+              const isCurrentlyCollapsed = rect.isCollapsed;
+              if (isCurrentlyCollapsed) {
+                collapseChild(rect, true);
+              } else {
+                collapseChild(rect, false);
+              }
+
+              e.cancelBubble = true;
+              setShapes((prev) => {
+                return prev.map((r) => {
+                  if (r.shape === "rect" && r.id === rect.id) {
+                    return { ...r, isCollapsed: !r.isCollapsed };
+                  } else {
+                    return r;
+                  }
+                });
+              });
+            }
+          }}
+          onTap={(e) => {
             if (tool !== "eraser") {
               const isCurrentlyCollapsed = rect.isCollapsed;
               if (isCurrentlyCollapsed) {

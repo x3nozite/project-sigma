@@ -59,7 +59,7 @@ export default function TaskForm({
     resolver: zodResolver(schema),
   });
 
-  const [selCol, setSelCol] = useState("#ff2056");
+  const [selCol, setSelCol] = useState(initialData?.color ?? "#ff2056");
 
   const onSubmit: SubmitHandler<taskFields> = async (data) => {
     try {

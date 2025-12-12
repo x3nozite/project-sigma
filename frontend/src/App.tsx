@@ -105,8 +105,6 @@ function App() {
     (async () => {
       await init();
 
-
-
       if (!session) {
         const local = await loadCanvas("local");
         if (!mounted) return;
@@ -129,10 +127,6 @@ function App() {
         setCanvasList([]);
         return;
       }
-
-
-
-
 
       const canvasRes = await loadCanvas(null);
       if (!mounted) return;
@@ -206,7 +200,6 @@ function App() {
     })();
   }, [currentCanvasId]);
 
-
   const openTodoForm = (parent: RectType | null, currTodo: TodoType | null) => {
     setSelectedParent(parent);
     //console.log("parent: " + parent);
@@ -243,11 +236,11 @@ function App() {
       x: parent
         ? parent.x + 400
         : (stageCoor.x * -1 + (window.innerWidth - 200) / 2) *
-        (100 / zoomValue),
+          (100 / zoomValue),
       y: parent
         ? parent.y
         : (stageCoor.y * -1 + (window.innerHeight - 200) / 2) *
-        (100 / zoomValue),
+          (100 / zoomValue),
       color: newFields.color, // default is green
       isCollapsed: false,
       scaleX: 1,
@@ -363,12 +356,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-            ...r,
-            title: newData.title,
-            description: newData.description,
-            color: newData.color,
-            dueDate: newData.date,
-          }
+              ...r,
+              title: newData.title,
+              description: newData.description,
+              color: newData.color,
+              dueDate: newData.date,
+            }
           : r
       )
     );
@@ -379,13 +372,13 @@ function App() {
       prev.map((t) =>
         t.id === shape.id
           ? {
-            ...t,
-            title: newData.title,
-            assignee: newData.assignee,
-            dueDate: newData.date,
-            completed: newData.completed,
-            color: newData.color,
-          }
+              ...t,
+              title: newData.title,
+              assignee: newData.assignee,
+              dueDate: newData.date,
+              completed: newData.completed,
+              color: newData.color,
+            }
           : t
       )
     );
@@ -653,9 +646,11 @@ function App() {
     }
   };
 
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
   return (
     <>
-      <div className="relative w-full h-screen overflow-hidden ">
+      <div className="relative w-screen h-100dvh overflow-hidden ">
         <nav className="top-nav absolute w-full z-50 flex flex-wrap justify-between items-center p-5">
           <div className="more-options ">
             <DropdownMenu.Root>
@@ -671,11 +666,7 @@ function App() {
                   alignOffset={5}
                   className="min-w-56 rounded-lg shadow-lg p-5 text-blue-700 hover:cursor-default hover:border-none bg-white"
                 >
-                  <DropdownMenu.Item
-                    classon
-                    prod
-                    finrName="group py-1 pl-2 hover:bg-sky-200 rounded-lg hover:text-blue-700 flex items-center"
-                  >
+                  <DropdownMenu.Item className="group py-1 pl-2 hover:bg-sky-200 rounded-lg hover:text-blue-700 flex items-center">
                     <div
                       className="flex items-center gap-2"
                       onClick={handleSave}
@@ -716,9 +707,10 @@ function App() {
                                       className={`
                                         flex items-center justify-between p-4 rounded-lg border-2 
                                         transition-all
-                                        ${currentCanvasId === canvas.canvas_id
-                                          ? "bg-blue-100 border-blue-400"
-                                          : "bg-gray-50 border-gray-200"
+                                        ${
+                                          currentCanvasId === canvas.canvas_id
+                                            ? "bg-blue-100 border-blue-400"
+                                            : "bg-gray-50 border-gray-200"
                                         }
                                       `}
                                     >
@@ -737,7 +729,7 @@ function App() {
                                         <HiOutlineFolder className="w-5 h-5 text-blue-600" />
                                         <div className="flex-1">
                                           {editingCanvasId ===
-                                            canvas.canvas_id ? (
+                                          canvas.canvas_id ? (
                                             <input
                                               type="text"
                                               value={editingCanvasName}
@@ -784,13 +776,13 @@ function App() {
                                       <div className="flex items-center gap-2">
                                         {currentCanvasId ===
                                           canvas.canvas_id && (
-                                            <span className="text-xs text-blue-600 font-medium mr-2">
-                                              Current
-                                            </span>
-                                          )}
+                                          <span className="text-xs text-blue-600 font-medium mr-2">
+                                            Current
+                                          </span>
+                                        )}
 
                                         {editingCanvasId ===
-                                          canvas.canvas_id ? (
+                                        canvas.canvas_id ? (
                                           <>
                                             <button
                                               onClick={(e) => {
@@ -958,7 +950,7 @@ function App() {
               </DropdownMenu.Portal>
             </DropdownMenu.Root>
           </div>
-          <div className="tool-bar absolute left-1/2 transform -translate-x-1/2 hidden md:flex">
+          <div className="tool-bar absolute left-1/2 transform -translate-x-1/2 hidden sm:flex">
             {/* <BottomNav
               onShapeClick={openForm}
               onEraserClick={toggleEraser}
@@ -1237,7 +1229,7 @@ function App() {
             isActive={tool === "eraser" || tool === "draw"}
           />
         </div> */}
-        <div className="absolute toolbar-mob flex md:hidden z-100 w-full left-1/2 -translate-x-1/2 justify-center  pb-4 bottom-0">
+        <div className="absolute toolbar-mob flex sm:hidden z-100 w-full left-1/2 -translate-x-1/2 justify-center  pb-4 bottom-0">
           <AppToolbar
             onShapeClick={() => openForm(null)}
             onTodoClick={() => openTodoForm(null, null)}
@@ -1254,9 +1246,9 @@ function App() {
         </div>
         <div className="account-buttons absolute flex flex-row top-1.5 right-0 gap-2 m-4 z-51"></div>
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-md/15 shadow-gray-600"></div>
-        <div className="absolute bottom-4 left-4  items-center z-10 bg-amber-100 border-2 border-amber-200 rounded-xl w-fit hidden md:inline-flex">
+        <div className="absolute bottom-21 left-5 sm:bottom-4 sm:left-4  items-center z-10 bg-amber-100 border-2 border-amber-200 rounded-xl w-fit inline-flex">
           <button
-            className="hover:bg-orange-200 hover:cursor-pointer px-4 py-2 rounded-l-lg"
+            className="hover:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-l-lg"
             onClick={() => setZoomValue(Math.max(zoomValue - 10, 10))}
           >
             <HiOutlineZoomOut />
@@ -1271,7 +1263,7 @@ function App() {
             </span>
           </button>
           <button
-            className="hover:bg-orange-200 hover:cursor-pointer px-4 py-2 rounded-r-lg h-full"
+            className="hover:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-r-lg h-full"
             onClick={() => setZoomValue(Math.min(zoomValue + 10, 500))}
           >
             <HiOutlineZoomIn />

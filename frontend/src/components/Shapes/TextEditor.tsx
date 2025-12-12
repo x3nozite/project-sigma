@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import Konva from "konva";
-import { Html } from "react-konva-utils";
 
 interface TextAreaProps {
   textNode: Konva.Text;
@@ -74,8 +73,9 @@ const TextArea = ({ textNode, onClose, onChange }: TextAreaProps) => {
     const handleInput = () => {
       textarea.style.width = `${textNode.width() - textNode.padding() * 2}px`;
       textarea.style.height = "auto";
-      textarea.style.height = `${textarea.scrollHeight + textNode.fontSize()
-        }px`;
+      textarea.style.height = `${
+        textarea.scrollHeight + textNode.fontSize()
+      }px`;
     };
 
     textarea.addEventListener("keydown", handleKeyDown);
@@ -104,9 +104,9 @@ const TextArea = ({ textNode, onClose, onChange }: TextAreaProps) => {
 
 const TextEditor = (props: TextAreaProps) => {
   return (
-    <Html>
+    <>
       <TextArea {...props} />
-    </Html>
+    </>
   );
 };
 

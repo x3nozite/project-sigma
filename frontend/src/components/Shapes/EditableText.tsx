@@ -26,16 +26,53 @@ const EditableText = ({ initialText, onEraserClick, onDragEnd, onTransformEnd, s
 
   }, [setIsEditingText, tool, setEditingRef]);
 
+
   const handleTransform = useCallback(() => {
     const node = textRef.current;
     if (!node) return;
-    const scaleX = node.scaleX();
-    const newWidth = node.width() * scaleX;
-    setShapes(prev => prev.map(shape => shape.id === initialText.id ? { ...shape, width: newWidth } : shape));
-    node.setAttrs({
-      width: newWidth,
-      scaleX: 1,
-    });
+
+    const transformer = node.getStage()?.findOne("#transformer") as Konva.Transformer;
+    if (!transformer) return;
+    const anchor = transformer?.getActiveAnchor();
+
+    // Horizontal resize only
+    if (anchor === "middle-right" || anchor === "middle-left") {
+      const newWidth = node.width() * node.scaleX();
+
+      node.setAttrs({
+        width: newWidth,
+        scaleX: 1,
+      });
+
+      setShapes(prev =>
+        prev.map(s =>
+          s.id === initialText.id
+            ? { ...s, width: newWidth }
+            : s
+        )
+      );
+      return;
+    }
+    // Vertical-only or diagonal → treat as scaling
+    if (anchor) {
+      const newFontSize = node.fontSize() * node.scaleY();
+      const newWidth = node.width() * node.scaleX();
+
+      node.setAttrs({
+        width: newWidth,
+        fontSize: newFontSize,
+        scaleX: 1,
+        scaleY: 1,
+      });
+      setShapes(prev =>
+        prev.map(s =>
+          s.id === initialText.id
+            ? { ...s, fontSize: newFontSize, width: newWidth }
+            : s
+        )
+      );
+      return;
+    }
   }, [initialText.id, setShapes]);
 
   return (
@@ -48,6 +85,8 @@ const EditableText = ({ initialText, onEraserClick, onDragEnd, onTransformEnd, s
         name="shape"
         x={initialText.x}
         y={initialText.y}
+        scaleX={initialText.scaleX}
+        scaleY={initialText.scaleY}
         width={initialText.width}
         fontSize={initialText.fontSize}
         fontFamily="Inter"

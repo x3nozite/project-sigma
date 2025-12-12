@@ -628,7 +628,15 @@ const ShapeCanvas = ({
         <Layer>
           <Transformer
             ref={transformerRef}
-
+            id="transformer"
+            enabledAnchors={[
+              "top-left",
+              "top-right",
+              "bottom-left",
+              "bottom-right",
+              "middle-left",
+              "middle-right"
+            ]}
             boundBoxFunc={(oldBox, newBox) => {
               if (newBox.width < 5 || newBox.height < 5) {
                 return oldBox;

@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useRef } from "react"
+import { useCallback, useRef } from "react"
 import { Text } from "react-konva";
-import type { ShapeType, TextType } from "../types";
+import type { ShapeType, TextType, ToolType } from "../types";
 import Konva from "konva";
-import { Html } from "react-konva-utils";
 
 interface Props {
   initialText: TextType;
@@ -12,128 +11,32 @@ interface Props {
   setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>;
   setIsEditingText: React.Dispatch<React.SetStateAction<boolean>>;
   isEditingText: boolean;
-}
-interface TextAreaProps {
-  textNode: Konva.Text;
-  onClose: () => void;
-  onChange: (value: string) => void;
+  tool: ToolType;
+  setEditingRef: React.Dispatch<React.SetStateAction<Konva.Text | null>>;
+  editingRef: Konva.Text | null;
 }
 
-const TextArea = ({ textNode, onClose, onChange }: TextAreaProps) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    if (!textareaRef.current) return;
-
-    const textarea = textareaRef.current;
-    const textPosition = textNode.position();
-    const areaPosition = {
-      x: textPosition.x,
-      y: textPosition.y,
-    };
-
-    // Match styles with the text node
-    textarea.style.position = "absolute";
-    textarea.value = textNode.text();
-    textarea.style.top = `${areaPosition.y}px`;
-    textarea.style.left = `${areaPosition.x}px`;
-    textarea.style.width = `${textNode.width() - textNode.padding() * 2}px`;
-    textarea.style.height = `${textNode.height() - textNode.padding() * 2 + 5
-      }px`;
-    textarea.style.fontSize = `${textNode.fontSize()}px`;
-    textarea.style.border = "none";
-    textarea.style.padding = "0px";
-    textarea.style.margin = "0px";
-    textarea.style.overflow = "hidden";
-    textarea.style.background = "none";
-    textarea.style.outline = "none";
-    textarea.style.resize = "none";
-    textarea.style.lineHeight = String(textNode.lineHeight());
-    textarea.style.fontFamily = textNode.fontFamily();
-    textarea.style.transformOrigin = "left top";
-    textarea.style.textAlign = textNode.align();
-
-    const rotation = textNode.rotation();
-    let transform = "";
-    if (rotation) {
-      transform += `rotateZ(${rotation}deg)`;
-    }
-    textarea.style.transform = transform;
-
-    textarea.style.height = "auto";
-    textarea.style.height = `${textarea.scrollHeight + 3}px`;
-
-    textarea.focus();
-
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (e.target !== textarea) {
-        onChange(textarea.value);
-        onClose();
-      }
-    };
-
-    // Add event listeners
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        onChange(textarea.value);
-        onClose();
-      }
-      if (e.key === "Escape") {
-        onClose();
-      }
-    };
-
-    const handleInput = () => {
-      const scale = textNode.getAbsoluteScale().x;
-      textarea.style.width = `${textNode.width() * scale}px`;
-      textarea.style.height = "auto";
-      textarea.style.height = `${textarea.scrollHeight + textNode.fontSize()
-        }px`;
-    };
-
-    textarea.addEventListener("keydown", handleKeyDown);
-    textarea.addEventListener("input", handleInput);
-    setTimeout(() => {
-      window.addEventListener("click", handleOutsideClick);
-    });
-
-    return () => {
-      textarea.removeEventListener("keydown", handleKeyDown);
-      textarea.removeEventListener("input", handleInput);
-      window.removeEventListener("click", handleOutsideClick);
-    };
-  }, [textNode, onChange, onClose]);
-
-  return (
-    <textarea
-      ref={textareaRef}
-      style={{
-        minHeight: "1em",
-        position: "absolute",
-      }}
-    />
-  );
-};
-
-const TextEditor = (props: TextAreaProps) => {
-  return (
-    <Html>
-      <TextArea {...props} />
-    </Html>
-  );
-};
-
-const EditableText = ({ initialText, onEraserClick, onDragEnd, onTransformEnd, setShapes, setIsEditingText, isEditingText }: Props) => {
-  const textRef = useRef(null);
+const EditableText = ({ initialText, onEraserClick, onDragEnd, onTransformEnd, setShapes, setIsEditingText, isEditingText, tool, setEditingRef, editingRef }: Props) => {
+  const textRef = useRef<Konva.Text | null>(null);
 
   const handleTextDblClick = useCallback(() => {
+    if (tool !== "hand") return;
     setIsEditingText(true);
-  }, [setIsEditingText]);
+    setEditingRef(textRef.current);
 
-  const handleTextChange = useCallback((newText: string) => {
-    setShapes(prev => prev.map(shape => shape.id === initialText.id ? { ...shape, text: newText } : shape))
-  }, [initialText.id, setShapes])
+  }, [setIsEditingText, tool, setEditingRef]);
+
+  const handleTransform = useCallback(() => {
+    const node = textRef.current;
+    if (!node) return;
+    const scaleX = node.scaleX();
+    const newWidth = node.width() * scaleX;
+    setShapes(prev => prev.map(shape => shape.id === initialText.id ? { ...shape, width: newWidth } : shape));
+    node.setAttrs({
+      width: newWidth,
+      scaleX: 1,
+    });
+  }, [initialText.id, setShapes]);
 
   return (
     <>
@@ -141,33 +44,28 @@ const EditableText = ({ initialText, onEraserClick, onDragEnd, onTransformEnd, s
         ref={textRef}
         key={"key-" + initialText.id}
         id={"group-" + initialText.id}
-        //shapeId={initialText.id}
+        shapeId={initialText.id}
         name="shape"
         x={initialText.x}
         y={initialText.y}
+        width={initialText.width}
         fontSize={initialText.fontSize}
         fontFamily="Inter"
         fontStyle="normal"
         fill="black"
-        align="justify"
-        ellipsis={true}
-        lineHeight={1.25}
+        align="left"
+        lineHeight={1}
         text={initialText.text}
         draggable
         onClick={() => onEraserClick(initialText.id)}
         onDragEnd={onDragEnd}
+        onTransform={handleTransform}
         onTransformEnd={onTransformEnd}
         onDblClick={handleTextDblClick}
         onDblTap={handleTextDblClick}
-        visible={!isEditingText}
+
+        visible={!(isEditingText && editingRef && editingRef?.id() === "group-" + initialText.id)}
       />
-      {isEditingText && textRef.current && (
-        <TextEditor
-          textNode={textRef.current}
-          onChange={handleTextChange}
-          onClose={() => { setIsEditingText(false) }}
-        />
-      )}
     </>
   )
 }

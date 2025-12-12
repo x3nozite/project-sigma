@@ -99,7 +99,7 @@ export const handleSelectMouseUp = (isSelecting: RefObject<boolean>, selectionRe
     }
 
     if (!mainLayer.current) return;
-    const node = mainLayer.current.findOne(`#${shape.id}`);
+    const node = mainLayer.current.findOne(`#group-${shape.id}`);
     if (!node) return;
 
 

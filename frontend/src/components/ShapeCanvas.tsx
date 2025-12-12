@@ -574,6 +574,7 @@ const ShapeCanvas = ({
             setShapes={setShapes}
             isEditingText={isEditingText}
             setIsEditingText={setIsEditingText}
+            tool={tool}
           />
           <RectLayer
             shapes={shapes.filter(
@@ -627,6 +628,7 @@ const ShapeCanvas = ({
         <Layer>
           <Transformer
             ref={transformerRef}
+
             boundBoxFunc={(oldBox, newBox) => {
               if (newBox.width < 5 || newBox.height < 5) {
                 return oldBox;

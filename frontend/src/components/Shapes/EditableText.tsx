@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react"
+import { useCallback, useRef } from "react"
 import { Text } from "react-konva";
 import type { ShapeType, TextType, ToolType } from "../types";
 import Konva from "konva";

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import Konva from "konva";
+import { Html } from "react-konva-utils";
 
 interface TextAreaProps {
   textNode: Konva.Text;
@@ -28,7 +29,7 @@ const TextArea = ({ textNode, onClose, onChange }: TextAreaProps) => {
     textarea.style.width = `${textNode.width() - textNode.padding() * 2}px`;
     textarea.style.height = `${textNode.height()}px`;
     textarea.style.fontSize = `${textNode.fontSize()}px`;
-    textarea.style.border = "1px solid #ccc";
+    textarea.style.border = "3px solid #ccc";
     textarea.style.borderRadius = "4px";
     textarea.style.padding = "0px";
     textarea.style.margin = "0px";

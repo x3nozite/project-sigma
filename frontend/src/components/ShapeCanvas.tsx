@@ -1,5 +1,5 @@
 import { Stage, Layer, Rect, Transformer } from "react-konva";
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useRef, useState } from "react";
 import type {
   RectType,
   ArrowType,

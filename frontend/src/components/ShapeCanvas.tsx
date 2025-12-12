@@ -62,7 +62,6 @@ interface Props {
   stageCoor: { x: number; y: number };
   setStageCoor: React.Dispatch<React.SetStateAction<{ x: number; y: number }>>;
   isFormOpen: boolean;
-  nodeMap: RefObject<Map<string, Konva.Node>>;
 }
 
 const bbox_id = "1234567890";
@@ -83,7 +82,6 @@ const ShapeCanvas = ({
   stageCoor,
   setStageCoor,
   isFormOpen,
-  nodeMap,
 }: Props) => {
   Konva.pixelRatio = window.devicePixelRatio || 1;
   const mainLayer = useRef<Konva.Layer | null>(null!);
@@ -109,6 +107,7 @@ const ShapeCanvas = ({
   const { pushUndo, undo, redo } = useUndoRedo();
   const currentUndoGroup = useRef<string | null>(null);
   const [isEditingText, setIsEditingText] = useState(false);
+  const nodeMap = useRef(new Map<string, Konva.Node>());
 
   useEffect(() => {
     if (!mainLayer.current) return;
@@ -568,38 +567,6 @@ const ShapeCanvas = ({
         }}
       >
         <Layer>
-
-          <TextLayer
-            texts={shapes.filter(
-              (s: ShapeType): s is TextType => s.shape === "text"
-            )}
-            onEraserClick={handleEraserClick}
-            onDragEnd={(e) => {
-              handleDragEnd(
-                e,
-                mainLayer,
-                tool,
-                prevShape,
-                setShapes,
-                shapes,
-                pushUndo,
-                currentUndoGroup.current
-              );
-            }}
-            onTransformEnd={(e) => {
-              handleTransfromEnd(
-                e,
-                setShapes,
-                shapes,
-                pushUndo,
-                currentUndoGroup.current
-              );
-            }}
-            setShapes={setShapes}
-            isEditingText={isEditingText}
-            setIsEditingText={setIsEditingText}
-            tool={tool}
-          />
           <LineLayer
             lines={shapes.filter(
               (s: ShapeType): s is LineType => s.shape === "line"
@@ -638,6 +605,37 @@ const ShapeCanvas = ({
             fill="transparent"
             draggable={true}
             temporary={true}
+          />
+          <TextLayer
+            texts={shapes.filter(
+              (s: ShapeType): s is TextType => s.shape === "text"
+            )}
+            onEraserClick={handleEraserClick}
+            onDragEnd={(e) => {
+              handleDragEnd(
+                e,
+                mainLayer,
+                tool,
+                prevShape,
+                setShapes,
+                shapes,
+                pushUndo,
+                currentUndoGroup.current
+              );
+            }}
+            onTransformEnd={(e) => {
+              handleTransfromEnd(
+                e,
+                setShapes,
+                shapes,
+                pushUndo,
+                currentUndoGroup.current
+              );
+            }}
+            setShapes={setShapes}
+            isEditingText={isEditingText}
+            setIsEditingText={setIsEditingText}
+            tool={tool}
           />
           <RectLayer
             shapes={shapes.filter(

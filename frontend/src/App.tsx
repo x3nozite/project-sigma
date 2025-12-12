@@ -84,12 +84,8 @@ function App() {
   const [editingCanvasId, setEditingCanvasId] = useState<string | null>(null);
   const [editingCanvasName, setEditingCanvasName] = useState("");
 
-<<<<<<< HEAD
   // canvas color
   const [canvasCol, setcanvasCol] = useState<string>("#ffffff");
-=======
-  const nodeMap = useRef(new Map<string, Konva.Node>());
->>>>>>> 3ed4371 (some optimization)
 
   useAutosaveCanvas({ shapes, connectors }, 1000, () => {
     if (!currentCanvasId || shapes.length === 0) return;
@@ -1324,7 +1320,6 @@ function App() {
             stageCoor={stageCoor}
             setStageCoor={setStageCoor}
             isFormOpen={isFormOpen}
-            nodeMap={nodeMap}
           />
         </div>
       </div>

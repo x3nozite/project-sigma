@@ -128,7 +128,7 @@ const Todo = ({
   const ref = useRef<Konva.Group>(null);
 
   useEffect(() => {
-    if (ref.current) {
+    if (ref.current && nodeMap && nodeMap.current) {
       nodeMap.current.set("group-" + todo.id, ref.current);
     }
   });

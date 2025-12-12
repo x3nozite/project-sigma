@@ -7,6 +7,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { checkEmailExists } from "./utilities/checkUser";
 import { useForm, type SubmitHandler } from "react-hook-form";
+import { useState } from "react";
 
 const schema = z.object({
   email: z.email("invalid email"),

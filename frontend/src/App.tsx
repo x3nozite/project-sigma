@@ -1,5 +1,5 @@
 import "./App.css";
-import BottomNav from "./components/BottomNav";
+//import BottomNav from "./components/BottomNav";
 import { useEffect, useState } from "react";
 import ShapeCanvas from "./components/ShapeCanvas";
 import type {
@@ -32,7 +32,6 @@ import {
   HiOutlineCheck,
   HiOutlinePlus,
   HiOutlinePencil,
-  HiOutlineX,
 } from "react-icons/hi";
 import { DropdownMenu, AlertDialog } from "radix-ui";
 import AppToolbar from "./components/ui/buttons/tools/AppToolbar";
@@ -85,10 +84,6 @@ function App() {
 
   useAutosaveCanvas({ shapes, connectors }, 1000, () => {
     if (!currentCanvasId || shapes.length === 0) return;
-    console.log("Autosaving:", {
-      shapes: shapes.length,
-      connectors: connectors.length,
-    });
     saveCanvas(
       {
         shapes,
@@ -243,7 +238,6 @@ function App() {
     };
 
     setShapes([...shapes, newTodo]);
-    let newItems: (ShapeType | ArrowType)[] = [newTodo];
     if (parent) {
       setShapes((prev) =>
         prev.map((s) =>
@@ -252,16 +246,15 @@ function App() {
             : s
         )
       );
-      addConnector(newTodo, parent);
-      const newConnector = connectors.find(
-        (conn) =>
-          conn.from === "group-" + newTodo.id &&
-          conn.to === "group-" + parent.id
-      );
-      if (newConnector) newItems = [...newItems, newConnector];
+      addConnector(newTodo, parent, newTodo.id);
     }
 
-    pushUndo({ items: newItems, action: "add" });
+    pushUndo({
+      before: newTodo,
+      after: newTodo,
+      action: "add",
+      id: newTodo.id,
+    });
   };
 
   const addRect = (newTask: taskFields) => {
@@ -290,12 +283,13 @@ function App() {
 
     setShapes([...shapes, newRect]);
 
-    pushUndo({ items: [newRect], action: "add" });
+    pushUndo({ before: newRect, after: newRect, action: "add" });
   };
 
   const addConnector = (
     from: Konva.Node | ShapeType,
-    to: Konva.Node | ShapeType
+    to: Konva.Node | ShapeType,
+    pushId?: string
   ) => {
     const fromId = from instanceof Konva.Node ? from.id() : "group-" + from.id;
     const toId = to instanceof Konva.Node ? to.id() : "group-" + to.id;
@@ -305,15 +299,16 @@ function App() {
       id: "connector-" + Date.now().toString(),
       from: fromId,
       to: toId,
-    }
+    };
 
-    setConnectors([
-      ...connectors,
-      newConnector
-    ]);
+    setConnectors([...connectors, newConnector]);
 
-    pushUndo({ items: [newConnector], action: "add" });
-
+    pushUndo({
+      before: newConnector,
+      after: newConnector,
+      action: "add",
+      id: pushId ? pushId : undefined,
+    });
   };
 
   const addText = () => {
@@ -323,14 +318,15 @@ function App() {
       y:
         (stageCoor.y * -1 + (window.innerHeight - 200) / 2) * (100 / zoomValue),
       fontSize: 20,
-      text: "Placeholder Text",
+      text: "Insert your text here",
       shape: "text",
       behavior: "decor",
       scaleX: 1,
       scaleY: 1,
+      width: 200,
     } as const;
     setShapes([...shapes, newText]);
-    pushUndo({ items: [newText], action: "add" });
+    pushUndo({ before: newText, after: newText, action: "add" });
   };
 
   const updateRect = (shape: ShapeType, newData: taskFields) => {
@@ -407,17 +403,14 @@ function App() {
     setShapes([]);
     setConnectors([]);
 
-    if(currentCanvasId === "local"){
+    if (currentCanvasId === "local") {
       await clearIndexedDBShapes();
-    }
-    else if(currentCanvasId){
+    } else if (currentCanvasId) {
       const response = await deleteCanvas(currentCanvasId);
       if (!response.success) {
         console.error("Failed to delete canvas from supabase", response.error);
+      }
     }
-    }
-    
-
   };
   // if (!session) {
   //   return <Auth supabase={supabase} appearance={{ theme: ThemeSupa }}></Auth>
@@ -671,7 +664,8 @@ function App() {
                       </AlertDialog.Trigger>
                       <AlertDialog.Portal>
                         <AlertDialog.Overlay className="fixed bg-black opacity-50 inset-0 z-100" />
-                        <AlertDialog.Content className="bg-white min-w-md max-w-2xl fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg z-101 max-h-96 overflow-y-auto">
+                        <AlertDialog.Content
+                          className="bg-white fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm sm:max-w-md lg:max-w-xl p-4 sm:p-6 rounded-lg z-101">
                           <AlertDialog.Title className="text-xl font-bold mb-4 flex items-center gap-2">
                             <HiOutlineFolderOpen />
                             My Canvases
@@ -873,7 +867,7 @@ function App() {
                       </AlertDialog.Trigger>
                       <AlertDialog.Portal>
                         <AlertDialog.Overlay className="fixed bg-black opacity-50 inset-0 z-100" />
-                        <AlertDialog.Content className="bg-white min-w-md max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 rounded-lg z-101">
+                        <AlertDialog.Content className="bg-white fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] max-w-sm sm:max-w-md p-4 sm:p-6 rounded-lg z-101">
                           <AlertDialog.Title className="text-xl font-bold mb-2">
                             Are you sure?
                           </AlertDialog.Title>
@@ -1201,7 +1195,7 @@ function App() {
             </div>
           </div>
         </nav>
-        <div className="absolute toolbar-mob flex sm:hidden z-100 w-full justify-center p-2 bottom-4">
+        {/* <div className="absolute toolbar-mob flex sm:hidden z-100 w-full justify-center p-2 bottom-4">
           <BottomNav
             onShapeClick={openForm}
             onEraserClick={toggleEraser}
@@ -1209,6 +1203,21 @@ function App() {
             onDrawClick={togglePencil}
             onColorSelect={setStrokeColor}
             isActive={tool === "eraser" || tool === "draw"}
+          />
+        </div> */}
+        <div className="absolute toolbar-mob flex sm:hidden z-100 w-full justify-center px-2 pb-4 bottom-0">
+          <AppToolbar
+            onShapeClick={() => openForm(null)}
+            onTodoClick={() => openTodoForm(null, null)}
+            onTextClick={addText}
+            onEraserClick={toggleEraser}
+            onClearClick={clearCanvas}
+            onDrawClick={togglePencil}
+            onSelectClick={toggleSelect}
+            onColorSelect={setStrokeColor}
+            isActive={tool === "eraser" || tool === "draw"}
+            tool={tool}
+            setTool={setTool}
           />
         </div>
         <div className="account-buttons absolute flex flex-row top-1.5 right-0 gap-2 m-4 z-51"></div>
@@ -1291,7 +1300,7 @@ function App() {
         <AlertDialog.Portal>
           <AlertDialog.Overlay className="fixed bg-black opacity-50 inset-0 z-100" />
 
-          <AlertDialog.Content className="bg-white min-w-md max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 rounded-lg z-101">
+          <AlertDialog.Content className="bg-white fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm sm:max-w-md lg:max-w-lg p-4 sm:p-5 rounded-lg z-101">
             <AlertDialog.Title className="text-xl font-bold mb-2">
               New Canvas
             </AlertDialog.Title>

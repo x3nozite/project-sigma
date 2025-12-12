@@ -68,7 +68,7 @@ function ResetPassword() {
         const refreshToken = params.get('refresh_token');
         const type = params.get('type');
 
-        console.log('URL params:', { accessToken: !!accessToken, refreshToken: !!refreshToken, type });
+        // console.log('URL params:', { accessToken: !!accessToken, refreshToken: !!refreshToken, type });
 
         if (accessToken && type === 'recovery') {
 

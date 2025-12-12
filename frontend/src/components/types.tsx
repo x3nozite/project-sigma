@@ -74,6 +74,7 @@ export type TextType = {
   behavior: "decor";
   scaleX: number;
   scaleY: number;
+  width: number;
 };
 
 export type ToolType = "hand" | "eraser" | "draw" | "select";
@@ -82,6 +83,7 @@ export type ShapeType = RectType | TodoType | LineType | TextType;
 
 export type UndoEntry = {
   id?: string;
-  items: (ShapeType | ArrowType)[];
+  before: (ShapeType | ArrowType);
+  after: (ShapeType | ArrowType);
   action: "add" | "update" | "delete";
 };

@@ -2,7 +2,6 @@ import { Path, Circle, Group, Rect, Text } from "react-konva";
 import type { ShapeType, TodoType, ToolType, RectType } from "../types";
 import { useState } from "react";
 import Konva from "konva";
-import { shapes } from "konva/lib/Shape";
 
 interface Props {
   todo: TodoType;

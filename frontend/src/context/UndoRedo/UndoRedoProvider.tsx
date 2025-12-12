@@ -9,11 +9,9 @@ export function UndoRedoProvider({ children }: { children: ReactNode }) {
   function pushUndo(entry: UndoEntry) {
     setUndoStack(prev => [...prev, entry]);
     setRedoStack([]);
-
-    console.log("test push undo");
   }
 
-  function undo(shapes: ShapeType[], connectors: ArrowType[], setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>) {
+  function undo(setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>) {
     const last = undoStack.at(-1);
     if (!last) return;
 
@@ -26,37 +24,49 @@ export function UndoRedoProvider({ children }: { children: ReactNode }) {
     while (tempStack.length > 0) {
       const entry = tempStack.at(-1);
       if (!entry) return;
+      const element = entry.before;
 
       if (entry.action === "add") {
-        entry.items.forEach(element => {
-          if (element.shape === "connector") {
-            setShapes(prev =>
-              prev.map(shape => {
-                if (shape.shape === "todo") {
-                  return { ...shape, parents: (shape.parents === element.to) ? "" : shape.parents }
-                };
-                if (shape.shape !== "rect") return shape;
-                return {
-                  ...shape,
-                  children: shape.children.filter(child => child !== element.from),
-                  parents: (shape.parents === element.to) ? "" : shape.parents
-                };
-              })
-            );
-            setConnectors(prev =>
-              prev.filter(conn => conn.id !== element.id)
-            );
-          } else {
-            setShapes(prev => prev.filter(shape => shape.id !== element.id));
-          }
-        });
-      } else if (entry.action === "update") {
-        entry.items.forEach(item => {
-          if (item.shape === "connector") return;
+        if (element.shape === "connector") {
           setShapes(prev =>
-            prev.map(shape => shape.id === item.id ? { ...shape, ...item } : shape)
-          )
-        })
+            prev.map(shape => {
+              if (shape.shape === "todo") {
+                return { ...shape, parents: (shape.parents === element.to) ? "" : shape.parents }
+              };
+              if (shape.shape !== "rect") return shape;
+              return {
+                ...shape,
+                children: shape.children.filter(child => child !== element.from),
+                parents: (shape.parents === element.to) ? "" : shape.parents
+              };
+            })
+          );
+          setConnectors(prev =>
+            prev.filter(conn => conn.id !== element.id)
+          );
+        } else {
+          setShapes(prev => prev.filter(shape => shape.id !== element.id));
+        }
+      } else if (entry.action === "update") {
+        if (element.shape === "connector") return;
+        setShapes(prev =>
+          prev.map(shape => shape.id === element.id ? { ...shape, ...element } : shape)
+        )
+      } else {
+        if (element.shape === "connector") {
+          setConnectors(prev => [...prev, element]);
+
+          setShapes(prev => prev.map(shape => {
+            if (shape.shape !== "rect" && shape.shape !== "todo") return shape;
+            if ("group-" + shape.id === element.from) return { ...shape, parents: element.to };
+            if (shape.shape === "rect" && "group-" + shape.id === element.to) return { ...shape, children: [...shape.children, element.from] };
+
+
+            return shape;
+          }))
+        } else {
+          setShapes(prev => [...prev, element])
+        }
       }
 
       collected.push(entry);
@@ -67,19 +77,94 @@ export function UndoRedoProvider({ children }: { children: ReactNode }) {
     }
     setUndoStack(tempStack);
     setRedoStack(prev => [...prev, ...collected]);
-
-    if (last.action === "delete") return;
-
   }
 
-  function redo() {
+  function redo(setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, setConnectors: React.Dispatch<React.SetStateAction<ArrowType[]>>) {
     const last = redoStack.at(-1);
     if (!last) return;
 
-    // TODO: redo changes
+    let tempStack = [...redoStack];
+    let collected: UndoEntry[] = [];
+    collected = [];
 
-    setRedoStack(prev => prev.slice(0, -1));
-    setUndoStack(prev => [...prev, last]);
+    while (tempStack.length > 0) {
+      const entry = tempStack.at(-1);
+      if (!entry) break;
+      const element = entry.after;
+
+      // FORWARD REPLAY
+      if (entry.action === "add") {
+        if (element.shape === "connector") {
+          setConnectors(prev => [...prev, element]);
+
+          setShapes(prev =>
+            prev.map(shape => {
+              if (shape.shape === "todo") {
+                return {
+                  ...shape,
+                  parents: ("group-" + shape.id === element.to) ? element.from : shape.parents
+                };
+              }
+              if (shape.shape !== "rect") return shape;
+
+              return {
+                ...shape,
+                children: "group-" + shape.id === element.to
+                  ? [...shape.children, element.from]
+                  : shape.children
+              };
+            })
+          );
+
+        } else {
+          // node
+          setShapes(prev => [...prev, element]);
+        }
+
+      } else if (entry.action === "update") {
+        if (element.shape === "connector") return;
+
+        setShapes(prev =>
+          prev.map(shape =>
+            shape.id === element.id ? { ...shape, ...element } : shape
+          )
+        );
+
+      } else if (entry.action === "delete") {
+        if (element.shape === "connector") {
+          setConnectors(prev => prev.filter(c => c.id !== element.id));
+          setShapes(prev =>
+            prev.map(shape => {
+              if (shape.shape !== "rect" && shape.shape !== "todo") return shape;
+
+              // remove child reference if it was in children
+              if (shape.shape === "rect" && shape.children.includes(element.to)) {
+                return { ...shape, children: shape.children.filter(c => c !== element.to) };
+              }
+
+              // remove parent reference if it was pointing to from
+              if (shape.parents === element.from) {
+                return { ...shape, parents: "" };
+              }
+
+              return shape;
+            })
+          );
+        } else {
+          setShapes(prev => prev.filter(s => s.id !== element.id))
+        }
+      }
+
+      collected.push(entry);
+      tempStack = tempStack.slice(0, -1);
+
+      const next = tempStack.at(-1);
+      if (!next || !next.id || next.id !== last.id) break;
+    }
+
+    // move batch back to undo
+    setRedoStack(tempStack);
+    setUndoStack(prev => [...prev, ...collected]);
   }
 
   return (

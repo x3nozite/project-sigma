@@ -1,7 +1,6 @@
 import type Konva from "konva/lib/_CoreInternals";
 import Todo from "./Shapes/Todo";
 import type { ShapeType, TodoType, ToolType, RectType } from "./types";
-import { shapes } from "konva/lib/Shape";
 
 interface Props {
   todos: TodoType[];

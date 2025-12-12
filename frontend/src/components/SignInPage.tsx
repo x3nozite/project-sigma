@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { supabase } from "../supabase-client";
 // import { SubmitHandler } from "react-hook-form";
-import { useSession } from "../context/SessionContext";
 import loginimage from "../assets/loginImage.webp";
 import { HiArrowLeft } from "react-icons/hi";
 import { z } from "zod";
@@ -31,7 +29,6 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordFields = z.infer<typeof forgotPasswordSchema>;
 
 function SignIn() {
-  const { session } = useSession();
   const navigate = useNavigate();
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   const [emailSent, setEmailSent] = useState(false);

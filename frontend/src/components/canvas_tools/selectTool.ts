@@ -99,7 +99,7 @@ export const handleSelectMouseUp = (isSelecting: RefObject<boolean>, selectionRe
     }
 
     if (!mainLayer.current) return;
-    const node = mainLayer.current.findOne(`#${shape.id}`);
+    const node = mainLayer.current.findOne(`#group-${shape.id}`);
     if (!node) return;
 
 
@@ -143,11 +143,7 @@ export const handleTransfromEnd = (e: Konva.KonvaEventObject<DragEvent>, setShap
   const id = e.target.id();
   const node = e.target;
 
-  const shapeInArray = shapes.find((s => "group-" + s.id === node.id()));
-  if (shapeInArray) {
-    if (groupId) pushUndo({ id: groupId, items: [shapeInArray], action: "update" });
-    else pushUndo({ items: [shapeInArray], action: "update" });
-  }
+  const beforeChanges = shapes.find(s => "group-" + s.id === id);
 
   setShapes(prevShapes => {
     const newShapes = [...prevShapes];
@@ -155,6 +151,7 @@ export const handleTransfromEnd = (e: Konva.KonvaEventObject<DragEvent>, setShap
     const index = newShapes.findIndex(r => "group-" + r.id === id);
 
     if (index !== -1 && newShapes[index].behavior === "node") {
+
       newShapes[index] = {
         ...newShapes[index],
         x: node.x(),
@@ -162,7 +159,27 @@ export const handleTransfromEnd = (e: Konva.KonvaEventObject<DragEvent>, setShap
         scaleX: node.scaleX(),
         scaleY: node.scaleY(),
       }
+    } else if (index !== -1 && newShapes[index].shape === "text") {
+      // const newWidth = node.width() * node.scaleX();
+      //
+      // newShapes[index] = {
+      //   ...newShapes[index],
+      //   x: node.x(),
+      //   y: node.y(),
+      //   width: newWidth,
+      //   scaleX: 1,
+      //   scaleY: 1,
+      // };
+      //
+      // // reset actual Konva node scale so text doesn't stretch
+      // node.scaleX(1);
+      // node.scaleY(1);
     }
     return newShapes;
   })
+  const shapeInArray = shapes.find(s => "group-" + s.id === id);
+  if (shapeInArray) {
+    const afterChanges = { ...shapeInArray, x: node.x(), y: node.y(), scaleX: node.scaleX(), scaleY: node.scaleY() };
+    if (beforeChanges && afterChanges) pushUndo(({ action: "update", before: beforeChanges, after: afterChanges, id: (groupId) ? groupId : undefined }));
+  }
 }

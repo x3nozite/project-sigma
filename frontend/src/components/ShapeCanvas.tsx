@@ -1,5 +1,5 @@
 import { Stage, Layer, Rect, Transformer } from "react-konva";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import type {
   RectType,
   ArrowType,
@@ -62,6 +62,7 @@ interface Props {
   stageCoor: { x: number; y: number };
   setStageCoor: React.Dispatch<React.SetStateAction<{ x: number; y: number }>>;
   isFormOpen: boolean;
+  nodeMap: RefObject<Map<string, Konva.Node>>;
 }
 
 const bbox_id = "1234567890";
@@ -82,6 +83,7 @@ const ShapeCanvas = ({
   stageCoor,
   setStageCoor,
   isFormOpen,
+  nodeMap,
 }: Props) => {
   Konva.pixelRatio = window.devicePixelRatio || 1;
   const mainLayer = useRef<Konva.Layer | null>(null!);
@@ -220,6 +222,9 @@ const ShapeCanvas = ({
       });
     });
 
+  }, [addConnector, setShapes, shapes]);
+
+  useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (isFormOpen || isEditingText) return;
       // Ctrl + Z
@@ -274,7 +279,7 @@ const ShapeCanvas = ({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  });
+  }, [isEditingText, isFormOpen, onAddTodo, onShapeClick, redo, setConnectors, setShapes, setTool, tool, undo])
 
   useEffect(() => {
     //update transformer when selection changes
@@ -286,10 +291,6 @@ const ShapeCanvas = ({
       transformerRef.current.nodes(nodes);
 
       currentUndoGroup.current = crypto.randomUUID();
-
-      nodes.forEach((element) => {
-        console.log(element.id());
-      });
 
       requestAnimationFrame(() => {
         const bbox = boundBoxRef.current;
@@ -334,15 +335,14 @@ const ShapeCanvas = ({
   }, [selectedIds, tool, stageCoor]);
 
   useEffect(() => {
-    // When switching away from select → clear the selection
     if (tool !== "select") {
       setSelectedIds([]);
     }
   }, [tool]);
 
   useEffect(() => {
-    arrowMovement(connectors, mainLayer, tempLayer, arrowLayer);
-  }, [shapes, connectors]);
+    arrowMovement(connectors, mainLayer, tempLayer, arrowLayer, nodeMap);
+  }, [shapes, connectors, nodeMap]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -567,44 +567,8 @@ const ShapeCanvas = ({
           setStageCoor({ x: stageRef.current.x(), y: stageRef.current.y() });
         }}
       >
-        <Layer ref={arrowLayer}>
-          <ArrowLayer connectors={connectors} mainLayer={mainLayer} />
-        </Layer>
+        <Layer>
 
-        <Layer ref={mainLayer}>
-          <Rect
-            id={bbox_id}
-            ref={boundBoxRef}
-            fill="transparent"
-            draggable={true}
-            temporary={true}
-          />
-          <LineLayer
-            lines={shapes.filter(
-              (s: ShapeType): s is LineType => s.shape === "line"
-            )}
-            onDragEnd={(e) => {
-              handleDragEnd(
-                e,
-                mainLayer,
-                tool,
-                prevShape,
-                setShapes,
-                shapes,
-                pushUndo,
-                currentUndoGroup.current
-              );
-            }}
-            onTransformEnd={(e) => {
-              handleTransfromEnd(
-                e,
-                setShapes,
-                shapes,
-                pushUndo,
-                currentUndoGroup.current
-              );
-            }}
-          />
           <TextLayer
             texts={shapes.filter(
               (s: ShapeType): s is TextType => s.shape === "text"
@@ -636,6 +600,45 @@ const ShapeCanvas = ({
             setIsEditingText={setIsEditingText}
             tool={tool}
           />
+          <LineLayer
+            lines={shapes.filter(
+              (s: ShapeType): s is LineType => s.shape === "line"
+            )}
+            onDragEnd={(e) => {
+              handleDragEnd(
+                e,
+                mainLayer,
+                tool,
+                prevShape,
+                setShapes,
+                shapes,
+                pushUndo,
+                currentUndoGroup.current
+              );
+            }}
+            onTransformEnd={(e) => {
+              handleTransfromEnd(
+                e,
+                setShapes,
+                shapes,
+                pushUndo,
+                currentUndoGroup.current
+              );
+            }}
+          />
+        </Layer>
+        <Layer ref={arrowLayer}>
+          <ArrowLayer connectors={connectors} mainLayer={mainLayer} />
+        </Layer>
+
+        <Layer ref={mainLayer}>
+          <Rect
+            id={bbox_id}
+            ref={boundBoxRef}
+            fill="transparent"
+            draggable={true}
+            temporary={true}
+          />
           <RectLayer
             shapes={shapes.filter(
               (s: ShapeType): s is RectType => s.shape === "rect"
@@ -645,7 +648,7 @@ const ShapeCanvas = ({
             onDragStart={(e) => handleDragStart(e, tool, tempLayer)}
             onDragMove={(e) => {
               handleDragMove(e, mainLayer, prevShape, tool);
-              arrowMovement(connectors, mainLayer, tempLayer, arrowLayer);
+              arrowMovement(connectors, mainLayer, tempLayer, arrowLayer, nodeMap);
             }}
             onDragEnd={(e) => {
               handleDragEnd(
@@ -675,6 +678,7 @@ const ShapeCanvas = ({
             getBorder={getBorder}
             onAddTodo={onAddTodo}
             getChildCounts={countChildren}
+            nodeMap={nodeMap}
           />
           <TodoLayer
             todos={shapes.filter(
@@ -685,7 +689,7 @@ const ShapeCanvas = ({
             onDragStart={(e) => handleDragStart(e, tool, tempLayer)}
             onDragMove={(e) => {
               handleDragMove(e, mainLayer, prevShape, tool);
-              arrowMovement(connectors, mainLayer, tempLayer, arrowLayer);
+              arrowMovement(connectors, mainLayer, tempLayer, arrowLayer, nodeMap);
             }}
             onDragEnd={(e) => {
               handleDragEnd(
@@ -712,6 +716,7 @@ const ShapeCanvas = ({
             getBorder={getBorder}
             onTodoClick={onAddTodo}
             shapes={shapes}
+            nodeMap={nodeMap}
           />
         </Layer>
         <Layer ref={tempLayer}></Layer>

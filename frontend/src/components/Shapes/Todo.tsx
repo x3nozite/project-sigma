@@ -1,6 +1,6 @@
 import { Path, Circle, Group, Rect, Text } from "react-konva";
 import type { ShapeType, TodoType, ToolType, RectType } from "../types";
-import { useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import Konva from "konva";
 
 interface Props {
@@ -15,6 +15,7 @@ interface Props {
   onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   getBorder: (color: string) => string | undefined;
   onTodoClick: (parent: RectType | null, currTodo: TodoType | null) => void;
+  nodeMap: RefObject<Map<string, Konva.Node>>;
 }
 
 const Todo = ({
@@ -28,6 +29,7 @@ const Todo = ({
   handleEraserClick,
   onTodoClick,
   shapes,
+  nodeMap
 }: Props) => {
   // For the checkbox
   const [isHovered, setisHovered] = useState(false);
@@ -123,13 +125,24 @@ const Todo = ({
     );
   };
 
+  const ref = useRef<Konva.Group>(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      nodeMap.current.set("group-" + todo.id, ref.current);
+    }
+  });
+
   return (
     <Group
       key={"key-" + todo.id}
       id={"group-" + todo.id}
+      ref={ref}
       shapeId={todo.id}
       x={todo.x}
       y={todo.y}
+      mainWidth={todo.width}
+      mainHeight={todo.height}
       name="shape"
       scalingX={todo.scaleX ?? 1}
       scalingY={todo.scaleY ?? 1}

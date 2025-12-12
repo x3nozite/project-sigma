@@ -2,27 +2,14 @@ import type { ArrowType } from "../types";
 import Konva from "konva";
 import type { RefObject } from "react";
 
-export function arrowMovement(connectors: ArrowType[], mainLayer: RefObject<Konva.Layer | null>, tempLayer: RefObject<Konva.Layer | null>, arrowLayer: RefObject<Konva.Layer | null>) {
+export function arrowMovement(connectors: ArrowType[], mainLayer: RefObject<Konva.Layer | null>, tempLayer: RefObject<Konva.Layer | null>, arrowLayer: RefObject<Konva.Layer | null>, nodeMap: RefObject<Map<string, Konva.Node>>) {
   connectors.forEach((connector) => {
     if (!mainLayer.current || !tempLayer.current) return;
-    const fromNode =
-      tempLayer.current.findOne(`#${connector.from}`) ||
-      mainLayer.current.findOne(`#${connector.from}`);
-    const toNode =
-      tempLayer.current.findOne(`#${connector.to}`) ||
-      mainLayer.current.findOne(`#${connector.to}`);
+    const fromNode = nodeMap.current.get(connector.from);
+    const toNode = nodeMap.current.get(connector.to);
     const arrowNode = arrowLayer.current?.findOne(`#${connector.id}`) as Konva.Arrow;
 
-    const fromShape =
-      mainLayer.current.findOne(
-        `#${connector.from.replace(/^group-/, "")}`
-      ) ||
-      tempLayer.current.findOne(`#${connector.from.replace(/^group-/, "")}`);
-    const toShape =
-      mainLayer.current.findOne(`#${connector.to.replace(/^group-/, "")}`) ||
-      tempLayer.current.findOne(`#${connector.to.replace(/^group-/, "")}`);
-
-    if (!fromNode || !toNode || !arrowNode || !fromShape || !toShape) return;
+    if (!fromNode || !toNode || !arrowNode) return;
 
     const dx = toNode.x() - fromNode.x();
     const dy = toNode.y() - fromNode.y();
@@ -32,11 +19,11 @@ export function arrowMovement(connectors: ArrowType[], mainLayer: RefObject<Konv
     const vectorY = dy / dist;
     const offset = Math.min(30, dist / 5 - 1);
 
-    const fromWidth = fromShape.width() * (fromNode.attrs.scalingX ?? 1);
-    const fromHeight = fromShape.height() * (fromNode.attrs.scalingY ?? 1);
+    const fromWidth = fromNode.getAttr("mainWidth") * (fromNode.attrs.scalingX ?? 1);
+    const fromHeight = fromNode.getAttr("mainHeight") * (fromNode.attrs.scalingY ?? 1);
 
-    const toWidth = toShape.width() * (toNode.attrs.scalingX ?? 1);
-    const toHeight = toShape.height() * (toNode.attrs.scalingY ?? 1);
+    const toWidth = toNode.getAttr("mainWidth") * (toNode.attrs.scalingX ?? 1);
+    const toHeight = toNode.getAttr("mainHeight") * (toNode.attrs.scalingY ?? 1);
 
     arrowNode.points([
       fromNode.x() + fromWidth / 2 + vectorX * (fromWidth / 2 + offset),
@@ -44,6 +31,29 @@ export function arrowMovement(connectors: ArrowType[], mainLayer: RefObject<Konv
       toNode.x() + toWidth / 2 - vectorX * (toWidth / 2 + offset),
       toNode.y() + toHeight / 2 - vectorY * (toHeight / 2 + offset)
     ]);
+  });
+}
+
+export function updateArrows(arrowLayer: RefObject<Konva.Layer | null>, connectors: ArrowType[], dx: number, dy: number, movedId: string) {
+  connectors.forEach((connector) => {
+    const arrow = arrowLayer.current?.findOne('#' + connector.id) as Konva.Arrow;
+    if (!arrow) return;
+
+    const pts = arrow.points();
+
+    if (connector.from === movedId) {
+      pts[0] += dx;
+      pts[1] += dy;
+      console.log(pts[0]);
+      console.log(pts[1]);
+    }
+
+    if (connector.to === movedId) {
+      pts[2] += dx;
+      pts[3] += dy;
+    }
+
+    arrow.points(pts);
   });
 }
 

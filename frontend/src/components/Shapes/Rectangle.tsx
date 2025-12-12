@@ -1,6 +1,6 @@
 import { Circle, Group, Rect, Text } from "react-konva";
 import type { RectType, ShapeType, TodoType, ToolType } from "../types";
-import { useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import Konva from "konva";
 
 interface Props {
@@ -21,6 +21,7 @@ interface Props {
     rect: RectType,
     shapes: ShapeType[]
   ) => { completed: number; not_completed: number };
+  nodeMap: RefObject<Map<string, Konva.Node>>;
 }
 
 const Rectangle = ({
@@ -38,6 +39,7 @@ const Rectangle = ({
   onAddTodo,
   global_shape,
   getChildCounts,
+  nodeMap
 }: Props) => {
   // test
   const counts = getChildCounts(rect, global_shape);
@@ -94,14 +96,25 @@ const Rectangle = ({
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const showCircle = isMobile || isHovered;
 
+  const ref = useRef<Konva.Group>(null)
+
+  useEffect(() => {
+    if (ref.current) {
+      nodeMap.current.set("group-" + rect.id, ref.current);
+    }
+  });
+
   return (
     <Group
       key={"key-" + rect.id}
+      ref={ref}
       id={"group-" + rect.id}
       shapeId={rect.id}
       x={rect.x}
       y={rect.y}
       name="shape"
+      mainWidth={rect.width}
+      mainHeight={rect.height}
       scalingX={rect.scaleX ?? 1}
       scalingY={rect.scaleY ?? 1}
       scaleX={rect.scaleX ?? 1}
@@ -133,7 +146,7 @@ const Rectangle = ({
           onShapeClick(rect);
         }
       }}
-      
+
     >
       <Group visible={!rect.isCollapsed}>
         <Rect
@@ -258,53 +271,53 @@ const Rectangle = ({
           fontStyle="bold"
           fontSize={16}
         ></Text>
-        <Group x={260} y={7} width={20} height={40} 
-            onDblClick={(e) => {e.cancelBubble = true;}}
-            onDblTap={(e) => {e.cancelBubble = true;}}
-            onClick={(e) => {
-              if (tool !== "eraser") {
-                const isCurrentlyCollapsed = rect.isCollapsed;
-                if (isCurrentlyCollapsed) {
-                  collapseChild(rect, true);
-                } else {
-                  collapseChild(rect, false);
-                }
-
-                e.cancelBubble = true;
-                setShapes((prev) => {
-                  return prev.map((r) => {
-                    if (r.shape === "rect" && r.id === rect.id) {
-                      return { ...r, isCollapsed: !r.isCollapsed };
-                    } else {
-                      return r;
-                    }
-                  });
-                });
+        <Group x={260} y={7} width={20} height={40}
+          onDblClick={(e) => { e.cancelBubble = true; }}
+          onDblTap={(e) => { e.cancelBubble = true; }}
+          onClick={(e) => {
+            if (tool !== "eraser") {
+              const isCurrentlyCollapsed = rect.isCollapsed;
+              if (isCurrentlyCollapsed) {
+                collapseChild(rect, true);
+              } else {
+                collapseChild(rect, false);
               }
-            }}
-            onTap={(e) => {
-              if (tool !== "eraser") {
-                const isCurrentlyCollapsed = rect.isCollapsed;
-                if (isCurrentlyCollapsed) {
-                  collapseChild(rect, true);
-                } else {
-                  collapseChild(rect, false);
-                }
 
-                e.cancelBubble = true;
-                setShapes((prev) => {
-                  return prev.map((r) => {
-                    if (r.shape === "rect" && r.id === rect.id) {
-                      return { ...r, isCollapsed: !r.isCollapsed };
-                    } else {
-                      return r;
-                    }
-                  });
+              e.cancelBubble = true;
+              setShapes((prev) => {
+                return prev.map((r) => {
+                  if (r.shape === "rect" && r.id === rect.id) {
+                    return { ...r, isCollapsed: !r.isCollapsed };
+                  } else {
+                    return r;
+                  }
                 });
+              });
+            }
+          }}
+          onTap={(e) => {
+            if (tool !== "eraser") {
+              const isCurrentlyCollapsed = rect.isCollapsed;
+              if (isCurrentlyCollapsed) {
+                collapseChild(rect, true);
+              } else {
+                collapseChild(rect, false);
               }
-            }}>
-          <Rect  width={30} height={30} listening={true}>
-          </Rect> 
+
+              e.cancelBubble = true;
+              setShapes((prev) => {
+                return prev.map((r) => {
+                  if (r.shape === "rect" && r.id === rect.id) {
+                    return { ...r, isCollapsed: !r.isCollapsed };
+                  } else {
+                    return r;
+                  }
+                });
+              });
+            }
+          }}>
+          <Rect width={30} height={30} listening={true}>
+          </Rect>
           <Text
             width={30}
             height={30}
@@ -314,7 +327,7 @@ const Rectangle = ({
             text={rect.isCollapsed ? "+" : "-"}
             fontSize={32}
             align="center"
-            
+
           ></Text>
         </Group>
       </Group>

@@ -1,6 +1,6 @@
 import "./App.css";
 //import BottomNav from "./components/BottomNav";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ShapeCanvas from "./components/ShapeCanvas";
 import type {
   RectType,
@@ -84,8 +84,12 @@ function App() {
   const [editingCanvasId, setEditingCanvasId] = useState<string | null>(null);
   const [editingCanvasName, setEditingCanvasName] = useState("");
 
+<<<<<<< HEAD
   // canvas color
   const [canvasCol, setcanvasCol] = useState<string>("#ffffff");
+=======
+  const nodeMap = useRef(new Map<string, Konva.Node>());
+>>>>>>> 3ed4371 (some optimization)
 
   useAutosaveCanvas({ shapes, connectors }, 1000, () => {
     if (!currentCanvasId || shapes.length === 0) return;
@@ -244,11 +248,11 @@ function App() {
       x: parent
         ? parent.x + 400
         : (stageCoor.x * -1 + (window.innerWidth - 200) / 2) *
-          (100 / zoomValue),
+        (100 / zoomValue),
       y: parent
         ? parent.y
         : (stageCoor.y * -1 + (window.innerHeight - 200) / 2) *
-          (100 / zoomValue),
+        (100 / zoomValue),
       color: newFields.color, // default is green
       isCollapsed: false,
       scaleX: 1,
@@ -364,12 +368,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-              ...r,
-              title: newData.title,
-              description: newData.description,
-              color: newData.color,
-              dueDate: newData.date,
-            }
+            ...r,
+            title: newData.title,
+            description: newData.description,
+            color: newData.color,
+            dueDate: newData.date,
+          }
           : r
       )
     );
@@ -380,13 +384,13 @@ function App() {
       prev.map((t) =>
         t.id === shape.id
           ? {
-              ...t,
-              title: newData.title,
-              assignee: newData.assignee,
-              dueDate: newData.date,
-              completed: newData.completed,
-              color: newData.color,
-            }
+            ...t,
+            title: newData.title,
+            assignee: newData.assignee,
+            dueDate: newData.date,
+            completed: newData.completed,
+            color: newData.color,
+          }
           : t
       )
     );
@@ -717,10 +721,9 @@ function App() {
                                       className={`
                                         flex items-center justify-between p-4 rounded-lg border-2 
                                         transition-all
-                                        ${
-                                          currentCanvasId === canvas.canvas_id
-                                            ? "bg-blue-100 border-blue-400"
-                                            : "bg-gray-50 border-gray-200"
+                                        ${currentCanvasId === canvas.canvas_id
+                                          ? "bg-blue-100 border-blue-400"
+                                          : "bg-gray-50 border-gray-200"
                                         }
                                       `}
                                     >
@@ -739,7 +742,7 @@ function App() {
                                         <HiOutlineFolder className="w-5 h-5 text-blue-600" />
                                         <div className="flex-1">
                                           {editingCanvasId ===
-                                          canvas.canvas_id ? (
+                                            canvas.canvas_id ? (
                                             <input
                                               type="text"
                                               value={editingCanvasName}
@@ -786,13 +789,13 @@ function App() {
                                       <div className="flex items-center gap-2">
                                         {currentCanvasId ===
                                           canvas.canvas_id && (
-                                          <span className="text-xs text-blue-600 font-medium mr-2">
-                                            Current
-                                          </span>
-                                        )}
+                                            <span className="text-xs text-blue-600 font-medium mr-2">
+                                              Current
+                                            </span>
+                                          )}
 
                                         {editingCanvasId ===
-                                        canvas.canvas_id ? (
+                                          canvas.canvas_id ? (
                                           <>
                                             <button
                                               onClick={(e) => {
@@ -1321,6 +1324,7 @@ function App() {
             stageCoor={stageCoor}
             setStageCoor={setStageCoor}
             isFormOpen={isFormOpen}
+            nodeMap={nodeMap}
           />
         </div>
       </div>

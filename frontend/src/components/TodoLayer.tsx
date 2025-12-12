@@ -1,6 +1,7 @@
 import type Konva from "konva/lib/_CoreInternals";
 import Todo from "./Shapes/Todo";
 import type { ShapeType, TodoType, ToolType, RectType } from "./types";
+import type { RefObject } from "react";
 
 interface Props {
   todos: TodoType[];
@@ -14,6 +15,7 @@ interface Props {
   onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   getBorder: (color: string) => string | undefined;
   onTodoClick: (parent: RectType | null, currTodo: TodoType | null) => void;
+  nodeMap: RefObject<Map<string, Konva.Node>>;
 }
 
 const TodoLayer = ({
@@ -28,6 +30,7 @@ const TodoLayer = ({
   getBorder,
   onTodoClick,
   shapes,
+  nodeMap
 }: Props) => {
   return (
     <>
@@ -45,6 +48,7 @@ const TodoLayer = ({
           getBorder={getBorder}
           onTodoClick={onTodoClick}
           shapes={shapes}
+          nodeMap={nodeMap}
         />
       ))}
     </>

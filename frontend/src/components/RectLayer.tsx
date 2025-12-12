@@ -1,6 +1,7 @@
 import Konva from "konva";
 import type { RectType, ShapeType, TodoType, ToolType } from "./types";
 import Rectangle from "./Shapes/Rectangle";
+import type { RefObject } from "react";
 
 interface Props {
   shapes: RectType[];
@@ -21,6 +22,7 @@ interface Props {
     rect: RectType,
     shapes: ShapeType[]
   ) => { completed: number; not_completed: number };
+  nodeMap: RefObject<Map<string, Konva.Node>>;
 }
 
 const RectLayer = ({
@@ -38,6 +40,7 @@ const RectLayer = ({
   onAddTodo,
   allShapes,
   getChildCounts,
+  nodeMap
 }: Props) => {
   return (
     <>
@@ -58,6 +61,7 @@ const RectLayer = ({
           onAddTodo={onAddTodo}
           global_shape={allShapes}
           getChildCounts={getChildCounts}
+          nodeMap={nodeMap}
         />
       ))}
     </>

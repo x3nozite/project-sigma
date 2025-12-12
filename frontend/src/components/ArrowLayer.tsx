@@ -15,6 +15,7 @@ const ArrowLayer = ({ connectors, mainLayer }: Props) => {
       {connectors.map((connector) => {
         return (
           < ArrowShape
+            key={connector.id}
             connector={connector}
             mainLayer={mainLayer}
           />

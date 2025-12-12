@@ -123,7 +123,7 @@ export async function updateCanvasColor(
       .update({ background_color: canvasCol })
       .eq("canvas_id", canvasId)
 
-    if (error){
+    if (error) {
       console.error(error)
     }
 
@@ -139,12 +139,12 @@ export async function getCanvasColor(canvasId: string) {
       .select("background_color")
       .eq("canvas_id", canvasId)
       .single();
-  
+
     if (error) {
       console.error(error);
       return null;
     }
-  
+
     return data.background_color;
   } catch (error) {
     console.error("Error on get canvas color function: ", error);

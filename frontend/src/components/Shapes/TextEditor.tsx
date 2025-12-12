@@ -27,7 +27,6 @@ const TextArea = ({ textNode, onClose, onChange }: TextAreaProps) => {
     textarea.style.left = `${areaPosition.x}px`;
     textarea.style.width = `${textNode.width() - textNode.padding() * 2}px`;
     textarea.style.height = `${textNode.height()}px`;
-    console.log(textNode.height());
     textarea.style.fontSize = `${textNode.fontSize()}px`;
     textarea.style.border = "1px solid #ccc";
     textarea.style.borderRadius = "4px";
@@ -74,9 +73,8 @@ const TextArea = ({ textNode, onClose, onChange }: TextAreaProps) => {
     const handleInput = () => {
       textarea.style.width = `${textNode.width() - textNode.padding() * 2}px`;
       textarea.style.height = "auto";
-      textarea.style.height = `${
-        textarea.scrollHeight + textNode.fontSize()
-      }px`;
+      textarea.style.height = `${textarea.scrollHeight + textNode.fontSize()
+        }px`;
     };
 
     textarea.addEventListener("keydown", handleKeyDown);

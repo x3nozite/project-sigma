@@ -34,29 +34,6 @@ export function arrowMovement(connectors: ArrowType[], mainLayer: RefObject<Konv
   });
 }
 
-export function updateArrows(arrowLayer: RefObject<Konva.Layer | null>, connectors: ArrowType[], dx: number, dy: number, movedId: string) {
-  connectors.forEach((connector) => {
-    const arrow = arrowLayer.current?.findOne('#' + connector.id) as Konva.Arrow;
-    if (!arrow) return;
-
-    const pts = arrow.points();
-
-    if (connector.from === movedId) {
-      pts[0] += dx;
-      pts[1] += dy;
-      console.log(pts[0]);
-      console.log(pts[1]);
-    }
-
-    if (connector.to === movedId) {
-      pts[2] += dx;
-      pts[3] += dy;
-    }
-
-    arrow.points(pts);
-  });
-}
-
 export const getConnectorPoints = (fromGroup: Konva.Node, toGroup: Konva.Node, fromShape: Konva.Node, toShape: Konva.Node) => {
   const dx = toGroup.x() - fromGroup.x();
   const dy = toGroup.y() - fromGroup.y();

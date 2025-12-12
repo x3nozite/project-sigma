@@ -131,8 +131,8 @@ function App() {
       }
 
 
-      
-      
+
+
 
       const canvasRes = await loadCanvas(null);
       if (!mounted) return;
@@ -205,13 +205,12 @@ function App() {
       if (savedColor) setcanvasCol(savedColor);
     })();
   }, [currentCanvasId]);
-  
+
 
   const openTodoForm = (parent: RectType | null, currTodo: TodoType | null) => {
     setSelectedParent(parent);
     //console.log("parent: " + parent);
     setSelectedTodo(currTodo);
-    console.log(currTodo);
     setisFormOpen(true);
     setShowTodoForm(true);
   };

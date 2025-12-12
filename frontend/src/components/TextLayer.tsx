@@ -30,6 +30,7 @@ const TextLayer = ({ texts, onEraserClick, onDragEnd, onTransformEnd, setShapes,
     <>
       {texts.map(text => (
         <EditableText
+          key={text.id}
           initialText={text}
           onEraserClick={onEraserClick}
           onDragEnd={onDragEnd}

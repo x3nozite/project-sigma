@@ -39,7 +39,7 @@ const Rectangle = ({
   onAddTodo,
   global_shape,
   getChildCounts,
-  nodeMap
+  nodeMap,
 }: Props) => {
   // test
   const counts = getChildCounts(rect, global_shape);
@@ -84,19 +84,22 @@ const Rectangle = ({
 
   // formatted date
   const due = new Date(rect.dueDate);
-  const formatted = due
-    .toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    })
-    .replace(/, (?=\d{4})/, " ");
-
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+  const parts = formatter.formatToParts(due);
+  const weekday = parts.find((p) => p.type === "weekday")!.value.slice(0, 3);
+  const day = parts.find((p) => p.type === "day")!.value;
+  const month = parts.find((p) => p.type === "month")!.value.slice(0, 3);
+  const year = parts.find((p) => p.type === "year")!.value;
+  const formatted = `${weekday}, ${day} ${month} ${year}`;
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const showCircle = isMobile || isHovered;
 
-  const ref = useRef<Konva.Group>(null)
+  const ref = useRef<Konva.Group>(null);
 
   useEffect(() => {
     if (ref.current && nodeMap && nodeMap.current) {
@@ -146,7 +149,6 @@ const Rectangle = ({
           onShapeClick(rect);
         }
       }}
-
     >
       <Group visible={!rect.isCollapsed}>
         <Rect
@@ -182,12 +184,12 @@ const Rectangle = ({
         />
         <Text
           text={formatted}
-          x={150}
+          x={130}
           y={170}
           width={150}
           fontFamily="Inter"
-          fontSize={10}
-          align="left"
+          fontSize={14}
+          align="right"
           fill="black"
           opacity={0.8}
           listening={false}
@@ -271,9 +273,17 @@ const Rectangle = ({
           fontStyle="bold"
           fontSize={16}
         ></Text>
-        <Group x={260} y={7} width={20} height={40}
-          onDblClick={(e) => { e.cancelBubble = true; }}
-          onDblTap={(e) => { e.cancelBubble = true; }}
+        <Group
+          x={260}
+          y={7}
+          width={20}
+          height={40}
+          onDblClick={(e) => {
+            e.cancelBubble = true;
+          }}
+          onDblTap={(e) => {
+            e.cancelBubble = true;
+          }}
           onClick={(e) => {
             if (tool !== "eraser") {
               const isCurrentlyCollapsed = rect.isCollapsed;
@@ -315,9 +325,9 @@ const Rectangle = ({
                 });
               });
             }
-          }}>
-          <Rect width={30} height={30} listening={true}>
-          </Rect>
+          }}
+        >
+          <Rect width={30} height={30} listening={true}></Rect>
           <Text
             width={30}
             height={30}
@@ -327,7 +337,6 @@ const Rectangle = ({
             text={rect.isCollapsed ? "+" : "-"}
             fontSize={32}
             align="center"
-
           ></Text>
         </Group>
       </Group>

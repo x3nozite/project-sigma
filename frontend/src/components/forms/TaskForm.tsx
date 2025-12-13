@@ -13,7 +13,7 @@ const schema = z.object({
   // .min(10, "Description must be at least 10 characters")
   // .max(100, "Description must be at most 100 characters"),
   color: z.string(),
-  date: z.string(),
+  date: z.string().min(1, "Date cannot be empty!"),
   time: z.string(),
 });
 
@@ -86,16 +86,16 @@ export default function TaskForm({
 
   return (
     <div>
-      <div className="fixed inset-0 bg-black opacity-50 z-40"></div>
+      <div className="fixed inset-0 bg-black opacity-50 z-50"></div>
       <div
         className="
     fixed bg-white
     top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-    w-[90%] max-w-sm sm:max-w-lg
-    max-h-[90vh]
+    w-[90dvw] sm:w-[70dvw] md:w-[50dvw]
+    max-h-[70dvh]
     px-4 py-4 sm:px-8 sm:py-6
     flex flex-col justify-between items-start
-    rounded-lg shadow-2xl z-50
+    rounded-lg shadow-2xl z-50 overflow-auto
   "
       >
         <div
@@ -103,26 +103,70 @@ export default function TaskForm({
           style={{ backgroundColor: selCol }}
         ></div>
         <form onSubmit={handleSubmit(onSubmit)} className="w-full h-full">
-          <div className="mb-2 flex flex-row items-end justify-between h-15  w-full">
+          <div className="my-2 flex flex-row items-end justify-between h-15 w-full">
             <input
               {...register("title")}
               type="text"
               id="title"
               size={11}
               placeholder="My New Subject"
-              className="text-3xl h-full p-2 font-bold rounded-lg"
+              className="text-xl sm:text-3xl h-full w-full p-2 font-bold rounded-lg"
             ></input>
             {errors.title && (
               <div className="text-red-500">{errors.title?.message}</div>
             )}
             <button
               onClick={onCloseForm}
-              className="hover:cursor-pointer p-2 h-full"
+              className="hidden md:block hover:cursor-pointer p-2 h-full"
             >
               X
             </button>
           </div>
-          <div className="mb-8 flex flex-col gap-5 w-full items-start">
+          {/* <div className="mb-2 flex flex-row gap-1 w-full">
+            <label className="text-md font-bold px-2.5 py-2 text-start rounded-md">
+              Date
+            </label>
+            <input
+              {...register("date")}
+              type="date"
+              className="border border-gray-300 bg-gray-100 rounded-lg p-2 shadow-xs"
+            />
+          </div> */}
+          <div className="w-full grid grid-cols-[6rem_1fr] gap-2 items-center">
+            <label className="text-sm px-2.5 py-2  text-start rounded-md">
+              Color
+            </label>
+            <select
+              {...register("color")}
+              value={selCol}
+              onChange={(e) => setSelCol(e.target.value)}
+              name="color"
+              className="hover:bg-gray-300 w-full h-full px-2 rounded-md text-sm"
+            >
+              <option value="#ff2056">Red</option>
+              <option value="#2b7fff">Blue</option>
+              <option value="#00bc7d">Green</option>
+              <option value="#ad46ff">Purple</option>
+              <option value="#ff6900">Orange</option>
+            </select>
+          </div>
+          <div className="w-full grid grid-cols-[6rem_1fr] gap-2 items-center ">
+            <label className="text-sm px-2.5 py-2 text-start rounded-md">
+              Due Date
+            </label>
+            <input
+              {...register("date")}
+              type="date"
+              className="relative w-full h-full hover:bg-gray-300 px-2 rounded-md text-sm"
+            />
+          </div>
+          {errors.date && (
+            <div className="text-red-500 ml-28 w-full">
+              {errors.date?.message}
+            </div>
+          )}
+          <hr className="h-px w-full my-2 bg-gray-200 border-0" />
+          <div className="mb-3  flex flex-col gap-2 w-full items-start">
             <div className="inline-flex gap-2">
               <svg
                 className="w-6 h-6 text-gray-800"
@@ -146,44 +190,11 @@ export default function TaskForm({
             <textarea
               {...register("description")}
               placeholder="Add a detailed description for subject..."
-              className="border border-gray-300 bg-gray-50 rounded-lg p-2 shadow-xs ml-8 w-[calc(100%-2rem)] items-start h-25 resize-none"
+              className="border border-gray-300 bg-gray-50 rounded-lg p-2 shadow-xs w-full items-start h-[50dvh] md:h-[30dvh] resize-none"
             ></textarea>
             {errors.description && (
               <div className="text-red-500">{errors.description?.message}</div>
             )}
-          </div>
-          <hr className="h-px w-full my-2 bg-gray-200 border-0" />
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 w-full mt-5 mb-5">
-            <div className="flex flex-col gap-1">
-              <label className="text-lg font-semibold">Date</label>
-              <input
-                {...register("date")}
-                type="date"
-                className="border border-gray-300 bg-gray-100 rounded-lg p-2 shadow-xs"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-lg font-semibold">Due Time</label>
-              <input
-                {...register("time")}
-                type="time"
-                className="border border-gray-300 bg-gray-100 rounded-lg p-2 shadow-xs"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-lg font-semibold">Color</label>
-              <select
-                {...register("color")}
-                onChange={(e) => setSelCol(e.target.value)}
-                className="border border-gray-300 bg-gray-100 rounded-lg p-2 shadow-xs"
-              >
-                <option value="#ff2056">Red</option>
-                <option value="#2b7fff">Blue</option>
-                <option value="#00bc7d">Green</option>
-                <option value="#ad46ff">Purple</option>
-                <option value="#ff6900">Orange</option>
-              </select>
-            </div>
           </div>
 
           <div className="flex flex-row justify-between gap-2 w-full h-full">

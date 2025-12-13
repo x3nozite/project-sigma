@@ -135,7 +135,7 @@ export default function TodoForm({
                 Subject
               </label>
               <div
-                className="w-full h-full font-medium flex items-center justify-center px-2 rounded-md bg-red-200 "
+                className="w-full h-full font-medium flex items-center justify-center px-2 rounded-md bg-red-200"
                 style={{
                   backgroundColor: parent ? parent.color : "#d1d5dc",
                   color: parent ? "#ffffff" : "#000000",

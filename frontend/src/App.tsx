@@ -22,17 +22,19 @@ import {
   HiOutlineZoomIn,
   HiOutlineZoomOut,
   HiOutlineFolder,
-  HiOutlineDocument,
   HiOutlineTrash,
   HiOutlineChevronDown,
   HiOutlineLogout,
   HiOutlineLogin,
-  HiOutlineChatAlt2,
   HiOutlineFolderOpen,
   HiOutlineCheck,
   HiOutlinePlus,
   HiOutlinePencil,
+  HiOutlineEye,
+  HiOutlineEyeOff,
+  HiOutlineGlobeAlt,
 } from "react-icons/hi";
+import { FaGithub } from "react-icons/fa";
 import { DropdownMenu, AlertDialog } from "radix-ui";
 import AppToolbar from "./components/ui/buttons/tools/AppToolbar";
 import {
@@ -83,7 +85,7 @@ function App() {
   const [newCanvasName, setNewCanvasName] = useState("");
   const [editingCanvasId, setEditingCanvasId] = useState<string | null>(null);
   const [editingCanvasName, setEditingCanvasName] = useState("");
-
+  const [toolVis, setToolVis] = useState(true);
   // canvas color
   const [canvasCol, setcanvasCol] = useState<string>("#ffffff");
 
@@ -236,11 +238,11 @@ function App() {
       x: parent
         ? parent.x + 400
         : (stageCoor.x * -1 + (window.innerWidth - 200) / 2) *
-        (100 / zoomValue),
+          (100 / zoomValue),
       y: parent
         ? parent.y
         : (stageCoor.y * -1 + (window.innerHeight - 200) / 2) *
-        (100 / zoomValue),
+          (100 / zoomValue),
       color: newFields.color, // default is green
       isCollapsed: false,
       scaleX: 1,
@@ -346,7 +348,7 @@ function App() {
       scaleX: 1,
       scaleY: 1,
       width: 200,
-      color: "black"
+      color: "black",
     } as const;
     setShapes([...shapes, newText]);
     pushUndo({ before: newText, after: newText, action: "add" });
@@ -357,12 +359,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-            ...r,
-            title: newData.title,
-            description: newData.description,
-            color: newData.color,
-            dueDate: newData.date,
-          }
+              ...r,
+              title: newData.title,
+              description: newData.description,
+              color: newData.color,
+              dueDate: newData.date,
+            }
           : r
       )
     );
@@ -373,13 +375,13 @@ function App() {
       prev.map((t) =>
         t.id === shape.id
           ? {
-            ...t,
-            title: newData.title,
-            assignee: newData.assignee,
-            dueDate: newData.date,
-            completed: newData.completed,
-            color: newData.color,
-          }
+              ...t,
+              title: newData.title,
+              assignee: newData.assignee,
+              dueDate: newData.date,
+              completed: newData.completed,
+              color: newData.color,
+            }
           : t
       )
     );
@@ -653,7 +655,7 @@ function App() {
     <>
       <div className="relative w-screen h-100dvh overflow-hidden ">
         <nav className="top-nav absolute w-full z-50 flex flex-wrap justify-between items-center p-5">
-          <div className="more-options ">
+          <div className="more-options">
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
                 <button className="p-2.5 bg-blue-200 border-blue-300 border-2 rounded-lg hover:cursor-pointer">
@@ -665,7 +667,7 @@ function App() {
                   sideOffset={5}
                   align="start"
                   alignOffset={5}
-                  className="min-w-56 rounded-lg shadow-lg p-5 text-blue-700 hover:cursor-default hover:border-none bg-white"
+                  className="min-w-56 max-h-[50dvh]  overflow-y-scroll rounded-lg shadow-lg p-5 text-blue-700 hover:cursor-default hover:border-none bg-white"
                 >
                   <DropdownMenu.Item className="group py-1 pl-2 hover:bg-sky-200 rounded-lg hover:text-blue-700 flex items-center">
                     <div
@@ -708,9 +710,10 @@ function App() {
                                       className={`
                                         flex items-center justify-between p-4 rounded-lg border-2 
                                         transition-all
-                                        ${currentCanvasId === canvas.canvas_id
-                                          ? "bg-blue-100 border-blue-400"
-                                          : "bg-gray-50 border-gray-200"
+                                        ${
+                                          currentCanvasId === canvas.canvas_id
+                                            ? "bg-blue-100 border-blue-400"
+                                            : "bg-gray-50 border-gray-200"
                                         }
                                       `}
                                     >
@@ -729,7 +732,7 @@ function App() {
                                         <HiOutlineFolder className="w-5 h-5 text-blue-600" />
                                         <div className="flex-1">
                                           {editingCanvasId ===
-                                            canvas.canvas_id ? (
+                                          canvas.canvas_id ? (
                                             <input
                                               type="text"
                                               value={editingCanvasName}
@@ -776,13 +779,13 @@ function App() {
                                       <div className="flex items-center gap-2">
                                         {currentCanvasId ===
                                           canvas.canvas_id && (
-                                            <span className="text-xs text-blue-600 font-medium mr-2">
-                                              Current
-                                            </span>
-                                          )}
+                                          <span className="text-xs text-blue-600 font-medium mr-2">
+                                            Current
+                                          </span>
+                                        )}
 
                                         {editingCanvasId ===
-                                          canvas.canvas_id ? (
+                                        canvas.canvas_id ? (
                                           <>
                                             <button
                                               onClick={(e) => {
@@ -859,13 +862,6 @@ function App() {
                     </AlertDialog.Root>
                   </DropdownMenu.Item>
 
-                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700">
-                    <div className="flex items-center gap-2">
-                      <HiOutlineDocument />
-                      Export PDF
-                    </div>
-                  </DropdownMenu.Item>
-
                   <DropdownMenu.Separator />
 
                   <DropdownMenu.Item className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700">
@@ -919,7 +915,24 @@ function App() {
                       </AlertDialog.Portal>
                     </AlertDialog.Root>
                   </DropdownMenu.Item>
-                  <DropdownMenu.Separator className="h-[2px] my-2 bg-gray-500" />
+                  <DropdownMenu.Separator className="h-[0.1dvh] my-2 bg-gray-500" />
+                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700">
+                    <a href="https://github.com/x3nozite/rect-up">
+                      <div className="flex items-center gap-2">
+                        <FaGithub />
+                        Github
+                      </div>
+                    </a>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700">
+                    <a href="https://forms.gle/5s7W6VNtgeGiRFyL8">
+                      <div className="flex items-center gap-2">
+                        <HiOutlineGlobeAlt />
+                        Feedback & Support
+                      </div>
+                    </a>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Separator className="h-[0.1dvh] my-2 bg-gray-500" />
                   <DropdownMenu.Label className="py-0.5 pl-2 text-sm text-gray-400">
                     Canvas Theme
                   </DropdownMenu.Label>
@@ -959,19 +972,21 @@ function App() {
               onColorSelect={setStrokeColor}
               isActive={tool === "eraser" || tool === "draw"}
             /> */}
-            <AppToolbar
-              onShapeClick={() => openForm(null)}
-              onTodoClick={() => openTodoForm(null, null)}
-              onTextClick={addText}
-              onEraserClick={toggleEraser}
-              onClearClick={clearCanvas}
-              onDrawClick={togglePencil}
-              onSelectClick={toggleSelect}
-              onColorSelect={setStrokeColor}
-              isActive={tool === "eraser" || tool === "draw"}
-              tool={tool}
-              setTool={setTool}
-            />
+            {toolVis && (
+              <AppToolbar
+                onShapeClick={() => openForm(null)}
+                onTodoClick={() => openTodoForm(null, null)}
+                onTextClick={addText}
+                onEraserClick={toggleEraser}
+                onClearClick={clearCanvas}
+                onDrawClick={togglePencil}
+                onSelectClick={toggleSelect}
+                onColorSelect={setStrokeColor}
+                isActive={tool === "eraser" || tool === "draw"}
+                tool={tool}
+                setTool={setTool}
+              />
+            )}
           </div>
           <div className="user-account">
             <div className="big-buttons hidden gap-2 lg:flex">
@@ -1230,19 +1245,21 @@ function App() {
           />
         </div> */}
         <div className="absolute toolbar-mob flex sm:hidden z-100 w-full left-1/2 -translate-x-1/2 justify-center  pb-4 bottom-0">
-          <AppToolbar
-            onShapeClick={() => openForm(null)}
-            onTodoClick={() => openTodoForm(null, null)}
-            onTextClick={addText}
-            onEraserClick={toggleEraser}
-            onClearClick={clearCanvas}
-            onDrawClick={togglePencil}
-            onSelectClick={toggleSelect}
-            onColorSelect={setStrokeColor}
-            isActive={tool === "eraser" || tool === "draw"}
-            tool={tool}
-            setTool={setTool}
-          />
+          {toolVis && (
+            <AppToolbar
+              onShapeClick={() => openForm(null)}
+              onTodoClick={() => openTodoForm(null, null)}
+              onTextClick={addText}
+              onEraserClick={toggleEraser}
+              onClearClick={clearCanvas}
+              onDrawClick={togglePencil}
+              onSelectClick={toggleSelect}
+              onColorSelect={setStrokeColor}
+              isActive={tool === "eraser" || tool === "draw"}
+              tool={tool}
+              setTool={setTool}
+            />
+          )}
         </div>
         <div className="account-buttons absolute flex flex-row top-1.5 right-0 gap-2 m-4 z-51"></div>
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-md/15 shadow-gray-600"></div>
@@ -1258,7 +1275,7 @@ function App() {
             className="relative w-20 py-2 hover:cursor-pointer text-center group"
           >
             {zoomValue}%
-            <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+            <span className="absolute pointer-events-none -top-5 left-1/2 -translate-x-1/2 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
               Reset Value
             </span>
           </button>
@@ -1269,14 +1286,17 @@ function App() {
             <HiOutlineZoomIn />
           </button>
         </div>
-        <a href="https://forms.gle/5s7W6VNtgeGiRFyL8">
-          <button className="absolute bottom-4 right-4 items-center z-10 bg-red-100 border-2 border-red-200 rounded-xl w-fit p-2.5 hover:bg-red-200 hover:cursor-pointer group">
-            <HiOutlineChatAlt2 />
-            <span className="absolute right-12 -top-5 translate-x-1/2 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
-              RectUp Form
+        <div className="flex flex-row absolute bottom-20 md:bottom-4 right-4 gap-4">
+          <button
+            onClick={() => setToolVis((prev) => !prev)}
+            className="items-center z-10 bg-red-100 border-2 border-red-200 rounded-xl w-fit p-2.5 hover:bg-red-200 hover:cursor-pointer group"
+          >
+            {toolVis ? <HiOutlineEye /> : <HiOutlineEyeOff />}
+            <span className="absolute pointer-events-none right-12 -top-5 translate-x-1/2 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+              Toolbar Visibility
             </span>
           </button>
-        </a>
+        </div>
         {showTodoForm && (
           <TodoForm
             parent={selectedParent}

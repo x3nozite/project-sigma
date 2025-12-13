@@ -91,7 +91,7 @@ export default function TaskForm({
         className="
     fixed bg-white
     top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-    w-[90dvw] sm:w-[70dvw] md:w-[50dvw]
+    w-[90dvw] sm:w-[80dvw] md:w-[80dvw]
     max-h-[70dvh]
     px-4 py-4 sm:px-8 sm:py-6
     flex flex-col justify-between items-start
@@ -190,7 +190,7 @@ export default function TaskForm({
             <textarea
               {...register("description")}
               placeholder="Add a detailed description for subject..."
-              className="border border-gray-300 bg-gray-50 rounded-lg p-2 shadow-xs w-full items-start h-[50dvh] md:h-[30dvh] resize-none"
+              className="border border-gray-300 bg-gray-50 rounded-lg p-2 shadow-xs w-full items-start h-[50dvh] md:h-[50dvh] resize-none"
             ></textarea>
             {errors.description && (
               <div className="text-red-500">{errors.description?.message}</div>

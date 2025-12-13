@@ -593,19 +593,6 @@ const ShapeCanvas = ({
               );
             }}
           />
-        </Layer>
-        <Layer ref={arrowLayer}>
-          <ArrowLayer connectors={connectors} mainLayer={mainLayer} />
-        </Layer>
-
-        <Layer ref={mainLayer}>
-          <Rect
-            id={bbox_id}
-            ref={boundBoxRef}
-            fill="transparent"
-            draggable={true}
-            temporary={true}
-          />
           <TextLayer
             texts={shapes.filter(
               (s: ShapeType): s is TextType => s.shape === "text"
@@ -637,6 +624,19 @@ const ShapeCanvas = ({
             setIsEditingText={setIsEditingText}
             tool={tool}
           />
+        </Layer>
+        <Layer ref={arrowLayer}>
+          <ArrowLayer connectors={connectors} mainLayer={mainLayer} />
+        </Layer>
+
+        <Layer ref={mainLayer}>
+          <Rect
+            id={bbox_id}
+            ref={boundBoxRef}
+            fill="transparent"
+            draggable={true}
+            temporary={true}
+          />
           <RectLayer
             shapes={shapes.filter(
               (s: ShapeType): s is RectType => s.shape === "rect"
@@ -645,7 +645,7 @@ const ShapeCanvas = ({
             setShapes={setShapes}
             onDragStart={(e) => handleDragStart(e, tool, tempLayer)}
             onDragMove={(e) => {
-              handleDragMove(e, mainLayer, prevShape, tool);
+              if (selectedIds.length <= 1) handleDragMove(e, mainLayer, prevShape, tool);
               arrowMovement(connectors, mainLayer, tempLayer, arrowLayer, nodeMap);
             }}
             onDragEnd={(e) => {
@@ -686,7 +686,7 @@ const ShapeCanvas = ({
             tool={tool}
             onDragStart={(e) => handleDragStart(e, tool, tempLayer)}
             onDragMove={(e) => {
-              handleDragMove(e, mainLayer, prevShape, tool);
+              if (selectedIds.length <= 1) handleDragMove(e, mainLayer, prevShape, tool);
               arrowMovement(connectors, mainLayer, tempLayer, arrowLayer, nodeMap);
             }}
             onDragEnd={(e) => {

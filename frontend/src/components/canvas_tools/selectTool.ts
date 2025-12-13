@@ -97,6 +97,15 @@ export const handleSelectMouseUp = (isSelecting: RefObject<boolean>, selectionRe
       );
       return lineIntersectsRect(stagePoints, selBox);
     }
+    if (shape.shape === "text") {
+      const node = stage?.findOne(`#group-${shape.id}`);
+      if (!node) return;
+      const s = node.getClientRect({ relativeTo: stage });
+      s.x += stageCoor.x;
+      s.y += stageCoor.y;
+      if (!s) return;
+      return Konva.Util.haveIntersection(selBox, s);
+    }
 
     if (!mainLayer.current) return;
     const node = mainLayer.current.findOne(`#group-${shape.id}`);

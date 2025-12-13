@@ -23,8 +23,10 @@ export function handleDragMove(
   if (tool === "eraser") return;
 
   const stage = e.target.getStage();
+  if (!stage || !mainLayer.current) return;
   const pointerPos = stage?.getPointerPosition();
-  const shape = mainLayer.current?.getIntersection(pointerPos as Vector2d);
+  if (!pointerPos) return;
+  const shape = mainLayer.current.getIntersection(pointerPos as Vector2d);
 
   if (!prevShape.current && shape) {
     // If there is a shape in the pointer postition

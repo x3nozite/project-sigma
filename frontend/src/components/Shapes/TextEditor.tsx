@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import Konva from "konva";
+import { Html } from "react-konva-utils";
 
 interface TextAreaProps {
   textNode: Konva.Text;
@@ -104,9 +105,9 @@ const TextArea = ({ textNode, onClose, onChange }: TextAreaProps) => {
 
 const TextEditor = (props: TextAreaProps) => {
   return (
-    <>
+    <Html>
       <TextArea {...props} />
-    </>
+    </Html>
   );
 };
 

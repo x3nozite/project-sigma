@@ -236,11 +236,11 @@ function App() {
       x: parent
         ? parent.x + 400
         : (stageCoor.x * -1 + (window.innerWidth - 200) / 2) *
-          (100 / zoomValue),
+        (100 / zoomValue),
       y: parent
         ? parent.y
         : (stageCoor.y * -1 + (window.innerHeight - 200) / 2) *
-          (100 / zoomValue),
+        (100 / zoomValue),
       color: newFields.color, // default is green
       isCollapsed: false,
       scaleX: 1,
@@ -346,6 +346,7 @@ function App() {
       scaleX: 1,
       scaleY: 1,
       width: 200,
+      color: "black"
     } as const;
     setShapes([...shapes, newText]);
     pushUndo({ before: newText, after: newText, action: "add" });
@@ -356,12 +357,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-              ...r,
-              title: newData.title,
-              description: newData.description,
-              color: newData.color,
-              dueDate: newData.date,
-            }
+            ...r,
+            title: newData.title,
+            description: newData.description,
+            color: newData.color,
+            dueDate: newData.date,
+          }
           : r
       )
     );
@@ -372,13 +373,13 @@ function App() {
       prev.map((t) =>
         t.id === shape.id
           ? {
-              ...t,
-              title: newData.title,
-              assignee: newData.assignee,
-              dueDate: newData.date,
-              completed: newData.completed,
-              color: newData.color,
-            }
+            ...t,
+            title: newData.title,
+            assignee: newData.assignee,
+            dueDate: newData.date,
+            completed: newData.completed,
+            color: newData.color,
+          }
           : t
       )
     );
@@ -646,7 +647,7 @@ function App() {
     }
   };
 
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  //const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
   return (
     <>
@@ -707,10 +708,9 @@ function App() {
                                       className={`
                                         flex items-center justify-between p-4 rounded-lg border-2 
                                         transition-all
-                                        ${
-                                          currentCanvasId === canvas.canvas_id
-                                            ? "bg-blue-100 border-blue-400"
-                                            : "bg-gray-50 border-gray-200"
+                                        ${currentCanvasId === canvas.canvas_id
+                                          ? "bg-blue-100 border-blue-400"
+                                          : "bg-gray-50 border-gray-200"
                                         }
                                       `}
                                     >
@@ -729,7 +729,7 @@ function App() {
                                         <HiOutlineFolder className="w-5 h-5 text-blue-600" />
                                         <div className="flex-1">
                                           {editingCanvasId ===
-                                          canvas.canvas_id ? (
+                                            canvas.canvas_id ? (
                                             <input
                                               type="text"
                                               value={editingCanvasName}
@@ -776,13 +776,13 @@ function App() {
                                       <div className="flex items-center gap-2">
                                         {currentCanvasId ===
                                           canvas.canvas_id && (
-                                          <span className="text-xs text-blue-600 font-medium mr-2">
-                                            Current
-                                          </span>
-                                        )}
+                                            <span className="text-xs text-blue-600 font-medium mr-2">
+                                              Current
+                                            </span>
+                                          )}
 
                                         {editingCanvasId ===
-                                        canvas.canvas_id ? (
+                                          canvas.canvas_id ? (
                                           <>
                                             <button
                                               onClick={(e) => {

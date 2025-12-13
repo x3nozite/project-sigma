@@ -75,6 +75,7 @@ export type TextType = {
   scaleX: number;
   scaleY: number;
   width: number;
+  color: string;
 };
 
 export type ToolType = "hand" | "eraser" | "draw" | "select";

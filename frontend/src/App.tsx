@@ -1234,69 +1234,62 @@ function App() {
             </div>
           </div>
         </nav>
-        {/* <div className="absolute toolbar-mob flex sm:hidden z-100 w-full justify-center p-2 bottom-4">
-          <BottomNav
-            onShapeClick={openForm}
-            onEraserClick={toggleEraser}
-            onClearClick={clearCanvas}
-            onDrawClick={togglePencil}
-            onColorSelect={setStrokeColor}
-            isActive={tool === "eraser" || tool === "draw"}
-          />
-        </div> */}
-        <div className="absolute toolbar-mob flex sm:hidden z-100 w-full left-1/2 -translate-x-1/2 justify-center  pb-4 bottom-0">
-          {toolVis && (
-            <AppToolbar
-              onShapeClick={() => openForm(null)}
-              onTodoClick={() => openTodoForm(null, null)}
-              onTextClick={addText}
-              onEraserClick={toggleEraser}
-              onClearClick={clearCanvas}
-              onDrawClick={togglePencil}
-              onSelectClick={toggleSelect}
-              onColorSelect={setStrokeColor}
-              isActive={tool === "eraser" || tool === "draw"}
-              tool={tool}
-              setTool={setTool}
-            />
-          )}
+        <div className="absolute pb-4 bottom-bar flex flex-col   inset-x-0 gap-2 w-full bottom-0">
+          <div className="flex flex-row w-full justify-between px-5">
+            <div className=" items-center z-10 bg-amber-100 border-2 border-amber-200 rounded-xl w-fit inline-flex">
+              <button
+                className="hover:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-l-lg"
+                onClick={() => setZoomValue(Math.max(zoomValue - 10, 10))}
+              >
+                <HiOutlineZoomOut />
+              </button>
+              <button
+                onClick={() => setZoomValue(100)}
+                className="relative w-20 py-2 hover:cursor-pointer text-center group"
+              >
+                {zoomValue}%
+                <span className="absolute pointer-events-none -top-5 left-1/2 -translate-x-1/2 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+                  Reset Value
+                </span>
+              </button>
+              <button
+                className="hover:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-r-lg h-full"
+                onClick={() => setZoomValue(Math.min(zoomValue + 10, 500))}
+              >
+                <HiOutlineZoomIn />
+              </button>
+            </div>
+            <div className="flex flex-row  bottom-20 md:bottom-4 right-4 gap-4">
+              <button
+                onClick={() => setToolVis((prev) => !prev)}
+                className="items-center z-10 bg-red-100 border-2 border-red-200 rounded-xl w-fit p-2.5 hover:bg-red-200 hover:cursor-pointer group"
+              >
+                {toolVis ? <HiOutlineEye /> : <HiOutlineEyeOff />}
+                <span className="absolute pointer-events-none right-12 -top-5 translate-x-1/2 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+                  Toolbar Visibility
+                </span>
+              </button>
+            </div>
+          </div>
+          <div className="toolbar-mob  flex sm:hidden z-100 w-full  justify-center  ">
+            {toolVis && (
+              <AppToolbar
+                onShapeClick={() => openForm(null)}
+                onTodoClick={() => openTodoForm(null, null)}
+                onTextClick={addText}
+                onEraserClick={toggleEraser}
+                onClearClick={clearCanvas}
+                onDrawClick={togglePencil}
+                onSelectClick={toggleSelect}
+                onColorSelect={setStrokeColor}
+                isActive={tool === "eraser" || tool === "draw"}
+                tool={tool}
+                setTool={setTool}
+              />
+            )}
+          </div>
         </div>
-        <div className="account-buttons absolute flex flex-row top-1.5 right-0 gap-2 m-4 z-51"></div>
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-xs rounded-md shadow-md/15 shadow-gray-600"></div>
-        <div className="absolute bottom-21 left-5 sm:bottom-4 sm:left-4  items-center z-10 bg-amber-100 border-2 border-amber-200 rounded-xl w-fit inline-flex">
-          <button
-            className="hover:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-l-lg"
-            onClick={() => setZoomValue(Math.max(zoomValue - 10, 10))}
-          >
-            <HiOutlineZoomOut />
-          </button>
-          <button
-            onClick={() => setZoomValue(100)}
-            className="relative w-20 py-2 hover:cursor-pointer text-center group"
-          >
-            {zoomValue}%
-            <span className="absolute pointer-events-none -top-5 left-1/2 -translate-x-1/2 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
-              Reset Value
-            </span>
-          </button>
-          <button
-            className="hover:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-r-lg h-full"
-            onClick={() => setZoomValue(Math.min(zoomValue + 10, 500))}
-          >
-            <HiOutlineZoomIn />
-          </button>
-        </div>
-        <div className="flex flex-row absolute bottom-20 md:bottom-4 right-4 gap-4">
-          <button
-            onClick={() => setToolVis((prev) => !prev)}
-            className="items-center z-10 bg-red-100 border-2 border-red-200 rounded-xl w-fit p-2.5 hover:bg-red-200 hover:cursor-pointer group"
-          >
-            {toolVis ? <HiOutlineEye /> : <HiOutlineEyeOff />}
-            <span className="absolute pointer-events-none right-12 -top-5 translate-x-1/2 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
-              Toolbar Visibility
-            </span>
-          </button>
-        </div>
+
         {showTodoForm && (
           <TodoForm
             parent={selectedParent}

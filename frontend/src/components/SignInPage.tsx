@@ -24,7 +24,7 @@ export type signInFields = z.infer<typeof schema>;
 // );
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: z.email("Invalid email address"),
 });
 
 type ForgotPasswordFields = z.infer<typeof forgotPasswordSchema>;
@@ -58,8 +58,8 @@ function SignIn() {
       const { data: _data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: import.meta.env.VITE_REDIRECT_URL
-        }
+          redirectTo: import.meta.env.VITE_REDIRECT_URL,
+        },
       });
       if (error) {
         console.error("cant handle oauth:", error);
@@ -119,8 +119,8 @@ function SignIn() {
   ) => {
     try {
       const baseUrl = import.meta.env.VITE_REDIRECT_URL;
-      console.log('Base URL:', baseUrl);
-      console.log('Full redirect URL:', `${baseUrl}#/reset-password`);
+      // console.log("Base URL:", baseUrl);
+      // console.log("Full redirect URL:", `${baseUrl}#/reset-password`);
       const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
         redirectTo: `${baseUrl}#/reset-password`,
       });
@@ -203,8 +203,10 @@ function SignIn() {
                   <label htmlFor="" className="font-bold ">
                     Password
                   </label>
-                  <span className="text-sm opacity-70 hover:cursor-pointer"
-                    onClick={() => setShowForgotPasswordModal(true)}>
+                  <span
+                    className="text-sm opacity-70 hover:cursor-pointer"
+                    onClick={() => setShowForgotPasswordModal(true)}
+                  >
                     Forgot Password?
                   </span>
                 </div>

@@ -89,6 +89,7 @@ function App() {
   const [toolVis, setToolVis] = useState(true);
   // canvas color
   const [canvasCol, setcanvasCol] = useState<string>("#ffffff");
+  const [drawCol, setDrawCol] = useState<string>("#000");
 
   useAutosaveCanvas({ shapes, connectors }, 1000, () => {
     if (!currentCanvasId || shapes.length === 0) return;
@@ -940,6 +941,33 @@ function App() {
                   </DropdownMenu.Item>
                   <DropdownMenu.Separator className="h-[0.1dvh] my-2 bg-gray-500" />
                   <DropdownMenu.Label className="py-0.5 pl-2 text-sm text-gray-400">
+                    Stroke Color
+                  </DropdownMenu.Label>
+                  <DropdownMenu.RadioGroup
+                    value={drawCol}
+                    onValueChange={setDrawCol}
+                    className="py-1 pl-2 "
+                  >
+                    <div className="flex flex-row gap-2 items-center justify-around">
+                      <DropdownMenu.RadioItem value="#000" className="group">
+                        <div className="p-4 relative bg-[#000] border-2 border-slate-200 rounded-lg group-data-[state=checked]:ring-2 group-data-[state=checked]:ring-slate-400"></div>
+                      </DropdownMenu.RadioItem>
+                      <DropdownMenu.RadioItem value="#e7000b" className="group">
+                        <div className="p-4 bg-[#e7000b] border-red-200 border-2 rounded-lg group-data-[state=checked]:ring-2 group-data-[state=checked]:ring-red-400"></div>
+                        <DropdownMenu.ItemIndicator></DropdownMenu.ItemIndicator>
+                      </DropdownMenu.RadioItem>
+                      <DropdownMenu.RadioItem value="#155dfc" className="group">
+                        <div className="p-4 bg-[#155dfc] border-2 border-blue-200 rounded-lg group-data-[state=checked]:ring-2 group-data-[state=checked]:ring-blue-400"></div>
+                        <DropdownMenu.ItemIndicator></DropdownMenu.ItemIndicator>
+                      </DropdownMenu.RadioItem>
+                      <DropdownMenu.RadioItem value="#009966" className="group">
+                        <div className="p-4 bg-[#009966] border-2 border-emerald-200 rounded-lg group-data-[state=checked]:ring-2 group-data-[state=checked]:ring-emerald-400"></div>
+                        <DropdownMenu.ItemIndicator></DropdownMenu.ItemIndicator>
+                      </DropdownMenu.RadioItem>
+                    </div>
+                  </DropdownMenu.RadioGroup>
+                  <DropdownMenu.Separator className="h-[0.1dvh] my-2 bg-gray-500" />
+                  <DropdownMenu.Label className="py-0.5 pl-2 text-sm text-gray-400">
                     Canvas Theme
                   </DropdownMenu.Label>
                   <DropdownMenu.RadioGroup
@@ -1346,7 +1374,7 @@ function App() {
             connectors={connectors}
             addConnector={addConnector}
             setConnectors={setConnectors}
-            strokeColor={strokeColor}
+            strokeColor={drawCol}
             onShapeClick={openForm}
             onAddTodo={openTodoForm}
             stageCoor={stageCoor}

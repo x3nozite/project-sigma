@@ -77,7 +77,7 @@ const ShapeCanvas = ({
   connectors = [],
   setConnectors,
   addConnector,
-  strokeColor = "#000",
+  strokeColor,
   onShapeClick,
   onAddTodo,
   stageCoor,

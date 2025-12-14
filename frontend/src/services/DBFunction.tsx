@@ -118,6 +118,11 @@ export async function updateCanvasColor(
   canvasCol?: string
 ) {
   try {
+    const { data: auth } = await supabase.auth.getUser(); // could just check if canvasId === "local" (?)
+    const user = auth?.user;
+    
+    // TODO: fetch color from indexedDB
+    if (!user) return;
     const { error } = await supabase
       .from("canvas")
       .update({ background_color: canvasCol })
@@ -134,6 +139,13 @@ export async function updateCanvasColor(
 
 export async function getCanvasColor(canvasId: string) {
   try {
+    const { data: auth } = await supabase.auth.getUser(); // could just check if canvasId === "local" (?)
+    const user = auth?.user;
+    
+    // TODO: fetch color from indexedDB
+    if (!user) return;
+
+    // fetch from database if user is logged in
     const { data, error } = await supabase
       .from("canvas")
       .select("background_color")

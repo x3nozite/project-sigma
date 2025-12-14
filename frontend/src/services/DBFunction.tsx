@@ -120,30 +120,76 @@ export async function updateCanvasColor(
   try {
     const { data: auth } = await supabase.auth.getUser(); // could just check if canvasId === "local" (?)
     const user = auth?.user;
-    
-    // TODO: fetch color from indexedDB
-    if (!user) return;
+
+    if (!user || canvasId === "local") {
+      await new Promise((resolve) => {
+        const request = indexedDB.open("CanvasDB");
+
+        const canvasColorData = {
+          local_color: "local",
+          color: canvasCol || "#ffffff",
+          updatedAt: Date.now(),
+        };
+
+        request.onsuccess = () => {
+          const db = request.result;
+          const tx = db.transaction("BackgroundColor", "readwrite");
+          const colorStore = tx.objectStore("BackgroundColor");
+
+          colorStore.put(canvasColorData);
+
+          tx.oncomplete = () => resolve(true);
+          tx.onerror = () => resolve(true);
+        };
+
+        request.onerror = () => resolve(true);
+      });
+
+      return { success: true, canvasId: "local" };
+    }
+
     const { error } = await supabase
       .from("canvas")
       .update({ background_color: canvasCol })
-      .eq("canvas_id", canvasId)
+      .eq("canvas_id", canvasId);
 
     if (error) {
-      console.error(error)
+      console.error(error);
     }
-
   } catch (error) {
-    console.error("Error on update canvas color function: ", error)
+    console.error("Error on update canvas color function: ", error);
   }
 }
 
-export async function getCanvasColor(canvasId: string) {
+export async function getCanvasColor(canvasId: string | null) {
   try {
-    const { data: auth } = await supabase.auth.getUser(); // could just check if canvasId === "local" (?)
+    const { data: auth } = await supabase.auth.getUser();
     const user = auth?.user;
-    
-    // TODO: fetch color from indexedDB
-    if (!user) return;
+
+    if (!user || canvasId === "local") {
+      return new Promise((resolve) => {
+        const request = indexedDB.open("CanvasDB");
+
+        request.onsuccess = () => {
+          const db = request.result;
+          const tx = db.transaction(["BackgroundColor"], "readonly");
+          const store = tx.objectStore("BackgroundColor");
+          const res = store.get("local");
+
+          tx.oncomplete = () => {
+            const localColor = res.result;
+            if (localColor) {
+              resolve(localColor.color);
+            }
+            else resolve("#ffffff");
+          };
+        };
+
+        request.onerror = () => {
+          resolve("#ffffff");
+        };
+      });
+    }
 
     // fetch from database if user is logged in
     const { data, error } = await supabase
@@ -154,7 +200,7 @@ export async function getCanvasColor(canvasId: string) {
 
     if (error) {
       console.error(error);
-      return null;
+      return "#ffffff";
     }
 
     return data.background_color;
@@ -171,7 +217,7 @@ export async function saveCanvas(
     const { data: auth } = await supabase.auth.getUser();
     const user = auth?.user;
     // --- SAVE TO INDEXEDDB if not logged in---
-    if (!user) {
+    if (!user || canvasId === "local") {
       await new Promise((resolve) => {
         const request = indexedDB.open("CanvasDB");
 
@@ -334,7 +380,7 @@ export async function loadCanvas(
     } = await supabase.auth.getUser();
     const viewport = await loadViewport();
 
-    if (!user) {
+    if (!user || canvasId === "local") {
       return new Promise((resolve) => {
         const request = indexedDB.open("CanvasDB");
 

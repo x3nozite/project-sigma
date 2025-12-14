@@ -184,10 +184,12 @@ function App() {
 
   // useeffect for autosaving canvas color
   useEffect(() => {
-    if (!currentCanvasId) return;
-
     const timeout = setTimeout(() => {
-      updateCanvasColor(currentCanvasId, canvasCol);
+      if (!currentCanvasId){
+        updateCanvasColor("local", canvasCol);
+      } else {
+        updateCanvasColor(currentCanvasId, canvasCol);
+      }
     }, 500);
 
     return () => clearTimeout(timeout);
@@ -195,11 +197,14 @@ function App() {
 
   // useeffect for getting canvas color for every canvas change
   useEffect(() => {
-    if (!currentCanvasId) return;
-
     (async () => {
-      const savedColor = await getCanvasColor(currentCanvasId);
-      if (savedColor) setcanvasCol(savedColor);
+      if (!currentCanvasId) {
+        const localColor = await getCanvasColor("local");
+        if (localColor) setcanvasCol(localColor);
+      } else {
+        const savedColor = await getCanvasColor(currentCanvasId);
+        if (savedColor) setcanvasCol(savedColor);
+      }
     })();
   }, [currentCanvasId]);
 

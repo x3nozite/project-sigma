@@ -10,7 +10,7 @@ export const useIndexedDBInit = () => {
       sessionStorage.setItem("isDbReady", JSON.stringify(true));
       sessionStorage.setItem("isExpired", JSON.stringify(true));
       const success = await initIndexedDb();
-
+      
       if (!success) console.error("InitDb - Something went wrong");
       else console.log("IndexedDB Initialized (first time)");
     }

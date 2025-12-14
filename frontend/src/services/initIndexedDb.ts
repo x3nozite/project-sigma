@@ -5,10 +5,10 @@ export const initIndexedDb = async (): Promise<boolean> => {
 
   return new Promise((resolve) => {
     // open connection
-    request = indexedDB.open("CanvasDB", 2);
+    request = indexedDB.open("CanvasDB", 3);
     request.onupgradeneeded = () => {
       db = request.result;
-
+      
       // create object store if it doesn't exist yet
       if (!db.objectStoreNames.contains("Canvas")) {
         console.log("create object store");
@@ -17,6 +17,10 @@ export const initIndexedDb = async (): Promise<boolean> => {
 
       if (!db.objectStoreNames.contains("Viewport")) {
         db.createObjectStore("Viewport", { keyPath: "canvas_viewport" })
+      }
+
+      if (!db.objectStoreNames.contains("BackgroundColor")) {
+        db.createObjectStore("BackgroundColor", { keyPath: "local_color" })
       }
     };
 

@@ -5,7 +5,7 @@ export function changeCursor(tool: string) {
     case "select":
       return "pointer";
     case "eraser":
-      return "url('./cursor.svg') 16 16, auto";
+      return "url('/rect-up/cursor.svg') 16 16, auto";
     case "draw":
       return "crosshair";
     default:

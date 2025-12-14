@@ -673,7 +673,7 @@ function App() {
                   sideOffset={5}
                   align="start"
                   alignOffset={5}
-                  className="min-w-56 max-h-[50dvh]  overflow-y-scroll rounded-lg shadow-lg p-5 text-blue-700 hover:cursor-default hover:border-none bg-white"
+                  className="min-w-56 max-h-[50dvh]  overflow-y-scroll rounded-lg shadow-lg p-5 text-blue-700 hover:cursor-default hover:border-none bg-white "
                 >
                   <DropdownMenu.Item className="group py-1 pl-2 hover:bg-sky-200 rounded-lg hover:text-blue-700 flex items-center">
                     <div

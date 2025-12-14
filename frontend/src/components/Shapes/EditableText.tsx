@@ -16,7 +16,7 @@ interface Props {
   editingRef: Konva.Text | null;
 }
 
-const EditableText = ({ initialText, onEraserClick, onDragEnd, onTransformEnd, setShapes, setIsEditingText, isEditingText, tool, setEditingRef, editingRef }: Props) => {
+const EditableText = ({ initialText, onEraserClick, onDragEnd, onTransformEnd, setIsEditingText, isEditingText, tool, setEditingRef, editingRef }: Props) => {
   const textRef = useRef<Konva.Text | null>(null);
 
   const handleTextDblClick = useCallback(() => {

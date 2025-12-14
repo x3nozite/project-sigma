@@ -1,6 +1,8 @@
+import { getUserProfile } from "../../services/DBFunction";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useSession } from "../../context/SessionContext";
 import type { SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import type { RectType, ShapeType } from "../types";
@@ -9,8 +11,7 @@ const schema = z.object({
   title: z.string(),
   // .min(3, "Title must be at least 3 characters")
   // .max(50, "Title must be at most 50 characters"),
-  assignee: z.string(),
-  date: z.string(),
+  date: z.string().min(1, "Date cannot be empty"),
   completed: z.boolean(),
   color: z.string(),
 });
@@ -32,6 +33,7 @@ export default function TodoForm({
   onCloseForm,
   initialTodo,
 }: Props) {
+  const { session } = useSession();
   const isEditing =
     initialTodo &&
     initialTodo.behavior === "node" &&
@@ -54,14 +56,12 @@ export default function TodoForm({
     defaultValues: isEditing
       ? {
           title: initialTodo.title,
-          assignee: initialTodo.assignee,
           date: formatted,
           completed: initialTodo.completed,
           color: initialTodo.color,
         }
       : {
           title: "My Newest Todo",
-          assignee: "Guest",
           date: formatted,
           completed: false,
           color: parent?.color,
@@ -146,21 +146,16 @@ export default function TodoForm({
                 </span>
               </div>
             </div>
-            <div className="w-full grid grid-cols-[6rem_1fr] gap-2 items-center ">
-              <label className="text-sm px-2.5 py-2 text-start rounded-md">
-                Due Date
-              </label>
-              <input
-                {...register("date")}
-                type="date"
-                className="w-full h-full hover:bg-gray-300 px-2 rounded-md text-sm"
-              />
-            </div>
             <div className="w-full grid grid-cols-[6rem_1fr] gap-2 items-center">
               <label className="text-sm px-2.5 py-2  text-start rounded-md">
                 Assignee
               </label>
-              <select
+              <div className="w-full h-full font-medium flex items-center justify-center px-2 rounded-md bg-gray-200">
+                <span className="text-sm text-start  w-full ">
+                  {session ? session.user.email : "Guest"}
+                </span>
+              </div>
+              {/* <select
                 {...register("assignee")}
                 name="assignee"
                 className="hover:bg-gray-300 w-full h-full px-2 rounded-md text-sm"
@@ -170,7 +165,17 @@ export default function TodoForm({
                 <option value="User2">User2</option>
                 <option value="User3">User3</option>
                 <option value="User4">User4</option>
-              </select>
+              </select> */}
+            </div>
+            <div className="w-full grid grid-cols-[6rem_1fr] gap-2 items-center ">
+              <label className="text-sm px-2.5 py-2 text-start rounded-md">
+                Due Date
+              </label>
+              <input
+                {...register("date")}
+                type="date"
+                className="w-full h-full hover:bg-gray-300 px-2 rounded-md text-sm"
+              />
             </div>
             <div className="w-full grid grid-cols-[6rem_1fr] gap-2 items-center">
               <label className="text-sm px-2.5 py-2  text-start rounded-md">

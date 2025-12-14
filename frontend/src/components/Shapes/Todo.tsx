@@ -2,6 +2,7 @@ import { Path, Circle, Group, Rect, Text } from "react-konva";
 import type { ShapeType, TodoType, ToolType, RectType } from "../types";
 import { useEffect, useRef, useState, type RefObject } from "react";
 import Konva from "konva";
+import { startsWith } from "zod";
 
 interface Props {
   todo: TodoType;
@@ -29,7 +30,7 @@ const Todo = ({
   handleEraserClick,
   onTodoClick,
   shapes,
-  nodeMap
+  nodeMap,
 }: Props) => {
   // For the checkbox
   const [isHovered, setisHovered] = useState(false);
@@ -170,7 +171,10 @@ const Todo = ({
           if (!shapes) return;
           let parent: RectType | null = null;
           if (todo.parents) {
-            const found = shapes.find((s) => "group-" + s.id === todo.parents);
+            const parentId = todo.parents?.startsWith("group-")
+              ? todo.parents.replace("group-", "")
+              : todo.parents;
+            const found = shapes.find((s) => s.id === parentId);
             if (found && found?.shape === "rect") {
               parent = found as RectType;
             }
@@ -183,7 +187,7 @@ const Todo = ({
           if (!shapes) return;
           let parent: RectType | null = null;
           if (todo.parents) {
-            const found = shapes.find((s) => "group-" + s.id === todo.parents);
+            const found = shapes.find((s) => "rect-" + s.id === todo.parents);
             if (found && found?.shape === "rect") {
               parent = found as RectType;
             }

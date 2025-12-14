@@ -186,7 +186,7 @@ function App() {
   // useeffect for autosaving canvas color
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (!currentCanvasId){
+      if (!currentCanvasId) {
         updateCanvasColor("local", canvasCol);
       } else {
         updateCanvasColor(currentCanvasId, canvasCol);
@@ -239,7 +239,7 @@ function App() {
 
   const addTodo = (newFields: todoFields, parent: RectType | null) => {
     const iso = new Date(newFields.date).toISOString();
-
+    console.log("Current parent is: " + parent?.id);
     const newTodo: TodoType = {
       id: "todo-" + Date.now().toString(),
       x: parent
@@ -263,7 +263,7 @@ function App() {
       dueDate: iso,
       completed: newFields.completed,
       // assignee: session ? session.user.user_metadata.name : "Guest",
-      assignee: newFields.assignee,
+      assignee: session?.user.email ?? "Guest",
       status: "Something",
       parents: parent ? parent.id : "",
     };
@@ -384,7 +384,6 @@ function App() {
           ? {
               ...t,
               title: newData.title,
-              assignee: newData.assignee,
               dueDate: newData.date,
               completed: newData.completed,
               color: newData.color,

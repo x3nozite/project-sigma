@@ -34,6 +34,7 @@ import {
   HiOutlineEyeOff,
   HiOutlineGlobeAlt,
 } from "react-icons/hi";
+import { HiMiniArrowUturnLeft, HiMiniArrowUturnRight } from "react-icons/hi2";
 import { FaGithub } from "react-icons/fa";
 import { DropdownMenu, AlertDialog } from "radix-ui";
 import AppToolbar from "./components/ui/buttons/tools/AppToolbar";
@@ -80,7 +81,7 @@ function App() {
   const [currentCanvasId, setCurrentCanvasId] = useState<string | null>(null);
   const [canvasList, setCanvasList] = useState<any[]>([]);
   // const [canvasUsers, setCanvasUsers] = useState<CanvasUsers[]>([]);
-  const { pushUndo } = useUndoRedo();
+  const { pushUndo, undo, redo } = useUndoRedo();
   const [showNameModal, setShowNameModal] = useState(false);
   const [newCanvasName, setNewCanvasName] = useState("");
   const [editingCanvasId, setEditingCanvasId] = useState<string | null>(null);
@@ -1236,33 +1237,55 @@ function App() {
         </nav>
         <div className="absolute pb-4 bottom-bar flex flex-col   inset-x-0 gap-2 w-full bottom-0">
           <div className="flex flex-row w-full justify-between px-5">
-            <div className=" items-center z-10 bg-amber-100 border-2 border-amber-200 rounded-xl w-fit inline-flex">
-              <button
-                className="hover:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-l-lg"
-                onClick={() => setZoomValue(Math.max(zoomValue - 10, 10))}
-              >
-                <HiOutlineZoomOut />
-              </button>
-              <button
-                onClick={() => setZoomValue(100)}
-                className="relative w-20 py-2 hover:cursor-pointer text-center group"
-              >
-                {zoomValue}%
-                <span className="absolute pointer-events-none -top-5 left-1/2 -translate-x-1/2 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
-                  Reset Value
-                </span>
-              </button>
-              <button
-                className="hover:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-r-lg h-full"
-                onClick={() => setZoomValue(Math.min(zoomValue + 10, 500))}
-              >
-                <HiOutlineZoomIn />
-              </button>
+            <div className="flex flex-row gap-2">
+              <div className=" items-center z-10 bg-amber-100 border-2 border-amber-200 rounded-xl w-fit inline-flex">
+                <button
+                  className="hover:bg-orange-200 active:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-l-lg h-full"
+                  onClick={() => setZoomValue(Math.max(zoomValue - 10, 10))}
+                >
+                  <HiOutlineZoomOut />
+                </button>
+                <button
+                  onClick={() => setZoomValue(100)}
+                  className="relative w-20 py-2 hover:cursor-pointer text-center group"
+                >
+                  {zoomValue}%
+                  <span className="absolute pointer-events-none -top-5 left-1/2 -translate-x-1/2 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+                    Reset Value
+                  </span>
+                </button>
+                <button
+                  className="hover:bg-orange-200 active:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-r-lg h-full"
+                  onClick={() => setZoomValue(Math.min(zoomValue + 10, 500))}
+                >
+                  <HiOutlineZoomIn />
+                </button>
+              </div>
+              <div className=" items-center z-10 gap-1 sm:gap-0 bg-green-100 border-2 border-emerald-200 rounded-xl w-fit inline-flex">
+                <button
+                  className="hover:bg-green-200 active:bg-green-200 group relative hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-l-lg h-full"
+                  onClick={() => undo(setShapes, setConnectors)}
+                >
+                  <HiMiniArrowUturnLeft />
+                  <span className="absolute pointer-events-none -top-5 left-1/2 -translate-x-1/2 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+                    Undo
+                  </span>
+                </button>
+                <button
+                  className="hover:bg-green-200 active:bg-green-200 group relative hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-r-lg h-full"
+                  onClick={() => redo(setShapes, setConnectors)}
+                >
+                  <HiMiniArrowUturnRight />
+                  <span className="absolute pointer-events-none -top-5 left-1/2 -translate-x-1/2 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
+                    Redo
+                  </span>
+                </button>
+              </div>
             </div>
             <div className="flex flex-row  bottom-20 md:bottom-4 right-4 gap-4">
               <button
                 onClick={() => setToolVis((prev) => !prev)}
-                className="items-center z-10 bg-red-100 border-2 border-red-200 rounded-xl w-fit p-2.5 hover:bg-red-200 hover:cursor-pointer group"
+                className="items-center z-10 bg-red-100 border-2 border-red-200 rounded-xl w-fit p-2.5 hover:bg-red-200 active:bg-red-300 hover:cursor-pointer group"
               >
                 {toolVis ? <HiOutlineEye /> : <HiOutlineEyeOff />}
                 <span className="absolute pointer-events-none right-12 -top-5 translate-x-1/2 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
@@ -1324,6 +1347,7 @@ function App() {
             stageCoor={stageCoor}
             setStageCoor={setStageCoor}
             isFormOpen={isFormOpen}
+            onTextClick={addText}
           />
         </div>
       </div>

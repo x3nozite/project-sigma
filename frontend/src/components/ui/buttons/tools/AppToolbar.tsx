@@ -72,11 +72,14 @@ function AppToolbar({
         <Toolbar.ToggleItem value="annotate">
           <div
             onClick={() => onTextClick()}
-            className="add-annotate group flex flex-col justify-center items-center  rounded-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 max-sm:w-8 max-sm:h-8 max-sm:p-[2px]"
+            className="add-annotate relative group flex flex-col justify-center items-center  rounded-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 max-sm:w-8 max-sm:h-8 max-sm:p-[2px]"
           >
             <HiOutlineAnnotation className="text-2xl md:text-xl" />
             <span className="absolute pointer-events-none -top-3 text-nowrap px-2 py-1 rounded-sm bg-gray-700 text-sm text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 ">
-              Annotate
+              Add Text — E
+            </span>
+            <span className="hidden xl:inline absolute text-xs right-0 bottom-0 font-bold text-gray-300 group-data-[state=on]:text-blue-500">
+              E
             </span>
           </div>
         </Toolbar.ToggleItem>

@@ -62,6 +62,7 @@ interface Props {
   stageCoor: { x: number; y: number };
   setStageCoor: React.Dispatch<React.SetStateAction<{ x: number; y: number }>>;
   isFormOpen: boolean;
+  onTextClick: () => void;
 }
 
 const bbox_id = "1234567890";
@@ -82,6 +83,7 @@ const ShapeCanvas = ({
   stageCoor,
   setStageCoor,
   isFormOpen,
+  onTextClick,
 }: Props) => {
   Konva.pixelRatio = window.devicePixelRatio || 1;
   const mainLayer = useRef<Konva.Layer | null>(null!);
@@ -220,7 +222,6 @@ const ShapeCanvas = ({
         addConnector((e as DragEventWithSource).source, shapeGroup);
       });
     });
-
   }, [addConnector, setShapes, shapes]);
 
   useEffect(() => {
@@ -231,7 +232,10 @@ const ShapeCanvas = ({
         undo(setShapes, setConnectors); // or whatever your undo function is
         return;
       }
-      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "z") {
+      if (
+        ((e.ctrlKey || e.metaKey) && e.key === "y") ||
+        (e.shiftKey && e.key === "z")
+      ) {
         redo(setShapes, setConnectors);
         return;
       }
@@ -269,6 +273,9 @@ const ShapeCanvas = ({
         case "w":
           onAddTodo(null, null);
           break;
+        case "e":
+          onTextClick();
+          break;
         default:
           break;
       }
@@ -278,7 +285,19 @@ const ShapeCanvas = ({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isEditingText, isFormOpen, onAddTodo, onShapeClick, redo, setConnectors, setShapes, setTool, tool, undo])
+  }, [
+    isEditingText,
+    isFormOpen,
+    onAddTodo,
+    onShapeClick,
+    redo,
+    setConnectors,
+    setShapes,
+    setTool,
+    tool,
+    undo,
+    onTextClick,
+  ]);
 
   useEffect(() => {
     //update transformer when selection changes
@@ -645,8 +664,15 @@ const ShapeCanvas = ({
             setShapes={setShapes}
             onDragStart={(e) => handleDragStart(e, tool, tempLayer)}
             onDragMove={(e) => {
-              if (selectedIds.length <= 1) handleDragMove(e, mainLayer, prevShape, tool);
-              arrowMovement(connectors, mainLayer, tempLayer, arrowLayer, nodeMap);
+              if (selectedIds.length <= 1)
+                handleDragMove(e, mainLayer, prevShape, tool);
+              arrowMovement(
+                connectors,
+                mainLayer,
+                tempLayer,
+                arrowLayer,
+                nodeMap
+              );
             }}
             onDragEnd={(e) => {
               handleDragEnd(
@@ -686,8 +712,15 @@ const ShapeCanvas = ({
             tool={tool}
             onDragStart={(e) => handleDragStart(e, tool, tempLayer)}
             onDragMove={(e) => {
-              if (selectedIds.length <= 1) handleDragMove(e, mainLayer, prevShape, tool);
-              arrowMovement(connectors, mainLayer, tempLayer, arrowLayer, nodeMap);
+              if (selectedIds.length <= 1)
+                handleDragMove(e, mainLayer, prevShape, tool);
+              arrowMovement(
+                connectors,
+                mainLayer,
+                tempLayer,
+                arrowLayer,
+                nodeMap
+              );
             }}
             onDragEnd={(e) => {
               handleDragEnd(

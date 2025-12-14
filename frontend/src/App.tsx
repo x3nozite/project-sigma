@@ -71,7 +71,6 @@ function App() {
   const [shapes, setShapes] = useState<ShapeType[]>([]);
   const [connectors, setConnectors] = useState<ArrowType[]>([]);
   const [tool, setTool] = useState<ToolType>("hand");
-  const [strokeColor, setStrokeColor] = useState<string>("#000000");
   const navigate = useNavigate();
   const [selectedShape, setSelectedShape] = useState<ShapeType | null>(null);
   const [selectedTodo, setSelectedTodo] = useState<TodoType | null>(null);
@@ -1014,7 +1013,6 @@ function App() {
                 onClearClick={clearCanvas}
                 onDrawClick={togglePencil}
                 onSelectClick={toggleSelect}
-                onColorSelect={setStrokeColor}
                 isActive={tool === "eraser" || tool === "draw"}
                 tool={tool}
                 setTool={setTool}
@@ -1336,7 +1334,6 @@ function App() {
                 onClearClick={clearCanvas}
                 onDrawClick={togglePencil}
                 onSelectClick={toggleSelect}
-                onColorSelect={setStrokeColor}
                 isActive={tool === "eraser" || tool === "draw"}
                 tool={tool}
                 setTool={setTool}

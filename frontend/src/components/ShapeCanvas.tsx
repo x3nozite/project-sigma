@@ -55,7 +55,7 @@ interface Props {
   setTool: React.Dispatch<React.SetStateAction<ToolType>>;
   zoom: number;
   setZoomValue: React.Dispatch<React.SetStateAction<number>>;
-  strokeColor?: string;
+  strokeColor: string;
   onShapeClick: (shape: ShapeType | null) => void;
   // add todo from rectangle
   onAddTodo: (parent: RectType | null, currTodo: TodoType | null) => void;

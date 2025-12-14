@@ -44,13 +44,6 @@ const EditableText = ({ initialText, onEraserClick, onDragEnd, onTransformEnd, s
         scaleX: 1,
       });
 
-      setShapes(prev =>
-        prev.map(s =>
-          s.id === initialText.id
-            ? { ...s, width: newWidth }
-            : s
-        )
-      );
       return;
     }
     // Vertical-only or diagonal → treat as scaling
@@ -64,16 +57,9 @@ const EditableText = ({ initialText, onEraserClick, onDragEnd, onTransformEnd, s
         scaleX: 1,
         scaleY: 1,
       });
-      setShapes(prev =>
-        prev.map(s =>
-          s.id === initialText.id
-            ? { ...s, fontSize: newFontSize, width: newWidth }
-            : s
-        )
-      );
       return;
     }
-  }, [initialText.id, setShapes]);
+  }, []);
 
   return (
     <>

@@ -331,7 +331,7 @@ const ShapeCanvas = ({
       currentUndoGroup.current = null;
       bbox?.hide();
     }
-  }, [selectedIds, tool, stageCoor]);
+  }, [selectedIds, tool, stageCoor, shapes]);
 
   useEffect(() => {
     if (tool !== "select") {

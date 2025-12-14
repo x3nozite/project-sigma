@@ -160,7 +160,6 @@ export const handleTransfromEnd = (e: Konva.KonvaEventObject<DragEvent>, setShap
     const index = newShapes.findIndex(r => "group-" + r.id === id);
 
     if (index !== -1 && newShapes[index].behavior === "node") {
-
       newShapes[index] = {
         ...newShapes[index],
         x: node.x(),
@@ -169,26 +168,56 @@ export const handleTransfromEnd = (e: Konva.KonvaEventObject<DragEvent>, setShap
         scaleY: node.scaleY(),
       }
     } else if (index !== -1 && newShapes[index].shape === "text") {
-      // const newWidth = node.width() * node.scaleX();
-      //
-      // newShapes[index] = {
-      //   ...newShapes[index],
-      //   x: node.x(),
-      //   y: node.y(),
-      //   width: newWidth,
-      //   scaleX: 1,
-      //   scaleY: 1,
-      // };
-      //
-      // // reset actual Konva node scale so text doesn't stretch
-      // node.scaleX(1);
-      // node.scaleY(1);
+      const n = node as Konva.Text;
+
+      newShapes[index] = {
+        ...newShapes[index],
+        x: node.x(),
+        y: node.y(),
+        width: node.width(),
+        fontSize: n.fontSize(),
+        scaleX: 1,
+        scaleY: 1,
+      };
+
+      // reset actual Konva node scale so text doesn't stretch
+      node.scaleX(1);
+      node.scaleY(1);
+    } else if (index !== -1 && newShapes[index].shape === "line") {
+      const n = node as Konva.Line;
+
+      const scaleX = n.scaleX();
+      const scaleY = n.scaleY();
+      const posX = n.x();
+      const posY = n.y();
+
+      // Scale and offset points
+      const absolutePoints = n.points().map((value, i) =>
+        i % 2 === 0 ? value * scaleX + posX : value * scaleY + posY
+      );
+
+      newShapes[index] = {
+        ...newShapes[index],
+        points: absolutePoints,
+      };
+
+      // Reset the node to default transform so it renders correctly later
+      n.scaleX(1);
+      n.scaleY(1);
+      n.x(0);
+      n.y(0);
     }
     return newShapes;
   })
   const shapeInArray = shapes.find(s => "group-" + s.id === id);
   if (shapeInArray) {
-    const afterChanges = { ...shapeInArray, x: node.x(), y: node.y(), scaleX: node.scaleX(), scaleY: node.scaleY() };
+    let afterChanges = undefined;
+    if (shapeInArray.shape === "text") {
+      const n = node as Konva.Text;
+      afterChanges = { ...shapeInArray, x: n.x(), y: n.y(), scaleX: n.scaleX(), scaleY: n.scaleY(), width: n.width(), fontSize: n.fontSize() };
+    }
+    else if (shapeInArray.shape === "line") afterChanges = { ...shapeInArray, scaleX: node.scaleX(), scaleY: node.scaleY() };
+    else afterChanges = { ...shapeInArray, x: node.x(), y: node.y(), scaleX: node.scaleX(), scaleY: node.scaleY() };
     if (beforeChanges && afterChanges) pushUndo(({ action: "update", before: beforeChanges, after: afterChanges, id: (groupId) ? groupId : undefined }));
   }
 }

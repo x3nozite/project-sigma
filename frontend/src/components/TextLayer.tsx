@@ -3,6 +3,7 @@ import type { ShapeType, TextType, ToolType } from "./types";
 import EditableText from "./Shapes/EditableText";
 import TextEditor from "./Shapes/TextEditor";
 import { useCallback, useState } from "react";
+import { useUndoRedo } from "../context/UndoRedo/UndoRedoHelper";
 
 interface Props {
   texts: TextType[];
@@ -17,14 +18,37 @@ interface Props {
 
 const TextLayer = ({ texts, onEraserClick, onDragEnd, onTransformEnd, setShapes, setIsEditingText, isEditingText, tool }: Props) => {
   const [editingRef, setEditingRef] = useState<Konva.Text | null>(null);
+  const { pushUndo } = useUndoRedo();
 
   const handleTextChange = useCallback((newText: string) => {
     if (!editingRef) return;
     if (newText === "") {
-      setShapes(prev => prev.filter(s => "group-" + s.id !== editingRef.id()));
+      setShapes(prev => {
+        const deletedShape = prev.find(s => "group-" + s.id === editingRef.id());
+        if (deletedShape) {
+          pushUndo({ action: "delete", before: deletedShape, after: deletedShape });
+        }
+        return prev.filter(s => "group-" + s.id !== editingRef.id());
+      });
+      return;
     }
-    setShapes(prev => prev.map(shape => "group-" + shape.id === editingRef.id() ? { ...shape, text: newText } : shape))
-  }, [setShapes, editingRef])
+
+    setShapes(prev => {
+      return prev.map(shape => {
+        if ("group-" + shape.id === editingRef.id()) {
+          if (shape.shape === "text")
+            pushUndo({
+              action: "update",
+              before: shape,      // previous shape
+              after: { ...shape, text: newText }, // new shape
+            });
+          return { ...shape, text: newText }; // apply change
+        }
+        return shape;
+      });
+    });
+  }, [setShapes, editingRef, pushUndo])
+
 
   return (
     <>

@@ -151,7 +151,7 @@ function SignIn() {
         <span className="font-medium text-sm">Go Back</span>
       </div>
 
-      <div className="absolute top-24 sm:top-16 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center text-white text-center lg:hidden">
+      <div className="absolute top-24 sm:top-16 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center text-white text-center lg:hidden ">
         <span className="text-3xl/12 font-bold drop-shadow-lg">RectUp</span>
         <span className="text-lg font-medium opacity-90 drop-shadow-md">
           {" "}
@@ -163,7 +163,7 @@ function SignIn() {
         <img src={loginimage} alt="" className="object-cover w-full h-full" />
       </div>
 
-      <div className="form-column h-full w-full px-6 sm:px-10 lg:px-40 pb-10 lg:pb-40 pt-10 lg:pt-20 bg-white flex flex-col items-center justify-center gap-4 lg:col-span-2">
+      <div className="form-column h-full w-full px-6 sm:px-10 lg:px-40 pb-10 lg:pb-40 pt-10 lg:pt-20 bg-white flex flex-col items-center justify-center gap-4 lg:col-span-2 overflow-auto">
         <div className="lognav flex flex-col w-full items-center justify-center">
           <div className="my-company flex flex-col text-center  lg:flex">
             <span className="text-3xl/12 font-bold">RectUp</span>

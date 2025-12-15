@@ -109,12 +109,15 @@ const Todo = ({
 
   const { statusColor, statusText, statusTextColor } = getStatusinfo();
 
-  const canHover =
+  const showAlways =
     typeof window !== "undefined" &&
-    window.matchMedia("(hover: hover)").matches;
+    (window.matchMedia("(pointer: coarse)").matches || // touch-first devices
+      window.innerWidth < 724);
+
+  // phones + tablets
   // const isMobile = typeof window !== "undefined" && window.innerWidth < 724;
   // const showCircle = isMobile || isHovered || todo.completed;
-  const showCircle = !canHover || isHovered;
+  const showCircle = showAlways || isHovered;
 
   // Setting checkbox
   const handleCheck = (id: string) => {

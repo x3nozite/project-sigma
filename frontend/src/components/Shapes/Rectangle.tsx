@@ -96,8 +96,6 @@ const Rectangle = ({
   const month = parts.find((p) => p.type === "month")!.value.slice(0, 3);
   const year = parts.find((p) => p.type === "year")!.value;
   const formatted = `${weekday}, ${day} ${month} ${year}`;
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-  const showCircle = isMobile || isHovered;
 
   const ref = useRef<Konva.Group>(null);
 
@@ -107,6 +105,12 @@ const Rectangle = ({
     }
   });
 
+  const showAlways =
+    typeof window !== "undefined" &&
+    (window.matchMedia("(pointer: coarse)").matches || // touch-first devices
+      window.innerWidth < 724);
+
+  const showCircle = showAlways || isHovered;
   return (
     <Group
       key={"key-" + rect.id}

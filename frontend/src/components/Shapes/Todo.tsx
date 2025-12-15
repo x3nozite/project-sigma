@@ -109,8 +109,12 @@ const Todo = ({
 
   const { statusColor, statusText, statusTextColor } = getStatusinfo();
 
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-  const showCircle = isMobile || isHovered || todo.completed;
+  const canHover =
+    typeof window !== "undefined" &&
+    window.matchMedia("(hover: hover)").matches;
+  // const isMobile = typeof window !== "undefined" && window.innerWidth < 724;
+  // const showCircle = isMobile || isHovered || todo.completed;
+  const showCircle = !canHover || isHovered;
 
   // Setting checkbox
   const handleCheck = (id: string) => {
@@ -186,7 +190,10 @@ const Todo = ({
           if (!shapes) return;
           let parent: RectType | null = null;
           if (todo.parents) {
-            const found = shapes.find((s) => "rect-" + s.id === todo.parents);
+            const parentId = todo.parents?.startsWith("group-")
+              ? todo.parents.replace("group-", "")
+              : todo.parents;
+            const found = shapes.find((s) => s.id === parentId);
             if (found && found?.shape === "rect") {
               parent = found as RectType;
             }

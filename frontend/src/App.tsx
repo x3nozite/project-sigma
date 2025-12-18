@@ -33,6 +33,7 @@ import {
   HiOutlineEye,
   HiOutlineEyeOff,
   HiOutlineGlobeAlt,
+  HiOutlineX,
 } from "react-icons/hi";
 import { HiMiniArrowUturnLeft, HiMiniArrowUturnRight } from "react-icons/hi2";
 import { FaGithub } from "react-icons/fa";
@@ -89,6 +90,9 @@ function App() {
   // canvas color
   const [canvasCol, setcanvasCol] = useState<string>("#ffffff");
   const [drawCol, setDrawCol] = useState<string>("#000");
+  // Tambah state ini
+  const [hasShownLocalReminder, setHasShownLocalReminder] = useState(false);
+  const [showLocalReminder, setShowLocalReminder] = useState(false);
 
   useAutosaveCanvas({ shapes, connectors }, 1000, () => {
     if (!currentCanvasId || shapes.length === 0) return;
@@ -207,6 +211,23 @@ function App() {
       }
     })();
   }, [currentCanvasId]);
+
+  //useeffect for showing local canvas save reminder
+  useEffect(() => {
+    if (
+      !session &&
+      currentCanvasId === "local" &&
+      shapes.length >= 5 &&
+      !hasShownLocalReminder
+    ) {
+      setShowLocalReminder(true);
+      setHasShownLocalReminder(true);
+    }
+
+    if (session || shapes.length < 5) {
+      setHasShownLocalReminder(false);
+    }
+  }, [session, shapes.length, currentCanvasId, hasShownLocalReminder]);
 
   const openTodoForm = (parent: RectType | null, currTodo: TodoType | null) => {
     setSelectedParent(parent);
@@ -1429,6 +1450,42 @@ function App() {
           </AlertDialog.Content>
         </AlertDialog.Portal>
       </AlertDialog.Root>
+      {showLocalReminder &&
+        !session &&
+        currentCanvasId === "local" &&
+        shapes.length >= 5 && (
+          <div className="fixed bottom-24 right-5 z-[200] max-w-sm animate-in slide-in-from-right">
+            <div className="bg-white rounded-lg p-4 shadow-lg">
+              <div className="flex items-start gap-3">
+                <HiOutlineGlobeAlt className="text-blue-600 text-xl flex-shrink-0" />
+                <div className="flex-1">
+                  <div className="flex items-start justify-between mb-1">
+                    <h4 className="font-semibold text-gray-900">
+                      Local Storage Reminder
+                    </h4>
+                    <button
+                      onClick={() => setShowLocalReminder(false)}
+                      className="text-gray-400 hover:text-gray-600 -mt-1 -mr-1"
+                    >
+                      <HiOutlineX />
+                    </button>
+                  </div>
+                  <p className="text-sm text-gray-700 mb-3">
+                    {shapes.length} shapes saved locally. Sign in to use across
+                    different devices!
+                  </p>
+                  <button
+                    onClick={() => navigate("/signin")}
+                    className="bg-blue-500 text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 text-sm font-medium w-full flex items-center justify-center gap-1"
+                  >
+                    <HiOutlineLogin />
+                    Sign In Now
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
     </>
   );
 }

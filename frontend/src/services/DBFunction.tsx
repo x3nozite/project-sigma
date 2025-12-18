@@ -52,7 +52,7 @@ async function getOrCreateCanvas(userId: string): Promise<string | null> {
   }
 
   // canvas id doesnt exist
-  console.log("canvas id doesnt exist");
+  // console.log("canvas id doesnt exist");
   const { data: newCanvas, error: createError } = await supabase
     .from("canvas")
     .insert({
@@ -285,11 +285,11 @@ export async function saveCanvas(
 
     const allData = [...shapesToInsert, ...connectorsToInsert];
 
-    console.log('Saving to DB:', {
-      shapes: shapesToInsert.length,
-      connectors: connectorsToInsert.length,
-      total: allData.length
-    });
+    // console.log('Saving to DB:', {
+    //   shapes: shapesToInsert.length,
+    //   connectors: connectorsToInsert.length,
+    //   total: allData.length
+    // });
 
     if (allData.length > 0) {
       const { error: insertError } = await supabase
@@ -422,23 +422,6 @@ export async function loadCanvas(
       });
     }
 
-    // const request = indexedDB.open("CanvasDB");
-    // let viewport = { x: 0, y: 0, scale: 1 };
-
-    // request.onsuccess = () => {
-    //   const db = request.result;
-    //   const tx = db.transaction("Viewport", "readonly");
-
-    //   const viewportStore = tx.objectStore("Viewport");
-    //   const viewportRes = viewportStore.get("local");
-
-    //   tx.oncomplete = () => {
-    //     const viewportRecord = viewportRes.result as Viewport | undefined;
-
-    //     if (viewportRecord) viewport = viewportRecord;
-    //   }
-    // }
-
     let targetCanvasId = canvasId;
     if (!targetCanvasId) {
       targetCanvasId = await getOrCreateCanvas(user.id);
@@ -472,14 +455,6 @@ export async function loadCanvas(
 
     const shapes = [...rects, ...lines, ...todos];
 
-    // const validShapes = shapes.filter(s => {
-    //   const isValid = s.id && s.shape && s.behavior !== undefined;
-    //   if (!isValid) {
-    //     console.warn('Removing invalid shape:', s);
-    //   }
-    //   return isValid;
-    // });
-
     const uniqueShapes = Array.from(
       new Map(shapes.map((s) => [s.id, s])).values()
     );
@@ -511,15 +486,12 @@ export async function loadCanvas(
 
       return true;
     });
-    // const filteredConnectors = filterValidConnectors(
-    //   uniqueConnectors,
-    //   uniqueShapes
-    // );
-    console.log('Load complete:', {
-      shapes: uniqueShapes.length,
-      connectors: validConnectors.length,
-      removed: uniqueConnectors.length - validConnectors.length
-    });
+    
+    // console.log('Load complete:', {
+    //   shapes: uniqueShapes.length,
+    //   connectors: validConnectors.length,
+    //   removed: uniqueConnectors.length - validConnectors.length
+    // });
 
     return {
       success: true,

@@ -88,7 +88,7 @@ function ResetPassword() {
           }
 
           if (data.session) {
-            console.log('Session established successfully');
+            // console.log('Session established successfully');
             setIsValidSession(true);
             setIsLoading(false);
           }
@@ -113,7 +113,7 @@ function ResetPassword() {
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log('Auth state change:', event, !!session);
+        // console.log('Auth state change:', event, !!session);
         if (event === 'PASSWORD_RECOVERY' && session) {
           setIsValidSession(true);
           setIsLoading(false);

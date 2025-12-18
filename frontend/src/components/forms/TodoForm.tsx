@@ -78,7 +78,7 @@ export default function TodoForm({
       await new Promise((resolve) => setTimeout(resolve, 500));
       if (isEditing) onUpdateTodo(initialTodo, data);
       else {
-        console.log("init: " + initialTodo);
+        // console.log("init: " + initialTodo);
         onAddTodo(data, parent);
       }
       onCloseForm();

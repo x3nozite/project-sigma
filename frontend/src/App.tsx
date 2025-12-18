@@ -225,7 +225,7 @@ function App() {
 
   const openForm = (shape: ShapeType | null) => {
     setSelectedShape(shape);
-    console.log("shape: " + shape);
+    // console.log("shape: " + shape);
     setShowForm(true);
     setisFormOpen(true);
   };
@@ -238,7 +238,7 @@ function App() {
 
   const addTodo = (newFields: todoFields, parent: RectType | null) => {
     const iso = new Date(newFields.date).toISOString();
-    console.log("Current parent is: " + parent?.id);
+    // console.log("Current parent is: " + parent?.id);
     const newTodo: TodoType = {
       id: "todo-" + Date.now().toString(),
       x: parent
@@ -416,7 +416,7 @@ function App() {
         store.clear();
 
         tx.oncomplete = () => {
-          console.log("IndexedDB shapes cleared");
+          // console.log("IndexedDB shapes cleared");
           resolve();
         };
         tx.onerror = () => {

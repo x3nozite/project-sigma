@@ -1,14 +1,14 @@
 export const initIndexedDb = async (): Promise<boolean> => {
   let request: IDBOpenDBRequest;
   let db: IDBDatabase;
-  let version = 1;
+  let version = 3;
 
   return new Promise((resolve) => {
     // open connection
-    request = indexedDB.open("CanvasDB", 3);
+    request = indexedDB.open("CanvasDB", version);
     request.onupgradeneeded = () => {
       db = request.result;
-      
+
       // create object store if it doesn't exist yet
       if (!db.objectStoreNames.contains("Canvas")) {
         // console.log("create object store");

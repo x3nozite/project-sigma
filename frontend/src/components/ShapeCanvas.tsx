@@ -119,8 +119,9 @@ const ShapeCanvas = ({
       if (s.behavior !== "node") return;
       const shapeGroup = mainLayer.current?.findOne(`#group-${s.id}`);
       const shape = mainLayer.current?.findOne(`#${s.id}`) as Konva.Shape;
+      if (!shapeGroup || !shape) return;
       const shapeInArray = shapes.find((s) => s.id === shape.id());
-      if (!shapeGroup || !shape || !shapeInArray) return;
+      if (!shapeInArray) return;
 
       shapeGroup.off("drop");
       shapeGroup.off("dragenter");

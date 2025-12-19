@@ -6,9 +6,10 @@ interface Props {
   lines: LineType[];
   onDragEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
   onTransformEnd: (e: Konva.KonvaEventObject<DragEvent>) => void;
+  isDraggable: boolean;
 }
 
-const LineLayer = ({ lines, onDragEnd, onTransformEnd }: Props) => {
+const LineLayer = ({ lines, onDragEnd, onTransformEnd, isDraggable }: Props) => {
 
   return (
     <>
@@ -24,7 +25,7 @@ const LineLayer = ({ lines, onDragEnd, onTransformEnd }: Props) => {
           lineCap="round"
           lineJoin="round"
           globalCompositeOperation="source-over"
-          draggable
+          draggable={isDraggable}
           onDragEnd={onDragEnd}
           onTransformEnd={onTransformEnd}
         />

@@ -16,6 +16,7 @@ interface Props {
   getBorder: (color: string) => string | undefined;
   onTodoClick: (parent: RectType | null, currTodo: TodoType | null) => void;
   nodeMap: RefObject<Map<string, Konva.Node>>;
+  isDraggable: boolean;
 }
 
 const Todo = ({
@@ -30,6 +31,7 @@ const Todo = ({
   onTodoClick,
   shapes,
   nodeMap,
+  isDraggable
 }: Props) => {
   // For the checkbox
   const [isHovered, setisHovered] = useState(false);
@@ -161,7 +163,7 @@ const Todo = ({
       onMouseLeave={() => {
         if (tool === "hand") setisHovered(false);
       }}
-      draggable={tool != "eraser"}
+      draggable={isDraggable}
       onDragStart={onDragStart}
       onDragMove={onDragMove}
       onDragEnd={onDragEnd}

@@ -14,9 +14,10 @@ interface Props {
   tool: ToolType;
   setEditingRef: React.Dispatch<React.SetStateAction<Konva.Text | null>>;
   editingRef: Konva.Text | null;
+  isDraggable: boolean;
 }
 
-const EditableText = ({ initialText, onEraserClick, onDragEnd, onTransformEnd, setIsEditingText, isEditingText, tool, setEditingRef, editingRef }: Props) => {
+const EditableText = ({ initialText, onEraserClick, onDragEnd, onTransformEnd, setIsEditingText, isEditingText, tool, setEditingRef, editingRef, isDraggable }: Props) => {
   const textRef = useRef<Konva.Text | null>(null);
 
   const handleTextDblClick = useCallback(() => {
@@ -81,7 +82,7 @@ const EditableText = ({ initialText, onEraserClick, onDragEnd, onTransformEnd, s
         align="left"
         lineHeight={1}
         text={initialText.text}
-        draggable
+        draggable={isDraggable}
         onClick={() => onEraserClick(initialText.id)}
         onDragEnd={onDragEnd}
         onTransform={handleTransform}

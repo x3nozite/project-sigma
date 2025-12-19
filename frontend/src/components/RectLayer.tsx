@@ -23,6 +23,7 @@ interface Props {
     shapes: ShapeType[]
   ) => { completed: number; not_completed: number };
   nodeMap: RefObject<Map<string, Konva.Node>>;
+  isDraggable: boolean;
 }
 
 const RectLayer = ({
@@ -40,7 +41,8 @@ const RectLayer = ({
   onAddTodo,
   allShapes,
   getChildCounts,
-  nodeMap
+  nodeMap,
+  isDraggable
 }: Props) => {
   return (
     <>
@@ -62,6 +64,7 @@ const RectLayer = ({
           global_shape={allShapes}
           getChildCounts={getChildCounts}
           nodeMap={nodeMap}
+          isDraggable={isDraggable}
         />
       ))}
     </>

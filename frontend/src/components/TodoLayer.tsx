@@ -16,6 +16,7 @@ interface Props {
   getBorder: (color: string) => string | undefined;
   onTodoClick: (parent: RectType | null, currTodo: TodoType | null) => void;
   nodeMap: RefObject<Map<string, Konva.Node>>;
+  isDraggable: boolean;
 }
 
 const TodoLayer = ({
@@ -30,7 +31,8 @@ const TodoLayer = ({
   getBorder,
   onTodoClick,
   shapes,
-  nodeMap
+  nodeMap,
+  isDraggable
 }: Props) => {
   return (
     <>
@@ -49,6 +51,7 @@ const TodoLayer = ({
           onTodoClick={onTodoClick}
           shapes={shapes}
           nodeMap={nodeMap}
+          isDraggable={isDraggable}
         />
       ))}
     </>

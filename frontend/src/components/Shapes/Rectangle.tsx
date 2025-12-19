@@ -22,6 +22,7 @@ interface Props {
     shapes: ShapeType[]
   ) => { completed: number; not_completed: number };
   nodeMap: RefObject<Map<string, Konva.Node>>;
+  isDraggable: boolean;
 }
 
 const Rectangle = ({
@@ -40,6 +41,7 @@ const Rectangle = ({
   global_shape,
   getChildCounts,
   nodeMap,
+  isDraggable,
 }: Props) => {
   // test
   const counts = getChildCounts(rect, global_shape);
@@ -126,7 +128,7 @@ const Rectangle = ({
       scalingY={rect.scaleY ?? 1}
       scaleX={rect.scaleX ?? 1}
       scaleY={rect.scaleY ?? 1}
-      draggable={tool !== "eraser"}
+      draggable={isDraggable}
       onDragStart={onDragStart}
       onDragMove={onDragMove}
       onDragEnd={onDragEnd}

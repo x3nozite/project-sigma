@@ -14,9 +14,10 @@ interface Props {
   setIsEditingText: React.Dispatch<React.SetStateAction<boolean>>;
   isEditingText: boolean;
   tool: ToolType;
+  isDraggable: boolean;
 }
 
-const TextLayer = ({ texts, onEraserClick, onDragEnd, onTransformEnd, setShapes, setIsEditingText, isEditingText, tool }: Props) => {
+const TextLayer = ({ texts, onEraserClick, onDragEnd, onTransformEnd, setShapes, setIsEditingText, isEditingText, tool, isDraggable }: Props) => {
   const [editingRef, setEditingRef] = useState<Konva.Text | null>(null);
   const { pushUndo } = useUndoRedo();
 
@@ -65,6 +66,7 @@ const TextLayer = ({ texts, onEraserClick, onDragEnd, onTransformEnd, setShapes,
           tool={tool}
           editingRef={editingRef}
           setEditingRef={setEditingRef}
+          isDraggable={isDraggable}
         />
       ))}
       {isEditingText && editingRef && (

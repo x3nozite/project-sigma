@@ -110,6 +110,7 @@ const ShapeCanvas = ({
   const currentUndoGroup = useRef<string | null>(null);
   const [isEditingText, setIsEditingText] = useState(false);
   const nodeMap = useRef(new Map<string, Konva.Node>());
+  const [shapeDraggable, setShapeDraggable] = useState<boolean>(true);
 
   useEffect(() => {
     if (!mainLayer.current) return;
@@ -375,6 +376,12 @@ const ShapeCanvas = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    if (tool !== "hand" && tool !== "select") {
+      setShapeDraggable(false);
+    } else setShapeDraggable(true);
+  }, [tool])
+
   const checkParentVisible = (shape: ShapeType) => {
     if (shape.behavior !== "node") return;
     //find parent
@@ -611,6 +618,7 @@ const ShapeCanvas = ({
                 currentUndoGroup.current
               );
             }}
+            isDraggable={shapeDraggable}
           />
           <TextLayer
             texts={shapes.filter(
@@ -642,6 +650,7 @@ const ShapeCanvas = ({
             isEditingText={isEditingText}
             setIsEditingText={setIsEditingText}
             tool={tool}
+            isDraggable={shapeDraggable}
           />
         </Layer>
         <Layer ref={arrowLayer}>
@@ -703,6 +712,7 @@ const ShapeCanvas = ({
             onAddTodo={onAddTodo}
             getChildCounts={countChildren}
             nodeMap={nodeMap}
+            isDraggable={shapeDraggable}
           />
           <TodoLayer
             todos={shapes.filter(
@@ -748,6 +758,7 @@ const ShapeCanvas = ({
             onTodoClick={onAddTodo}
             shapes={shapes}
             nodeMap={nodeMap}
+            isDraggable={shapeDraggable}
           />
         </Layer>
         <Layer ref={tempLayer}></Layer>
@@ -763,6 +774,7 @@ const ShapeCanvas = ({
               "middle-left",
               "middle-right",
             ]}
+            rotateEnabled={false}
             boundBoxFunc={(oldBox, newBox) => {
               if (newBox.width < 5 || newBox.height < 5) {
                 return oldBox;

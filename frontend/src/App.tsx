@@ -1031,8 +1031,7 @@ function App() {
                                 Introduction
                               </h1>
                               <span>
-                                Add description here about the app, make it cute
-                                if you want
+                                Rect-Up is a simple canvas for planning and organizing work visually. You can create Tasks (rectangles), add smaller Todos, place Text labels, and connect items to show relationships.
                               </span>
                             </AlertDialog.Description>
                             <hr />
@@ -1057,8 +1056,12 @@ function App() {
                                     How To Use
                                   </h2>
                                   <ol className="list-decimal list-inside">
-                                    <li>Explain The Method Here</li>
-                                    <li>Add more explanation here</li>
+                                    <li>Click Add Task on the toolbar.</li>
+                                    <li>
+                                      Fill in Title, Description, choose a
+                                      Color, and set a Due Date.
+                                    </li>
+                                    <li>Click Create New Task.</li>
                                   </ol>
                                 </div>
                               </div>
@@ -1070,22 +1073,25 @@ function App() {
                                   2. Add Todo
                                 </h1>
                                 <span>
-                                  The Add Task feature allows you to create a
-                                  task item that represents a specific piece of
-                                  work or goal.
+                                  The Add Todo feature allows you to create
+                                  smaller checklist items or sub-tasks. Todos
+                                  can be created independently or linked to a
+                                  task to help break down larger goals into
+                                  manageable steps.
                                 </span>
                                 <img
                                   src="/rect-up/todo.gif"
                                   alt=""
-                                  className="w-full h-50 object-scale-down"
+                                  className="w-full h-70 object-scale-down"
                                 />
                                 <div className="flex flex-col">
                                   <h2 className="text-md font-bold">
                                     How To Use
                                   </h2>
                                   <ol className="list-decimal list-inside">
-                                    <li>Explain The Method Here</li>
-                                    <li>Add more explanation here</li>
+                                    <li>Click Add Todo on the toolbar.</li>
+                                    <li>Fill in Title, choose a Color, set a Due Date, and Check Status to be Completed if needed.</li>
+                                    <li>Click Submit.</li>
                                   </ol>
                                 </div>
                               </div>
@@ -1097,22 +1103,22 @@ function App() {
                                   3. Add Text
                                 </h1>
                                 <span>
-                                  The Add Task feature allows you to create a
-                                  task item that represents a specific piece of
-                                  work or goal.
+                                  Text is for free labels like section headers, notes, or markers
                                 </span>
                                 <img
-                                  src="/rect-up/test.gif"
+                                  src="/rect-up/text.gif"
                                   alt=""
-                                  className="w-full h-50 object-fit"
+                                  className="w-full h-70 object-scale-down"
                                 />
                                 <div className="flex flex-col">
                                   <h2 className="text-md font-bold">
                                     How To Use
                                   </h2>
                                   <ol className="list-decimal list-inside">
-                                    <li>Explain The Method Here</li>
-                                    <li>Add more explanation here</li>
+                                    <li>Click Add Text on the toolbar.</li>
+                                    <li>A text item will appear with a default message.</li>
+                                    <li>Drag it to where you want it on the canvas.</li>
+                                    <li>Click the text to edit it</li>
                                   </ol>
                                 </div>
                               </div>
@@ -1124,22 +1130,23 @@ function App() {
                                   4. New Canvas
                                 </h1>
                                 <span>
-                                  The Add Task feature allows you to create a
-                                  task item that represents a specific piece of
-                                  work or goal.
+                                  New Canvas creates a fresh workspace so you can separate boards by project
                                 </span>
                                 <img
-                                  src="/rect-up/test.gif"
+                                  src="/rect-up/createcanvas.gif"
                                   alt=""
-                                  className="w-full h-50 object-fit"
+                                  className="w-full h-70 object-scale-down"
                                 />
                                 <div className="flex flex-col">
                                   <h2 className="text-md font-bold">
                                     How To Use
                                   </h2>
                                   <ol className="list-decimal list-inside">
-                                    <li>Explain The Method Here</li>
-                                    <li>Add more explanation here</li>
+                                    <li>Click the ☰ (menu) button.</li>
+                                    <li>Select New Canvas.</li>
+                                    <li>Enter a canvas name, then click Create Canvas.</li>
+                                    <li>Your new canvas will open as an empty workspace.</li>
+                                    <li>You can view and switch canvases in My Canvases anytime.</li>
                                   </ol>
                                 </div>
                               </div>
@@ -1151,22 +1158,21 @@ function App() {
                                   5. Clear Canvas
                                 </h1>
                                 <span>
-                                  The Add Task feature allows you to create a
-                                  task item that represents a specific piece of
-                                  work or goal.
+                                  Clear Canvas removes all shapes and connectors from the current canvas. This action is permanent once confirmed.
                                 </span>
                                 <img
-                                  src="/rect-up/test.gif"
+                                  src="/rect-up/clearcanvas.gif"
                                   alt=""
-                                  className="w-full h-50 object-fit"
+                                  className="w-full h-70 object-scale-down"
                                 />
                                 <div className="flex flex-col">
                                   <h2 className="text-md font-bold">
                                     How To Use
                                   </h2>
                                   <ol className="list-decimal list-inside">
-                                    <li>Explain The Method Here</li>
-                                    <li>Add more explanation here</li>
+                                    <li>Click the ☰ (menu) button.</li>
+                                    <li>Select Clear Canvas.</li>
+                                    <li>Confirm by clicking Yes, clear canvas.</li>
                                   </ol>
                                 </div>
                               </div>

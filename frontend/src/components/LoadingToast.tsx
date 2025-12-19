@@ -1,5 +1,8 @@
 import type { LoadingToastType } from "./types";
-
+import { IoMdCheckmark } from "react-icons/io";
+import { FiLoader } from "react-icons/fi";
+import { FiAlertCircle } from "react-icons/fi";
+import { LuCircleHelp } from "react-icons/lu";
 type LoadingToastProps = {
   message: string;
   type: LoadingToastType;
@@ -30,7 +33,33 @@ export default function Toast({ message, type }: LoadingToastProps) {
         transition: "background 0.25s ease",
       }}
     >
-      {message}
+      {type === "success" && (
+          <div className="flex items-center gap-2">
+            <IoMdCheckmark color="#000000" />
+            {message}
+          </div>
+      )}
+
+      {type === "error" && (
+          <div className="flex items-center gap-2">
+            <FiAlertCircle color="#000000" />
+            {message}
+          </div>
+      )}
+
+      {type === "loading" && (
+          <div className="flex items-center gap-2">
+            <FiLoader color="#000000" />
+            {message}
+          </div>
+      )}
+
+      {type === "empty" && (
+          <div className="flex items-center gap-2">
+            <LuCircleHelp color="#000000" />
+            {message}
+          </div>
+      )}
     </div>
   );
 }

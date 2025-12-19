@@ -105,7 +105,10 @@ function App() {
 
   const showToast = (message: string, type: LoadingToastType) => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
+
+    if (type !== "loading") {
+      setTimeout(() => setToast(null), 3000);
+    }
   };
 
   useAutosaveCanvas({ shapes, connectors }, 1000, () => {
@@ -179,7 +182,7 @@ function App() {
         if (shapeCount === 0) {
           showToast("No objects found.", "empty");
         } else {
-          showToast(`Loaded ${shapeCount} objects`, "success");
+          showToast(`Loaded ${shapeCount} object(s)`, "success");
         }
 
         // timeout for toast

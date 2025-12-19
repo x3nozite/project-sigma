@@ -36,6 +36,7 @@ import {
   HiOutlineEyeOff,
   HiOutlineGlobeAlt,
   HiOutlineX,
+  HiOutlineInformationCircle,
 } from "react-icons/hi";
 import { HiMiniArrowUturnLeft, HiMiniArrowUturnRight } from "react-icons/hi2";
 import { FaGithub } from "react-icons/fa";
@@ -142,7 +143,8 @@ function App() {
           });
           setZoomValue(Math.round(local.data.viewport.scale * 100));
           setCurrentCanvasId("local");
-          const shapeCount = local.data.shapes.length + local.data.connectors.length
+          const shapeCount =
+            local.data.shapes.length + local.data.connectors.length;
 
           if (shapeCount === 0) {
             showToast("No objects found.", "empty");
@@ -152,8 +154,6 @@ function App() {
 
           // timeout for toast
           setTimeout(() => setToast(null), 3000);
-
-
         } else {
           setConnectors([]);
           setShapes([]);
@@ -176,8 +176,8 @@ function App() {
         });
         setZoomValue(Math.round(canvasRes.data.viewport.scale * 100));
 
-
-        const shapeCount = canvasRes.data.shapes.length + canvasRes.data.connectors.length
+        const shapeCount =
+          canvasRes.data.shapes.length + canvasRes.data.connectors.length;
 
         if (shapeCount === 0) {
           showToast("No objects found.", "empty");
@@ -305,11 +305,11 @@ function App() {
       x: parent
         ? parent.x + 400
         : (stageCoor.x * -1 + (window.innerWidth - 200) / 2) *
-        (100 / zoomValue),
+          (100 / zoomValue),
       y: parent
         ? parent.y
         : (stageCoor.y * -1 + (window.innerHeight - 200) / 2) *
-        (100 / zoomValue),
+          (100 / zoomValue),
       color: newFields.color, // default is green
       isCollapsed: false,
       scaleX: 1,
@@ -426,12 +426,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-            ...r,
-            title: newData.title,
-            description: newData.description,
-            color: newData.color,
-            dueDate: newData.date,
-          }
+              ...r,
+              title: newData.title,
+              description: newData.description,
+              color: newData.color,
+              dueDate: newData.date,
+            }
           : r
       )
     );
@@ -442,12 +442,12 @@ function App() {
       prev.map((t) =>
         t.id === shape.id
           ? {
-            ...t,
-            title: newData.title,
-            dueDate: newData.date,
-            completed: newData.completed,
-            color: newData.color,
-          }
+              ...t,
+              title: newData.title,
+              dueDate: newData.date,
+              completed: newData.completed,
+              color: newData.color,
+            }
           : t
       )
     );
@@ -588,12 +588,10 @@ function App() {
         // console.error("Load failed:", result.error);
       }
     } catch (error) {
-
       console.error("Load error:", error);
     } finally {
       setIsLoading(false);
     }
-
   };
 
   const handleCreateNewCanvas = async (name: string) => {
@@ -781,9 +779,10 @@ function App() {
                                       className={`
                                         flex items-center justify-between p-4 rounded-lg border-2 
                                         transition-all
-                                        ${currentCanvasId === canvas.canvas_id
-                                          ? "bg-blue-100 border-blue-400"
-                                          : "bg-gray-50 border-gray-200"
+                                        ${
+                                          currentCanvasId === canvas.canvas_id
+                                            ? "bg-blue-100 border-blue-400"
+                                            : "bg-gray-50 border-gray-200"
                                         }
                                       `}
                                     >
@@ -802,7 +801,7 @@ function App() {
                                         <HiOutlineFolder className="w-5 h-5 text-blue-600" />
                                         <div className="flex-1">
                                           {editingCanvasId ===
-                                            canvas.canvas_id ? (
+                                          canvas.canvas_id ? (
                                             <input
                                               type="text"
                                               value={editingCanvasName}
@@ -849,13 +848,13 @@ function App() {
                                       <div className="flex items-center gap-2">
                                         {currentCanvasId ===
                                           canvas.canvas_id && (
-                                            <span className="text-xs text-blue-600 font-medium mr-2">
-                                              Current
-                                            </span>
-                                          )}
+                                          <span className="text-xs text-blue-600 font-medium mr-2">
+                                            Current
+                                          </span>
+                                        )}
 
                                         {editingCanvasId ===
-                                          canvas.canvas_id ? (
+                                        canvas.canvas_id ? (
                                           <>
                                             <button
                                               onClick={(e) => {
@@ -1001,6 +1000,210 @@ function App() {
                         Feedback & Support
                       </div>
                     </a>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item
+                    onSelect={(event: Event) => event.preventDefault()}
+                    className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700"
+                  >
+                    <AlertDialog.Root>
+                      <AlertDialog.Trigger asChild>
+                        <button className="flex items-center gap-2">
+                          <HiOutlineInformationCircle />
+                          How to Use?
+                        </button>
+                      </AlertDialog.Trigger>
+                      <AlertDialog.Portal>
+                        <AlertDialog.Overlay className="fixed bg-black opacity-50 inset-0 z-100" />
+                        <AlertDialog.Content className="overflow-y-auto bg-white fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80dvw] md:w-[70dvw] xl:w-[40dvw] p-4 sm:p-6 rounded-lg z-101 h-[70dvh]">
+                          <AlertDialog.Title className="text-2xl font-bold mb-2">
+                            <div className="w-full flex flex-row justify-between items-center">
+                              <span>Rect-Up Documentation</span>
+                              <AlertDialog.Cancel asChild>
+                                <button className="px-4 py-2 text-sm bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                                  Close
+                                </button>
+                              </AlertDialog.Cancel>
+                            </div>
+                          </AlertDialog.Title>
+                          <div className="main flex flex-col gap-4">
+                            <AlertDialog.Description className="mt-2">
+                              <h1 className="text-xl font-bold">
+                                Introduction
+                              </h1>
+                              <span>
+                                Add description here about the app, make it cute
+                                if you want
+                              </span>
+                            </AlertDialog.Description>
+                            <hr />
+                            {/* copy explanation and hr multiple times */}
+                            <div className="explanation-1">
+                              <div className="flex flex-col gap-2">
+                                <h1 className="text-xl font-bold">
+                                  1. Add Task
+                                </h1>
+                                <span>
+                                  The Add Task feature allows you to create a
+                                  task item that represents a specific piece of
+                                  work or goal.
+                                </span>
+                                <img
+                                  src="/rect-up/test.gif"
+                                  alt=""
+                                  className="w-full h-50 object-fit"
+                                />
+                                <div className="flex flex-col">
+                                  <h2 className="text-md font-bold">
+                                    How To Use
+                                  </h2>
+                                  <ol className="list-decimal list-inside">
+                                    <li>Explain The Method Here</li>
+                                    <li>Add more explanation here</li>
+                                  </ol>
+                                </div>
+                              </div>
+                            </div>
+                            <hr />
+                            <div className="explanation-2">
+                              <div className="flex flex-col gap-2">
+                                <h1 className="text-xl font-bold">
+                                  2. Add Todo
+                                </h1>
+                                <span>
+                                  The Add Task feature allows you to create a
+                                  task item that represents a specific piece of
+                                  work or goal.
+                                </span>
+                                <img
+                                  src="/rect-up/test.gif"
+                                  alt=""
+                                  className="w-full h-50 object-fit"
+                                />
+                                <div className="flex flex-col">
+                                  <h2 className="text-md font-bold">
+                                    How To Use
+                                  </h2>
+                                  <ol className="list-decimal list-inside">
+                                    <li>Explain The Method Here</li>
+                                    <li>Add more explanation here</li>
+                                  </ol>
+                                </div>
+                              </div>
+                            </div>
+                            <hr />
+                            <div className="explanation-3">
+                              <div className="flex flex-col gap-2">
+                                <h1 className="text-xl font-bold">
+                                  3. Add Text
+                                </h1>
+                                <span>
+                                  The Add Task feature allows you to create a
+                                  task item that represents a specific piece of
+                                  work or goal.
+                                </span>
+                                <img
+                                  src="/rect-up/test.gif"
+                                  alt=""
+                                  className="w-full h-50 object-fit"
+                                />
+                                <div className="flex flex-col">
+                                  <h2 className="text-md font-bold">
+                                    How To Use
+                                  </h2>
+                                  <ol className="list-decimal list-inside">
+                                    <li>Explain The Method Here</li>
+                                    <li>Add more explanation here</li>
+                                  </ol>
+                                </div>
+                              </div>
+                            </div>
+                            <hr />
+                            <div className="explanation-4">
+                              <div className="flex flex-col gap-2">
+                                <h1 className="text-xl font-bold">
+                                  4. New Canvas
+                                </h1>
+                                <span>
+                                  The Add Task feature allows you to create a
+                                  task item that represents a specific piece of
+                                  work or goal.
+                                </span>
+                                <img
+                                  src="/rect-up/test.gif"
+                                  alt=""
+                                  className="w-full h-50 object-fit"
+                                />
+                                <div className="flex flex-col">
+                                  <h2 className="text-md font-bold">
+                                    How To Use
+                                  </h2>
+                                  <ol className="list-decimal list-inside">
+                                    <li>Explain The Method Here</li>
+                                    <li>Add more explanation here</li>
+                                  </ol>
+                                </div>
+                              </div>
+                            </div>
+                            <hr />
+                            <div className="explanation-5">
+                              <div className="flex flex-col gap-2">
+                                <h1 className="text-xl font-bold">
+                                  5. Clear Canvas
+                                </h1>
+                                <span>
+                                  The Add Task feature allows you to create a
+                                  task item that represents a specific piece of
+                                  work or goal.
+                                </span>
+                                <img
+                                  src="/rect-up/test.gif"
+                                  alt=""
+                                  className="w-full h-50 object-fit"
+                                />
+                                <div className="flex flex-col">
+                                  <h2 className="text-md font-bold">
+                                    How To Use
+                                  </h2>
+                                  <ol className="list-decimal list-inside">
+                                    <li>Explain The Method Here</li>
+                                    <li>Add more explanation here</li>
+                                  </ol>
+                                </div>
+                              </div>
+                            </div>
+                            <hr />
+                            <div className="explanation-5">
+                              <div className="flex flex-col gap-2">
+                                <h1 className="text-xl font-bold">
+                                  5. Extra Features
+                                </h1>
+                                <span>
+                                  make a fun description talking about undo zoom
+                                  and toggle visibility
+                                </span>
+
+                                <div className="flex flex-col">
+                                  <h2 className="text-md font-bold">
+                                    How To Use
+                                  </h2>
+                                  <ol className="list-decimal list-inside">
+                                    <li>Explain The Method Here</li>
+                                    <li>Add more explanation here</li>
+                                  </ol>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-end gap-4">
+                            <AlertDialog.Cancel asChild>
+                              <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                                Close
+                              </button>
+                            </AlertDialog.Cancel>
+                          </div>
+                        </AlertDialog.Content>
+                      </AlertDialog.Portal>
+                    </AlertDialog.Root>
                   </DropdownMenu.Item>
                   <DropdownMenu.Separator className="h-[0.1dvh] my-2 bg-gray-500" />
                   <DropdownMenu.Label className="py-0.5 pl-2 text-sm text-gray-400">
@@ -1498,7 +1701,7 @@ function App() {
         !session &&
         currentCanvasId === "local" &&
         shapes.length >= 5 && (
-          <div className="fixed bottom-24 right-5 z-[200] max-w-sm animate-in slide-in-from-right">
+          <div className="fixed bottom-24 right-5 z-500 max-w-sm animate-in slide-in-from-right">
             <div className="bg-white rounded-lg p-4 shadow-lg">
               <div className="flex items-start gap-3">
                 <HiOutlineGlobeAlt className="text-blue-600 text-xl flex-shrink-0" />
@@ -1516,7 +1719,8 @@ function App() {
                   </div>
                   <p className="text-sm text-gray-700 mb-3">
                     {shapes.length} shapes saved locally. Sign in to use across
-                    different devices! (Local data will remain on this device and won’t be migrated after signing in.)
+                    different devices! (Local data will remain on this device
+                    and won’t be migrated after signing in.)
                   </p>
                   <button
                     onClick={() => navigate("/signin")}

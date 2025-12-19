@@ -209,6 +209,37 @@ export async function getCanvasColor(canvasId: string | null) {
   }
 }
 
+async function saveViewport(viewport: Viewport, canvasId?: string | null): Promise<{ success: boolean, canvasId: string }> {
+
+  await new Promise((resolve) => {
+    const request = indexedDB.open("CanvasDB");
+
+
+    const viewportData = {
+      canvas_viewport: (canvasId) ? canvasId : "local",
+      x: viewport.x,
+      y: viewport.y,
+      scale: viewport.scale,
+      updatedAt: Date.now(),
+    };
+
+    request.onsuccess = () => {
+      const db = request.result;
+      const tx = db.transaction(["Viewport"], "readwrite");
+      const viewportStore = tx.objectStore("Viewport");
+
+      viewportStore.put(viewportData);
+
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => resolve(true);
+    };
+
+    request.onerror = () => resolve(true);
+  });
+
+  return { success: true, canvasId: "local" };
+}
+
 export async function saveCanvas(
   shapesData: CanvasData,
   canvasId?: string | null,
@@ -265,6 +296,8 @@ export async function saveCanvas(
         return { success: false, error: "Failed to get canvas" };
       }
     }
+
+    saveViewport(shapesData.viewport, canvasId);
 
     if (!shapesData || !shapesData.shapes || !shapesData.connectors) {
       console.warn("Skipping save - incomplete data");
@@ -334,7 +367,7 @@ export async function saveCanvas(
   }
 }
 
-const loadViewport = async (): Promise<Viewport> => {
+const loadViewport = async (canvasId?: string | null): Promise<Viewport> => {
   return new Promise((resolve) => {
     const request = indexedDB.open("CanvasDB");
 
@@ -342,7 +375,7 @@ const loadViewport = async (): Promise<Viewport> => {
       const db = request.result;
       const tx = db.transaction("Viewport", "readonly");
       const store = tx.objectStore("Viewport");
-      const res = store.get("local");
+      const res = store.get((canvasId) ? canvasId : "local");
 
       tx.oncomplete = () => {
         const vp = res.result as Viewport | undefined;
@@ -378,7 +411,7 @@ export async function loadCanvas(
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    const viewport = await loadViewport();
+    const viewport = await loadViewport(canvasId);
 
     if (!user || canvasId === "local") {
       return new Promise((resolve) => {
@@ -486,7 +519,7 @@ export async function loadCanvas(
 
       return true;
     });
-    
+
     // console.log('Load complete:', {
     //   shapes: uniqueShapes.length,
     //   connectors: validConnectors.length,
@@ -497,7 +530,7 @@ export async function loadCanvas(
       success: true,
       data: { shapes: uniqueShapes, connectors: validConnectors, viewport },
       canvasId: targetCanvasId,
-      
+
     };
   } catch (error: any) {
     console.error("loadCanvas error:", error);

@@ -1,7 +1,7 @@
 export const initIndexedDb = async (): Promise<boolean> => {
   let request: IDBOpenDBRequest;
   let db: IDBDatabase;
-  let version = 3;
+  let version = 4;
 
   return new Promise((resolve) => {
     // open connection

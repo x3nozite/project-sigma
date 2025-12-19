@@ -296,7 +296,7 @@ export async function saveCanvas(
         return { success: false, error: "Failed to get canvas" };
       }
     }
-
+    
     saveViewport(shapesData.viewport, canvasId);
 
     if (!shapesData || !shapesData.shapes || !shapesData.connectors) {
@@ -304,62 +304,68 @@ export async function saveCanvas(
       return { success: true, canvasId: targetCanvasId };
     }
 
-    await supabase.from("shapes").delete().eq("canvas_id", targetCanvasId);
+    const { data: existingShapes, error: fetchError } = await supabase
+      .from("shapes")
+      .select("shape_id, shape_data")
+      .eq("canvas_id", targetCanvasId);
 
-    const shapesToInsert = shapesData.shapes.map((shape) => ({
+    if (fetchError) {
+      console.error("Fetch error:", fetchError);
+      return { success: false, error: fetchError.message };
+    }
+
+    const shapeIdMap = new Map(
+      existingShapes?.map(s => [s.shape_data.id, s.shape_id]) || []
+    );
+
+    const currentShapeIds = new Set([
+      ...shapesData.shapes.map(s => s.id),
+      ...shapesData.connectors.map(c => c.id)
+    ]);
+
+    const shapeIdsToDelete = existingShapes
+      ?.filter(s => !currentShapeIds.has(s.shape_data.id))
+      .map(s => s.shape_id) || [];
+
+    if (shapeIdsToDelete.length > 0) {
+      console.log("saveCanvas: deleting removed shapes", shapeIdsToDelete.length);
+      await supabase
+        .from("shapes")
+        .delete()
+        .in("shape_id", shapeIdsToDelete);
+    }
+
+    const shapesToUpsert = shapesData.shapes.map((shape) => ({
+      shape_id: shapeIdMap.get(shape.id) || crypto.randomUUID(),
       canvas_id: targetCanvasId,
       shape_data: shape,
     }));
 
-    const connectorsToInsert = shapesData.connectors.map((c) => ({
+    const connectorsToUpsert = shapesData.connectors.map((c) => ({
+      shape_id: shapeIdMap.get(c.id) || crypto.randomUUID(),
       canvas_id: targetCanvasId,
       shape_data: c,
     }));
 
-    const allData = [...shapesToInsert, ...connectorsToInsert];
-
-    // console.log('Saving to DB:', {
-    //   shapes: shapesToInsert.length,
-    //   connectors: connectorsToInsert.length,
-    //   total: allData.length
-    // });
+    const allData = [...shapesToUpsert, ...connectorsToUpsert];
 
     if (allData.length > 0) {
-      const { error: insertError } = await supabase
+      console.log("saveCanvas: upserting shapes", allData.length);
+      
+      const { error: upsertError } = await supabase
         .from("shapes")
-        .insert(allData);
+        .upsert(allData, {
+          onConflict: 'shape_id', // Primary key conflict resolution
+          ignoreDuplicates: false
+        });
 
-      if (insertError) {
-        console.error("Insert error:", insertError);
-        return { success: false, error: insertError.message };
+      console.log("saveCanvas: upserted shapes");
+
+      if (upsertError) {
+        console.error("Upsert error:", upsertError);
+        return { success: false, error: upsertError.message };
       }
     }
-
-    // if (shapesData.shapes.length > 0) {
-    //   await supabase.from("shapes").delete().eq("canvas_id", targetCanvasId);
-
-    //   const shapesToInsert = shapesData.shapes.map((shape) => ({
-    //     canvas_id: targetCanvasId,
-    //     shape_data: shape,
-    //   }));
-
-    //   const connectorsToInsert = shapesData.connectors.map((c) => ({
-    //     canvas_id: targetCanvasId,
-    //     shape_data: c,
-    //   }));
-
-    //   const allData = [...shapesToInsert, ...connectorsToInsert];
-    //   const { error: insertError } = await supabase
-    //     .from("shapes")
-    //     .insert(allData);
-
-    //   if (insertError) {
-    //     return { success: false, error: insertError.message };
-    //   }
-    // } else {
-    //   await supabase.from("shapes").delete().eq("canvas_id", targetCanvasId);
-    // }
-
     return { success: true, canvasId: targetCanvasId };
   } catch (error) {
     console.error("Error saving:", error);

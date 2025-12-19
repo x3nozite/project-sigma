@@ -1513,7 +1513,7 @@ function App() {
                   </div>
                   <p className="text-sm text-gray-700 mb-3">
                     {shapes.length} shapes saved locally. Sign in to use across
-                    different devices!
+                    different devices! (Local data will remain on this device and won’t be migrated after signing in.)
                   </p>
                   <button
                     onClick={() => navigate("/signin")}

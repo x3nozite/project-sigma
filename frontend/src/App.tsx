@@ -8,7 +8,7 @@ import type {
   ToolType,
   ShapeType,
   TodoType,
-  ToastType,
+  LoadingToastType,
   // CanvasStatus,
 } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
@@ -57,7 +57,7 @@ import { useIndexedDBInit } from "./services/useIndexedDb";
 import { useAutosaveCanvas } from "./services/autosaveCanvas";
 import Konva from "konva";
 import { useUndoRedo } from "./context/UndoRedo/UndoRedoHelper";
-import Toast from "./components/Toast";
+import Toast from "./components/LoadingToast";
 
 function App() {
   const { init } = useIndexedDBInit();
@@ -97,13 +97,13 @@ function App() {
   const [hasShownLocalReminder, setHasShownLocalReminder] = useState(false);
   const [showLocalReminder, setShowLocalReminder] = useState(false);
   // const [status, setStatus] = useState<CanvasStatus>("idle");
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  // const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [toast, setToast] = useState<{
     message: string;
-    type: ToastType;
+    type: LoadingToastType;
   } | null>(null);
 
-  const showToast = (message: string, type: ToastType) => {
+  const showToast = (message: string, type: LoadingToastType) => {
     console.log("showToast called:", message, type);
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);

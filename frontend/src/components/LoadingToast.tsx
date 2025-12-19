@@ -1,13 +1,12 @@
-import { useEffect } from "react";
-import type { ToastType } from "./types";
+import type { LoadingToastType } from "./types";
 
-type ToastProps = {
+type LoadingToastProps = {
   message: string;
-  type: ToastType;
+  type: LoadingToastType;
 };
 
-export default function Toast({ message, type }: ToastProps) {
-  const colors: Record<ToastType, string> = {
+export default function Toast({ message, type }: LoadingToastProps) {
+  const colors: Record<LoadingToastType, string> = {
     loading: "#facc15", // yellow
     success: "#22c55e", // green
     empty: "#9ca3af",   // gray

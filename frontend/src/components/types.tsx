@@ -92,4 +92,4 @@ export type UndoEntry = {
 // export type CanvasStatus = "idle" | "loading" | "saving" | "saved" | "error";
 
 
-export type ToastType = "loading" | "success" | "empty" | "error";
+export type LoadingToastType = "loading" | "success" | "empty" | "error";

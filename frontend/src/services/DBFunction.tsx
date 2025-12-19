@@ -411,7 +411,6 @@ export async function loadCanvas(
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    const viewport = await loadViewport(canvasId);
 
     if (!user || canvasId === "local") {
       return new Promise((resolve) => {
@@ -525,6 +524,7 @@ export async function loadCanvas(
     //   connectors: validConnectors.length,
     //   removed: uniqueConnectors.length - validConnectors.length
     // });
+    const viewport = await loadViewport(targetCanvasId);
 
     return {
       success: true,

@@ -160,8 +160,7 @@ function App() {
         setCanvasList([]);
         return;
       }
-
-      const canvasRes = await loadCanvas(null);
+      const canvasRes = await loadCanvas(currentCanvasId);
       if (!mounted) return;
 
       if (canvasRes.success) {
@@ -174,7 +173,7 @@ function App() {
         });
         setZoomValue(Math.round(canvasRes.data.viewport.scale * 100));
 
-        
+
         const shapeCount = canvasRes.data.shapes.length + canvasRes.data.connectors.length
 
         if (shapeCount === 0) {
@@ -217,7 +216,7 @@ function App() {
     return () => {
       mounted = false;
     };
-  }, [init, session]);
+  }, [init, session, currentCanvasId]);
 
   // async function getInstruments() {
   //   const { data } = await supabase.from("instruments").select();
@@ -235,7 +234,7 @@ function App() {
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [canvasCol]);
+  }, [canvasCol, currentCanvasId]);
 
   // useeffect for getting canvas color for every canvas change
   useEffect(() => {
@@ -303,11 +302,11 @@ function App() {
       x: parent
         ? parent.x + 400
         : (stageCoor.x * -1 + (window.innerWidth - 200) / 2) *
-          (100 / zoomValue),
+        (100 / zoomValue),
       y: parent
         ? parent.y
         : (stageCoor.y * -1 + (window.innerHeight - 200) / 2) *
-          (100 / zoomValue),
+        (100 / zoomValue),
       color: newFields.color, // default is green
       isCollapsed: false,
       scaleX: 1,
@@ -424,12 +423,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-              ...r,
-              title: newData.title,
-              description: newData.description,
-              color: newData.color,
-              dueDate: newData.date,
-            }
+            ...r,
+            title: newData.title,
+            description: newData.description,
+            color: newData.color,
+            dueDate: newData.date,
+          }
           : r
       )
     );
@@ -440,12 +439,12 @@ function App() {
       prev.map((t) =>
         t.id === shape.id
           ? {
-              ...t,
-              title: newData.title,
-              dueDate: newData.date,
-              completed: newData.completed,
-              color: newData.color,
-            }
+            ...t,
+            title: newData.title,
+            dueDate: newData.date,
+            completed: newData.completed,
+            color: newData.color,
+          }
           : t
       )
     );
@@ -556,7 +555,7 @@ function App() {
 
   const handleLoad = async (canvasId?: string) => {
     setIsLoading(true);
-    
+
     // console.log("Loading canvas:", canvasId || "default");
     try {
       if (currentCanvasId && canvasId && canvasId !== currentCanvasId) {
@@ -586,12 +585,12 @@ function App() {
         // console.error("Load failed:", result.error);
       }
     } catch (error) {
-      
+
       console.error("Load error:", error);
     } finally {
       setIsLoading(false);
     }
-    
+
   };
 
   const handleCreateNewCanvas = async (name: string) => {
@@ -779,10 +778,9 @@ function App() {
                                       className={`
                                         flex items-center justify-between p-4 rounded-lg border-2 
                                         transition-all
-                                        ${
-                                          currentCanvasId === canvas.canvas_id
-                                            ? "bg-blue-100 border-blue-400"
-                                            : "bg-gray-50 border-gray-200"
+                                        ${currentCanvasId === canvas.canvas_id
+                                          ? "bg-blue-100 border-blue-400"
+                                          : "bg-gray-50 border-gray-200"
                                         }
                                       `}
                                     >
@@ -801,7 +799,7 @@ function App() {
                                         <HiOutlineFolder className="w-5 h-5 text-blue-600" />
                                         <div className="flex-1">
                                           {editingCanvasId ===
-                                          canvas.canvas_id ? (
+                                            canvas.canvas_id ? (
                                             <input
                                               type="text"
                                               value={editingCanvasName}
@@ -848,13 +846,13 @@ function App() {
                                       <div className="flex items-center gap-2">
                                         {currentCanvasId ===
                                           canvas.canvas_id && (
-                                          <span className="text-xs text-blue-600 font-medium mr-2">
-                                            Current
-                                          </span>
-                                        )}
+                                            <span className="text-xs text-blue-600 font-medium mr-2">
+                                              Current
+                                            </span>
+                                          )}
 
                                         {editingCanvasId ===
-                                        canvas.canvas_id ? (
+                                          canvas.canvas_id ? (
                                           <>
                                             <button
                                               onClick={(e) => {

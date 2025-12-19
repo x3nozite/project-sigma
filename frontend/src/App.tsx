@@ -1031,41 +1031,57 @@ function App() {
                                 Introduction
                               </h1>
                               <span>
-                                Rect-Up is a simple canvas for planning and organizing work visually. You can create Tasks (rectangles), add smaller Todos, place Text labels, and connect items to show relationships.
+                                Rect-Up is a simple visual planning canvas where
+                                you can organize work as Tasks, break them into
+                                Todos, add Text notes, and use canvas tools to
+                                navigate or sketch ideas.
                               </span>
                             </AlertDialog.Description>
+
                             <hr />
-                            {/* copy explanation and hr multiple times */}
                             <div className="explanation-1">
                               <div className="flex flex-col gap-2">
                                 <h1 className="text-xl font-bold">
                                   1. Add Task
                                 </h1>
                                 <span>
-                                  The Add Task feature allows you to create a
-                                  task item that represents a specific piece of
-                                  work or goal.
+                                  The <b>Add Task</b> feature allows you to
+                                  create a task card that represents a specific
+                                  piece of work, goal, or milestone on the
+                                  canvas.
                                 </span>
+
                                 <img
                                   src="/rect-up/task.gif"
-                                  alt=""
+                                  alt="Add Task demo"
                                   className="w-full h-70 object-scale-down"
                                 />
+
                                 <div className="flex flex-col">
                                   <h2 className="text-md font-bold">
                                     How To Use
                                   </h2>
                                   <ol className="list-decimal list-inside">
-                                    <li>Click Add Task on the toolbar.</li>
                                     <li>
-                                      Fill in Title, Description, choose a
-                                      Color, and set a Due Date.
+                                      Click <b>Add Task</b> on the toolbar.
                                     </li>
-                                    <li>Click Create New Task.</li>
+                                    <li>
+                                      Fill in the <b>Title</b> and{" "}
+                                      <b>Description</b>.
+                                    </li>
+                                    <li>
+                                      Choose a <b>Color</b> and set a{" "}
+                                      <b>Due Date</b>.
+                                    </li>
+                                    <li>
+                                      Click <b>Create</b> to place the task on
+                                      the canvas.
+                                    </li>
                                   </ol>
                                 </div>
                               </div>
                             </div>
+
                             <hr />
                             <div className="explanation-2">
                               <div className="flex flex-col gap-2">
@@ -1073,130 +1089,265 @@ function App() {
                                   2. Add Todo
                                 </h1>
                                 <span>
-                                  The Add Todo feature allows you to create
+                                  The <b>Add Todo</b> feature lets you create
                                   smaller checklist items or sub-tasks. Todos
-                                  can be created independently or linked to a
-                                  task to help break down larger goals into
+                                  help you break down bigger tasks into
                                   manageable steps.
                                 </span>
+
                                 <img
                                   src="/rect-up/todo.gif"
-                                  alt=""
+                                  alt="Add Todo demo"
                                   className="w-full h-70 object-scale-down"
                                 />
-                                <div className="flex flex-col">
-                                  <h2 className="text-md font-bold">
-                                    How To Use
-                                  </h2>
-                                  <ol className="list-decimal list-inside">
-                                    <li>Click Add Todo on the toolbar.</li>
-                                    <li>Fill in Title, choose a Color, set a Due Date, and Check Status to be Completed if needed.</li>
-                                    <li>Click Submit.</li>
-                                  </ol>
-                                </div>
-                              </div>
-                            </div>
-                            <hr />
-                            <div className="explanation-3">
-                              <div className="flex flex-col gap-2">
-                                <h1 className="text-xl font-bold">
-                                  3. Add Text
-                                </h1>
-                                <span>
-                                  Text is for free labels like section headers, notes, or markers
-                                </span>
-                                <img
-                                  src="/rect-up/text.gif"
-                                  alt=""
-                                  className="w-full h-70 object-scale-down"
-                                />
-                                <div className="flex flex-col">
-                                  <h2 className="text-md font-bold">
-                                    How To Use
-                                  </h2>
-                                  <ol className="list-decimal list-inside">
-                                    <li>Click Add Text on the toolbar.</li>
-                                    <li>A text item will appear with a default message.</li>
-                                    <li>Drag it to where you want it on the canvas.</li>
-                                    <li>Click the text to edit it</li>
-                                  </ol>
-                                </div>
-                              </div>
-                            </div>
-                            <hr />
-                            <div className="explanation-4">
-                              <div className="flex flex-col gap-2">
-                                <h1 className="text-xl font-bold">
-                                  4. New Canvas
-                                </h1>
-                                <span>
-                                  New Canvas creates a fresh workspace so you can separate boards by project
-                                </span>
-                                <img
-                                  src="/rect-up/createcanvas.gif"
-                                  alt=""
-                                  className="w-full h-70 object-scale-down"
-                                />
-                                <div className="flex flex-col">
-                                  <h2 className="text-md font-bold">
-                                    How To Use
-                                  </h2>
-                                  <ol className="list-decimal list-inside">
-                                    <li>Click the ☰ (menu) button.</li>
-                                    <li>Select New Canvas.</li>
-                                    <li>Enter a canvas name, then click Create Canvas.</li>
-                                    <li>Your new canvas will open as an empty workspace.</li>
-                                    <li>You can view and switch canvases in My Canvases anytime.</li>
-                                  </ol>
-                                </div>
-                              </div>
-                            </div>
-                            <hr />
-                            <div className="explanation-5">
-                              <div className="flex flex-col gap-2">
-                                <h1 className="text-xl font-bold">
-                                  5. Clear Canvas
-                                </h1>
-                                <span>
-                                  Clear Canvas removes all shapes and connectors from the current canvas. This action is permanent once confirmed.
-                                </span>
-                                <img
-                                  src="/rect-up/clearcanvas.gif"
-                                  alt=""
-                                  className="w-full h-70 object-scale-down"
-                                />
-                                <div className="flex flex-col">
-                                  <h2 className="text-md font-bold">
-                                    How To Use
-                                  </h2>
-                                  <ol className="list-decimal list-inside">
-                                    <li>Click the ☰ (menu) button.</li>
-                                    <li>Select Clear Canvas.</li>
-                                    <li>Confirm by clicking Yes, clear canvas.</li>
-                                  </ol>
-                                </div>
-                              </div>
-                            </div>
-                            <hr />
-                            <div className="explanation-5">
-                              <div className="flex flex-col gap-2">
-                                <h1 className="text-xl font-bold">
-                                  5. Extra Features
-                                </h1>
-                                <span>
-                                  make a fun description talking about undo zoom
-                                  and toggle visibility
-                                </span>
 
                                 <div className="flex flex-col">
                                   <h2 className="text-md font-bold">
                                     How To Use
                                   </h2>
                                   <ol className="list-decimal list-inside">
-                                    <li>Explain The Method Here</li>
-                                    <li>Add more explanation here</li>
+                                    <li>
+                                      Click <b>Add Todo</b> on the toolbar.
+                                    </li>
+                                    <li>
+                                      Enter a <b>Title</b>, choose a{" "}
+                                      <b>Color</b>, and set a <b>Due Date</b>.
+                                    </li>
+                                    <li>
+                                      Toggle <b>Completed</b> if the todo is
+                                      already done.
+                                    </li>
+                                    <li>
+                                      Click <b>Submit</b> to add it to the
+                                      canvas.
+                                    </li>
                                   </ol>
                                 </div>
+                              </div>
+                            </div>
+
+                            <hr />
+
+                            <div className="explanation-3">
+                              <div className="flex flex-col gap-2">
+                                <h1 className="text-xl font-bold">
+                                  3. Add Text
+                                </h1>
+                                <span>
+                                  The <b>Add Text</b> feature allows you to
+                                  place free labels on the canvas such as
+                                  headings, notes, reminders, or section titles.
+                                </span>
+
+                                <img
+                                  src="/rect-up/text.gif"
+                                  alt="Add Text demo"
+                                  className="w-full h-70 object-scale-down"
+                                />
+
+                                <div className="flex flex-col">
+                                  <h2 className="text-md font-bold">
+                                    How To Use
+                                  </h2>
+                                  <ol className="list-decimal list-inside">
+                                    <li>
+                                      Click <b>Add Text</b> on the toolbar.
+                                    </li>
+                                    <li>
+                                      A text item will appear with a default
+                                      message.
+                                    </li>
+                                    <li>Drag it to the position you want.</li>
+                                    <li>Click the text to edit the content.</li>
+                                  </ol>
+                                </div>
+                              </div>
+                            </div>
+
+                            <hr />
+
+                            <div className="explanation-4">
+                              <div className="flex flex-col gap-2">
+                                <h1 className="text-xl font-bold">
+                                  4. New Canvas
+                                </h1>
+                                <span>
+                                  <b>New Canvas</b> creates a fresh workspace so
+                                  you can separate boards by project, class, or
+                                  topic.
+                                </span>
+
+                                <img
+                                  src="/rect-up/createcanvas.gif"
+                                  alt="Create New Canvas demo"
+                                  className="w-full h-70 object-scale-down"
+                                />
+
+                                <div className="flex flex-col">
+                                  <h2 className="text-md font-bold">
+                                    How To Use
+                                  </h2>
+                                  <ol className="list-decimal list-inside">
+                                    <li>
+                                      Click the <b>☰ Menu</b> button.
+                                    </li>
+                                    <li>
+                                      Select <b>New Canvas</b>.
+                                    </li>
+                                    <li>Type a canvas name.</li>
+                                    <li>
+                                      Click <b>Create Canvas</b>.
+                                    </li>
+                                    <li>
+                                      To switch canvases, open{" "}
+                                      <b>My Canvases</b> from the menu.
+                                    </li>
+                                  </ol>
+                                </div>
+                              </div>
+                            </div>
+
+                            <hr />
+
+                            <div className="explanation-5">
+                              <div className="flex flex-col gap-2">
+                                <h1 className="text-xl font-bold">
+                                  5. Clear Canvas
+                                </h1>
+                                <span>
+                                  <b>Clear Canvas</b> removes all shapes and
+                                  connectors from your current canvas. This
+                                  action cannot be undone once confirmed.
+                                </span>
+
+                                <img
+                                  src="/rect-up/clearcanvas.gif"
+                                  alt="Clear Canvas demo"
+                                  className="w-full h-70 object-scale-down"
+                                />
+
+                                <div className="flex flex-col">
+                                  <h2 className="text-md font-bold">
+                                    How To Use
+                                  </h2>
+                                  <ol className="list-decimal list-inside">
+                                    <li>
+                                      Click the <b>☰ Menu</b> button.
+                                    </li>
+                                    <li>
+                                      Select <b>Clear Canvas</b>.
+                                    </li>
+                                    <li>
+                                      Confirm by clicking{" "}
+                                      <b>Yes, clear canvas</b>.
+                                    </li>
+                                  </ol>
+                                </div>
+                              </div>
+                            </div>
+
+                            <hr />
+                            {/* ===================== 6. CANVAS TOOLS ===================== */}
+                            <div className="explanation-6">
+                              <div className="flex flex-col gap-2">
+                                <h1 className="text-xl font-bold">
+                                  6. Canvas Tools
+                                </h1>
+                                <span>
+                                  Canvas tools control how you interact with the
+                                  canvas. Only one tool can be active at a time.
+                                </span>
+
+                                <div className="flex flex-col gap-3">
+                                  <div>
+                                    <h2 className="text-md font-bold">
+                                      Select
+                                    </h2>
+                                    <span>
+                                      The <b>Select</b> tool allows you to
+                                      select and interact with objects on the
+                                      canvas.
+                                    </span>
+                                  </div>
+
+                                  <div>
+                                    <h2 className="text-md font-bold">Hand</h2>
+                                    <span>
+                                      The <b>Hand</b> tool lets you pan around
+                                      the canvas without moving objects.
+                                    </span>
+                                  </div>
+
+                                  <div>
+                                    <h2 className="text-md font-bold">Draw</h2>
+                                    <span>
+                                      The <b>Draw</b> tool lets you sketch
+                                      freely. You can change the stroke color
+                                      from the menu.
+                                    </span>
+                                  </div>
+
+                                  <div>
+                                    <h2 className="text-md font-bold">
+                                      Eraser
+                                    </h2>
+                                    <span>
+                                      The <b>Eraser</b> tool removes drawn
+                                      strokes from the canvas.
+                                    </span>
+                                  </div>
+
+                                  <div className="flex flex-col">
+                                    <h2 className="text-md font-bold">
+                                      How To Use
+                                    </h2>
+                                    <ol className="list-decimal list-inside">
+                                      <li>Select a tool from the toolbar.</li>
+                                      <li>
+                                        Use the canvas based on the selected
+                                        mode (select, pan, draw, or erase).
+                                      </li>
+                                      <li>
+                                        Switch back to <b>Hand</b> when you want
+                                        to navigate freely.
+                                      </li>
+                                    </ol>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <hr />
+
+                            {/* ===================== 7. QUICK CONTROLS ===================== */}
+                            <div className="explanation-7">
+                              <div className="flex flex-col gap-2">
+                                <h1 className="text-xl font-bold">
+                                  7. Quick Controls
+                                </h1>
+                                <span>
+                                  These controls help you navigate and manage
+                                  changes while working.
+                                </span>
+
+                                <ul className="list-disc list-inside">
+                                  <li>
+                                    <b>Zoom In/Out:</b> Use the magnifier
+                                    buttons to zoom the canvas.
+                                  </li>
+                                  <li>
+                                    <b>Reset Zoom:</b> Click the percentage
+                                    button (e.g. 100%) to reset.
+                                  </li>
+                                  <li>
+                                    <b>Undo / Redo:</b> Use the left/right
+                                    arrows to undo or redo actions.
+                                  </li>
+                                  <li>
+                                    <b>Toolbar Visibility:</b> Click the eye
+                                    icon to hide/show the toolbar.
+                                  </li>
+                                </ul>
                               </div>
                             </div>
                           </div>

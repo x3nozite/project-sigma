@@ -104,7 +104,6 @@ function App() {
   } | null>(null);
 
   const showToast = (message: string, type: LoadingToastType) => {
-    console.log("showToast called:", message, type);
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
@@ -1530,7 +1529,7 @@ function App() {
             </div>
           </div>
         )}
-      {toast && (console.log("rendering toast", toast), <Toast message={toast.message} type={toast.type} />)}
+      {toast && <Toast message={toast.message} type={toast.type} />}
     </>
   );
 }

@@ -8,6 +8,8 @@ import type {
   ToolType,
   ShapeType,
   TodoType,
+  ToastType,
+  // CanvasStatus,
 } from "./components/types";
 import { MainButton, SecondButton } from "./components/ui/buttons";
 import TaskForm from "./components/forms/TaskForm";
@@ -55,6 +57,7 @@ import { useIndexedDBInit } from "./services/useIndexedDb";
 import { useAutosaveCanvas } from "./services/autosaveCanvas";
 import Konva from "konva";
 import { useUndoRedo } from "./context/UndoRedo/UndoRedoHelper";
+import Toast from "./components/Toast";
 
 function App() {
   const { init } = useIndexedDBInit();
@@ -93,6 +96,18 @@ function App() {
   // Tambah state ini
   const [hasShownLocalReminder, setHasShownLocalReminder] = useState(false);
   const [showLocalReminder, setShowLocalReminder] = useState(false);
+  // const [status, setStatus] = useState<CanvasStatus>("idle");
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: ToastType;
+  } | null>(null);
+
+  const showToast = (message: string, type: ToastType) => {
+    console.log("showToast called:", message, type);
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   useAutosaveCanvas({ shapes, connectors }, 1000, () => {
     if (!currentCanvasId || shapes.length === 0) return;
@@ -111,7 +126,7 @@ function App() {
 
     (async () => {
       await init();
-
+      showToast("Loading objects...", "loading");
       if (!session) {
         const local = await loadCanvas("local");
         if (!mounted) return;
@@ -125,6 +140,18 @@ function App() {
           });
           setZoomValue(Math.round(local.data.viewport.scale * 100));
           setCurrentCanvasId("local");
+          const shapeCount = local.data.shapes.length + local.data.connectors.length
+
+          if (shapeCount === 0) {
+            showToast("No objects found.", "empty");
+          } else {
+            showToast(`Loaded ${shapeCount} objects`, "success");
+          }
+
+          // timeout for toast
+          setTimeout(() => setToast(null), 3000);
+
+
         } else {
           setConnectors([]);
           setShapes([]);
@@ -147,6 +174,18 @@ function App() {
           y: canvasRes.data.viewport.y,
         });
         setZoomValue(Math.round(canvasRes.data.viewport.scale * 100));
+
+        
+        const shapeCount = canvasRes.data.shapes.length + canvasRes.data.connectors.length
+
+        if (shapeCount === 0) {
+          showToast("No objects found.", "empty");
+        } else {
+          showToast(`Loaded ${shapeCount} objects`, "success");
+        }
+
+        // timeout for toast
+        setTimeout(() => setToast(null), 3000);
 
         // console.log("canvas id: ", canvasRes.canvasId);
         // console.log("shapes: ", canvasRes.data.shapes);
@@ -518,6 +557,7 @@ function App() {
 
   const handleLoad = async (canvasId?: string) => {
     setIsLoading(true);
+    
     // console.log("Loading canvas:", canvasId || "default");
     try {
       if (currentCanvasId && canvasId && canvasId !== currentCanvasId) {
@@ -540,15 +580,19 @@ function App() {
         setShapes(result.data.shapes);
         setConnectors(result.data.connectors);
         setCurrentCanvasId(result.canvasId);
+
         // console.log("Loaded", result.data.shapes.length, "shapes");
       } else {
-        console.error("Load failed:", result.error);
+        showToast(result.error, "error");
+        // console.error("Load failed:", result.error);
       }
     } catch (error) {
+      
       console.error("Load error:", error);
     } finally {
       setIsLoading(false);
     }
+    
   };
 
   const handleCreateNewCanvas = async (name: string) => {
@@ -1486,6 +1530,7 @@ function App() {
             </div>
           </div>
         )}
+      {toast && (console.log("rendering toast", toast), <Toast message={toast.message} type={toast.type} />)}
     </>
   );
 }

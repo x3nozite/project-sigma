@@ -88,3 +88,8 @@ export type UndoEntry = {
   after: (ShapeType | ArrowType);
   action: "add" | "update" | "delete";
 };
+
+// export type CanvasStatus = "idle" | "loading" | "saving" | "saved" | "error";
+
+
+export type ToastType = "loading" | "success" | "empty" | "error";

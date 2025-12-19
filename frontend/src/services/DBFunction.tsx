@@ -497,6 +497,7 @@ export async function loadCanvas(
       success: true,
       data: { shapes: uniqueShapes, connectors: validConnectors, viewport },
       canvasId: targetCanvasId,
+      
     };
   } catch (error: any) {
     console.error("loadCanvas error:", error);

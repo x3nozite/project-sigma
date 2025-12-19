@@ -1048,9 +1048,9 @@ function App() {
                                   work or goal.
                                 </span>
                                 <img
-                                  src="/rect-up/test.gif"
+                                  src="/rect-up/task.gif"
                                   alt=""
-                                  className="w-full h-50 object-fit"
+                                  className="w-full h-70 object-scale-down"
                                 />
                                 <div className="flex flex-col">
                                   <h2 className="text-md font-bold">
@@ -1075,9 +1075,9 @@ function App() {
                                   work or goal.
                                 </span>
                                 <img
-                                  src="/rect-up/test.gif"
+                                  src="/rect-up/todo.gif"
                                   alt=""
-                                  className="w-full h-50 object-fit"
+                                  className="w-full h-50 object-scale-down"
                                 />
                                 <div className="flex flex-col">
                                   <h2 className="text-md font-bold">

@@ -300,7 +300,7 @@ export async function saveCanvas(
     saveViewport(shapesData.viewport, canvasId);
 
     if (!shapesData || !shapesData.shapes || !shapesData.connectors) {
-      console.warn("Skipping save - incomplete data");
+      console.warn("Incomplete data");
       return { success: true, canvasId: targetCanvasId };
     }
 
@@ -328,7 +328,6 @@ export async function saveCanvas(
       .map(s => s.shape_id) || [];
 
     if (shapeIdsToDelete.length > 0) {
-      console.log("saveCanvas: deleting removed shapes", shapeIdsToDelete.length);
       await supabase
         .from("shapes")
         .delete()
@@ -350,16 +349,12 @@ export async function saveCanvas(
     const allData = [...shapesToUpsert, ...connectorsToUpsert];
 
     if (allData.length > 0) {
-      console.log("saveCanvas: upserting shapes", allData.length);
-      
       const { error: upsertError } = await supabase
         .from("shapes")
         .upsert(allData, {
-          onConflict: 'shape_id', // Primary key conflict resolution
+          onConflict: 'shape_id',
           ignoreDuplicates: false
         });
-
-      console.log("saveCanvas: upserted shapes");
 
       if (upsertError) {
         console.error("Upsert error:", upsertError);

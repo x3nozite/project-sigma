@@ -550,7 +550,7 @@ function App() {
         currentCanvasId || null
       );
     } catch (error) {
-      // console.log(error);
+      showToast("Error saving objects.", "error");
     } finally {
       setIsLoading(false);
     }

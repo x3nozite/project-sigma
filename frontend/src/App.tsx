@@ -125,65 +125,72 @@ function App() {
 
     (async () => {
       await init();
-      
+      showToast("Loading objects...", "loading");
       if (!session) {
-        await handleLoad("local");
+        const local = await loadCanvas("local");
         if (!mounted) return;
 
-        // if (local.success) {
-        //   setShapes(local.data.shapes);
-        //   setConnectors(local.data.connectors);
-        //   setStageCoor({
-        //     x: local.data.viewport.x,
-        //     y: local.data.viewport.y,
-        //   });
-        //   setZoomValue(Math.round(local.data.viewport.scale * 100));
-        //   setCurrentCanvasId("local");
-        //   const shapeCount = local.data.shapes.length + local.data.connectors.length
+        if (local.success) {
+          setShapes(local.data.shapes);
+          setConnectors(local.data.connectors);
+          setStageCoor({
+            x: local.data.viewport.x,
+            y: local.data.viewport.y,
+          });
+          setZoomValue(Math.round(local.data.viewport.scale * 100));
+          setCurrentCanvasId("local");
+          const shapeCount = local.data.shapes.length + local.data.connectors.length
 
-        //   if (shapeCount === 0) {
-        //     showToast("No objects found.", "empty");
-        //   } else {
-        //     showToast(`Loaded ${shapeCount} objects`, "success");
-        //   }
+          if (shapeCount === 0) {
+            showToast("No objects found.", "empty");
+          } else {
+            showToast(`Loaded ${shapeCount} objects`, "success");
+          }
 
-        //   // timeout for toast
-        //   setTimeout(() => setToast(null), 3000);
+          // timeout for toast
+          setTimeout(() => setToast(null), 3000);
 
 
-        // } else {
-        //   setConnectors([]);
-        //   setShapes([]);
-        // }
+        } else {
+          setConnectors([]);
+          setShapes([]);
+        }
 
         setCurrentCanvasId("local");
         setCanvasList([]);
         return;
       }
 
-      await handleLoad(null);
+      const canvasRes = await loadCanvas(null);
       if (!mounted) return;
 
-      // if (canvasRes.success) {
-      //   setShapes(canvasRes.data.shapes);
-      //   setCurrentCanvasId(canvasRes.canvasId);
-      //   setConnectors(canvasRes.data.connectors);
-      //   setStageCoor({
-      //     x: canvasRes.data.viewport.x,
-      //     y: canvasRes.data.viewport.y,
-      //   });
-      //   setZoomValue(Math.round(canvasRes.data.viewport.scale * 100));
+      if (canvasRes.success) {
+        setShapes(canvasRes.data.shapes);
+        setCurrentCanvasId(canvasRes.canvasId);
+        setConnectors(canvasRes.data.connectors);
+        setStageCoor({
+          x: canvasRes.data.viewport.x,
+          y: canvasRes.data.viewport.y,
+        });
+        setZoomValue(Math.round(canvasRes.data.viewport.scale * 100));
 
         
-        
+        const shapeCount = canvasRes.data.shapes.length + canvasRes.data.connectors.length
 
-        
+        if (shapeCount === 0) {
+          showToast("No objects found.", "empty");
+        } else {
+          showToast(`Loaded ${shapeCount} objects`, "success");
+        }
 
-      //   // console.log("canvas id: ", canvasRes.canvasId);
-      //   // console.log("shapes: ", canvasRes.data.shapes);
-      // } else {
-      //   console.error("Failed to load canvas:", canvasRes.error);
-      // }
+        // timeout for toast
+        setTimeout(() => setToast(null), 3000);
+
+        // console.log("canvas id: ", canvasRes.canvasId);
+        // console.log("shapes: ", canvasRes.data.shapes);
+      } else {
+        console.error("Failed to load canvas:", canvasRes.error);
+      }
       const listRes = await getUserCanvases(session.user.id);
       if (!mounted) return;
 
@@ -547,10 +554,10 @@ function App() {
     }
   };
 
-  const handleLoad = async (canvasId?: string | null) => {
+  const handleLoad = async (canvasId?: string) => {
     setIsLoading(true);
-    showToast("Loading objects...", "loading");
-    console.log("Loading canvas:", canvasId || "default");
+    
+    // console.log("Loading canvas:", canvasId || "default");
     try {
       if (currentCanvasId && canvasId && canvasId !== currentCanvasId) {
         // console.log("Saving current canvas");
@@ -567,23 +574,14 @@ function App() {
           currentCanvasId
         );
       }
-      const result = await loadCanvas(canvasId);
+      const result = await loadCanvas(canvasId || null);
       if (result.success) {
         setShapes(result.data.shapes);
         setConnectors(result.data.connectors);
         setCurrentCanvasId(result.canvasId);
 
-        const shapeCount = result.data.shapes.length + result.data.connectors.length
-
-        if (shapeCount === 0) {
-          showToast("No objects found.", "empty");
-        } else {
-          showToast(`Loaded ${shapeCount} objects`, "success");
-        }
         // console.log("Loaded", result.data.shapes.length, "shapes");
       } else {
-        setShapes([]);
-        setConnectors([]);
         showToast(result.error, "error");
         // console.error("Load failed:", result.error);
       }
@@ -593,8 +591,7 @@ function App() {
     } finally {
       setIsLoading(false);
     }
-    // timeout for toast
-    setTimeout(() => setToast(null), 3000);
+    
   };
 
   const handleCreateNewCanvas = async (name: string) => {

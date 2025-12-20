@@ -1,5 +1,6 @@
 import Konva from "konva";
 import type { LineType, ShapeType, ToolType } from "../types";
+import { simplifyLine } from "../utilities/simplifyLine";
 
 export const drawingLineRef = {
   current: null as Konva.Line | null
@@ -63,12 +64,15 @@ export function handleStageMouseUp(
   const line = drawingLineRef.current;
   if (!line) return;
 
+  const rawPoints = line.points();
+  const simplifiedPoints = simplifyLine(rawPoints, 1.5);
+
   const newLine: LineType = {
     shape: "line",
     behavior: "decor",
     id: "line-" + Date.now(),
     color: "black",
-    points: line.points(),
+    points: simplifiedPoints,
     stroke: strokeColor,
     strokeWidth: 4,
     scaleX: 1,

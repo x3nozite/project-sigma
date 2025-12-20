@@ -1,6 +1,9 @@
 import Konva from "konva";
 import type { LineType, ShapeType, ToolType } from "../types";
-import type { SetStateAction } from "react";
+
+export const drawingLineRef = {
+  current: null as Konva.Line | null
+};
 
 export function getRelativePointerPosition(stage: Konva.Stage | null) {
   if (!stage) return null;
@@ -11,43 +14,69 @@ export function getRelativePointerPosition(stage: Konva.Stage | null) {
   return transform.point(pointer);
 }
 
-export function handleStageMouseDown(stage: Konva.Stage | null, tool: ToolType, strokeColor: string, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, setIsDrawing: React.Dispatch<React.SetStateAction<boolean>>) {
-  if (tool !== "draw") return;
+export function handleStageMouseDown(
+  stage: Konva.Stage | null,
+  tool: ToolType,
+  strokeColor: string
+) {
+  if (tool !== "draw" || !stage) return;
+
   const pos = getRelativePointerPosition(stage);
   if (!pos) return;
-  setIsDrawing(true);
+
+  const layer = stage.findOne("Layer") as Konva.Layer;
+
+  const line = new Konva.Line({
+    points: [pos.x, pos.y],
+    stroke: strokeColor,
+    strokeWidth: 4,
+    lineCap: "round",
+    lineJoin: "round",
+    listening: false,
+  });
+
+  layer.add(line);
+  drawingLineRef.current = line;
+}
+
+export function handleStageMouseMove(
+  stage: Konva.Stage | null,
+  tool: ToolType
+) {
+  if (tool !== "draw") return;
+  if (!drawingLineRef.current || !stage) return;
+
+  const pos = getRelativePointerPosition(stage);
+  if (!pos) return;
+
+  const line = drawingLineRef.current;
+  const points = line.points();
+
+  line.points([...points, pos.x, pos.y]);
+  line.getLayer()?.batchDraw();
+}
+
+export function handleStageMouseUp(
+  strokeColor: string,
+  setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>
+) {
+  const line = drawingLineRef.current;
+  if (!line) return;
 
   const newLine: LineType = {
     shape: "line",
     behavior: "decor",
+    id: "line-" + Date.now(),
     color: "black",
-    id: "line-" + Date.now().toString(),
-    points: [pos.x, pos.y],
+    points: line.points(),
     stroke: strokeColor,
     strokeWidth: 4,
     scaleX: 1,
-    scaleY: 1
+    scaleY: 1,
   };
+
   setShapes((prev) => [...prev, newLine]);
-}
 
-export function handleStageMouseMove(stage: Konva.Stage | null, tool: ToolType, setShapes: React.Dispatch<React.SetStateAction<ShapeType[]>>, isDrawing: boolean) {
-  if (!isDrawing || tool !== "draw") return;
-  const pos = getRelativePointerPosition(stage);
-  if (!pos) return;
-
-  setShapes((prev) => {
-    if (prev.length === 0) return prev;
-    const last = prev[prev.length - 1];
-
-    if (last.shape !== "line") return prev;
-
-    const updatedLast = { ...last, points: [...last.points, pos.x, pos.y] };
-
-    return [...prev.slice(0, -1), updatedLast];
-  });
-}
-
-export function handleStageMouseUp(isDrawing: boolean, setIsDrawing: React.Dispatch<SetStateAction<boolean>>) {
-  if (isDrawing) setIsDrawing(false);
+  line.destroy();
+  drawingLineRef.current = null;
 }

@@ -518,8 +518,8 @@ const ShapeCanvas = ({
               stageRef.current,
               tool,
               strokeColor,
-              setShapes,
-              setMouseHeldDown
+              // setShapes,
+              // setMouseHeldDown
             );
           if (tool === "eraser") handleEraseLinesMouseDown(setMouseHeldDown);
           if (tool === "select")
@@ -535,8 +535,6 @@ const ShapeCanvas = ({
             handleStageMouseMove(
               stageRef.current,
               tool,
-              setShapes,
-              mouseHeldDown
             );
           if (tool === "eraser")
             handleEraseLinesMouseMove(
@@ -557,7 +555,7 @@ const ShapeCanvas = ({
         }}
         onPointerUp={() => {
           if (tool === "draw") {
-            handleStageMouseUp(mouseHeldDown, setMouseHeldDown);
+            handleStageMouseUp(strokeColor, setShapes);
             pushUndo({
               action: "add",
               before: shapes[shapes.length - 1],

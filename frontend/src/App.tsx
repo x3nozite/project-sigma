@@ -1695,7 +1695,14 @@ function App() {
               <div className=" items-center z-10 bg-amber-100 border-2 border-amber-200 rounded-xl w-fit inline-flex">
                 <button
                   className="hover:bg-orange-200 active:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-l-lg h-full"
-                  onClick={() => setZoomValue(Math.max(zoomValue - 10, 10))}
+                  onClick={() => {
+                    const screenCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+                    const oldScale = zoomValue / 100;
+                    const newScale = (zoomValue - 10) / 100;
+                    const worldCenter = { x: (screenCenter.x - stageCoor.x) / oldScale, y: (screenCenter.y - stageCoor.y) / oldScale }
+                    setStageCoor({ x: screenCenter.x - worldCenter.x * newScale, y: screenCenter.y - worldCenter.y * newScale })
+                    setZoomValue(Math.max(zoomValue - 10, 10));
+                  }}
                 >
                   <HiOutlineZoomOut />
                 </button>
@@ -1718,6 +1725,11 @@ function App() {
                 <button
                   className="hover:bg-orange-200 active:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-r-lg h-full"
                   onClick={() => {
+                    const screenCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+                    const oldScale = zoomValue / 100;
+                    const newScale = (zoomValue + 10) / 100;
+                    const worldCenter = ({ x: (screenCenter.x - stageCoor.x) / oldScale, y: (screenCenter.y - stageCoor.y) / oldScale });
+                    setStageCoor({ x: screenCenter.x - worldCenter.x * newScale, y: screenCenter.y - worldCenter.y * newScale })
                     setZoomValue(Math.min(zoomValue + 10, 500));
                   }}
                 >

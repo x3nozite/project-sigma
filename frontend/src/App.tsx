@@ -1696,6 +1696,7 @@ function App() {
                 <button
                   className="hover:bg-orange-200 active:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-l-lg h-full"
                   onClick={() => {
+                    if (zoomValue === 10) return;
                     const screenCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
                     const oldScale = zoomValue / 100;
                     const newScale = (zoomValue - 10) / 100;
@@ -1725,6 +1726,7 @@ function App() {
                 <button
                   className="hover:bg-orange-200 active:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-r-lg h-full"
                   onClick={() => {
+                    if (zoomValue === 500) return;
                     const screenCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
                     const oldScale = zoomValue / 100;
                     const newScale = (zoomValue + 10) / 100;

@@ -155,8 +155,11 @@ function App() {
           // timeout for toast
           setTimeout(() => setToast(null), 3000);
         } else {
+          // first session ever
           setConnectors([]);
           setShapes([]);
+          
+          showToast("Create your first object!", "empty");
         }
 
         setCurrentCanvasId("local");

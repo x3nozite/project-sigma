@@ -1270,7 +1270,7 @@ function App() {
                                     </h2>
                                     <span>
                                       The <b>Select</b> tool allows you to
-                                      select and interact with objects on the
+                                      select, move, resize, or transform the objects on the
                                       canvas.
                                     </span>
                                   </div>
@@ -1279,7 +1279,8 @@ function App() {
                                     <h2 className="text-md font-bold">Hand</h2>
                                     <span>
                                       The <b>Hand</b> tool lets you pan around
-                                      the canvas without moving objects.
+                                      the canvas without moving objects. You can also
+                                      double-click the shapes to edit them.
                                     </span>
                                   </div>
 

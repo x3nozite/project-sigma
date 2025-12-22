@@ -39,6 +39,10 @@ const TourSteps = [
     content:
       "This is your workspace. Add Tasks and Todos, connect them, and experiment with the tools!",
   },
+  {
+    selector: '.more-options',
+    content: 'Head over to our \'How to use\' section to learn more!'
+  }
 ];
 
 export default TourSteps;

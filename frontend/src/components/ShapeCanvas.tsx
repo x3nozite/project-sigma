@@ -231,12 +231,12 @@ const ShapeCanvas = ({
       if (isFormOpen || isEditingText) return;
       // Ctrl + Z
       if (e.ctrlKey && !e.shiftKey && e.key === "z") {
-        undo(setShapes, setConnectors); // or whatever your undo function is
+        undo(setShapes, setConnectors);
         return;
       }
       if (
         ((e.ctrlKey || e.metaKey) && e.key === "y") ||
-        (e.shiftKey && e.key === "z")
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "z")
       ) {
         redo(setShapes, setConnectors);
         return;

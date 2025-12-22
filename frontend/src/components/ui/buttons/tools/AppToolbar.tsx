@@ -41,7 +41,7 @@ function AppToolbar({
       <Toolbar.ToggleGroup type="single" className="flex gap-2 sm:gap-0.5">
         <Toolbar.ToggleItem value="task">
           <div
-            className="add-shape relative group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 max-sm:w-8 max-sm:h-8 max-sm:p-[2px]"
+            className="add-task add-shape relative group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 max-sm:w-8 max-sm:h-8 max-sm:p-[2px]"
             onClick={onShapeClick}
           >
             <HiOutlineCube className="text-2xl" />
@@ -55,7 +55,7 @@ function AppToolbar({
         </Toolbar.ToggleItem>
         <Toolbar.ToggleItem value="todo">
           <div
-            className="add-shape relative group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 max-sm:w-8 max-sm:h-8 max-sm:p-[2px]"
+            className="add-todo add-shape relative group flex flex-col justify-center items-center  rounded-l-sm border-none w-10 h-10 p-1 text-gray-700 transition-colors duration-50 hover:bg-blue-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 max-sm:w-8 max-sm:h-8 max-sm:p-[2px]"
             onClick={() => onTodoClick()}
           >
             <HiOutlineBookOpen className="text-2xl md:text-xl" />
@@ -141,7 +141,7 @@ function AppToolbar({
         >
           <div
             className={
-              "add-shape relative group flex flex-col justify-center items-center rounded-sm border-none w-10 h-10 p-1 transition-colors duration-50 hover:text-red-500 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none  disabled:pointer-events-auto disabled:opacity-50 max-sm:w-8 max-sm:h-8 max-sm:p-[2px]"
+              "eraser-canvas add-shape relative group flex flex-col justify-center items-center rounded-sm border-none w-10 h-10 p-1 transition-colors duration-50 hover:text-red-500 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none  disabled:pointer-events-auto disabled:opacity-50 max-sm:w-8 max-sm:h-8 max-sm:p-[2px]"
             }
           >
             <BsEraser

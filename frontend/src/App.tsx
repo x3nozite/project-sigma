@@ -59,6 +59,7 @@ import { useAutosaveCanvas } from "./services/autosaveCanvas";
 import Konva from "konva";
 import { useUndoRedo } from "./context/UndoRedo/UndoRedoHelper";
 import Toast from "./components/LoadingToast";
+import { useTour } from "@reactour/tour";
 
 function App() {
   const { init } = useIndexedDBInit();
@@ -84,7 +85,6 @@ function App() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [currentCanvasId, setCurrentCanvasId] = useState<string | null>(null);
   const [canvasList, setCanvasList] = useState<any[]>([]);
-  // const [canvasUsers, setCanvasUsers] = useState<CanvasUsers[]>([]);
   const { pushUndo, undo, redo } = useUndoRedo();
   const [showNameModal, setShowNameModal] = useState(false);
   const [newCanvasName, setNewCanvasName] = useState("");
@@ -97,12 +97,11 @@ function App() {
   // Tambah state ini
   const [hasShownLocalReminder, setHasShownLocalReminder] = useState(false);
   const [showLocalReminder, setShowLocalReminder] = useState(false);
-  // const [status, setStatus] = useState<CanvasStatus>("idle");
-  // const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [toast, setToast] = useState<{
     message: string;
     type: LoadingToastType;
   } | null>(null);
+  const { setIsOpen } = useTour();
 
   const showToast = (message: string, type: LoadingToastType) => {
     setToast({ message, type });
@@ -126,6 +125,12 @@ function App() {
 
   useEffect(() => {
     let mounted = true;
+
+    const tourCompleted = localStorage.getItem('tourCompleted');
+    if (tourCompleted !== 'true') {
+      setIsOpen(true);
+      localStorage.setItem('tourCompleted', 'true');
+    }
 
     (async () => {
       await init();
@@ -215,6 +220,7 @@ function App() {
         console.error("Failed to load user profile:", profileRes.error);
       }
     })();
+
 
     return () => {
       mounted = false;

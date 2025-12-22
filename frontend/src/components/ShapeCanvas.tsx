@@ -499,7 +499,7 @@ const ShapeCanvas = ({
   };
 
   return (
-    <>
+    <div className="canvas-wrapper" style={{ padding: 0, margin: 0 }}>
       <Stage
         width={window.innerWidth}
         height={window.innerHeight}
@@ -794,7 +794,7 @@ const ShapeCanvas = ({
           )}
         </Layer>
       </Stage>
-    </>
+    </div>
   );
 };
 

@@ -12,7 +12,10 @@ function AppRoot() {
   return (
     <SessionProvider>
       <UndoRedoProvider>
-        <TourProvider steps={TourSteps}>
+        <TourProvider
+          steps={TourSteps}
+          onClickMask={() => { }}
+        >
           <RouterProvider router={router} />
         </TourProvider>
       </UndoRedoProvider>

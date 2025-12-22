@@ -29,7 +29,7 @@ const TourSteps = [
   },
   {
     selector: '.canvas-wrapper',
-    content: 'This is your workspace. Start adding Tasks and Todos, connect them, and experiment with the tools you just learned! You can also check our \'How to use?\' section to learn more!'
+    content: 'This is your workspace. Add Tasks and Todos, connect them, and experiment with the tools!'
   }
 ]
 

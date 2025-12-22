@@ -59,6 +59,7 @@ import { useAutosaveCanvas } from "./services/autosaveCanvas";
 import Konva from "konva";
 import { useUndoRedo } from "./context/UndoRedo/UndoRedoHelper";
 import Toast from "./components/LoadingToast";
+import { useTour } from "@reactour/tour";
 
 function App() {
   const { init } = useIndexedDBInit();
@@ -84,7 +85,6 @@ function App() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [currentCanvasId, setCurrentCanvasId] = useState<string | null>(null);
   const [canvasList, setCanvasList] = useState<any[]>([]);
-  // const [canvasUsers, setCanvasUsers] = useState<CanvasUsers[]>([]);
   const { pushUndo, undo, redo } = useUndoRedo();
   const [showNameModal, setShowNameModal] = useState(false);
   const [newCanvasName, setNewCanvasName] = useState("");
@@ -97,12 +97,11 @@ function App() {
   // Tambah state ini
   const [hasShownLocalReminder, setHasShownLocalReminder] = useState(false);
   const [showLocalReminder, setShowLocalReminder] = useState(false);
-  // const [status, setStatus] = useState<CanvasStatus>("idle");
-  // const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [toast, setToast] = useState<{
     message: string;
     type: LoadingToastType;
   } | null>(null);
+  const { setIsOpen } = useTour();
 
   const showToast = (message: string, type: LoadingToastType) => {
     setToast({ message, type });
@@ -126,6 +125,12 @@ function App() {
 
   useEffect(() => {
     let mounted = true;
+
+    const tourCompleted = localStorage.getItem('tourCompleted');
+    if (tourCompleted !== 'true') {
+      setIsOpen(true);
+      localStorage.setItem('tourCompleted', 'true');
+    }
 
     (async () => {
       await init();
@@ -218,6 +223,7 @@ function App() {
         console.error("Failed to load user profile:", profileRes.error);
       }
     })();
+
 
     return () => {
       mounted = false;
@@ -1267,7 +1273,7 @@ function App() {
                                     </h2>
                                     <span>
                                       The <b>Select</b> tool allows you to
-                                      select and interact with objects on the
+                                      select, move, resize, or transform the objects on the
                                       canvas.
                                     </span>
                                   </div>
@@ -1276,7 +1282,8 @@ function App() {
                                     <h2 className="text-md font-bold">Hand</h2>
                                     <span>
                                       The <b>Hand</b> tool lets you pan around
-                                      the canvas without moving objects.
+                                      the canvas without moving objects. You can also
+                                      double-click the shapes to edit them.
                                     </span>
                                   </div>
 
@@ -1698,7 +1705,15 @@ function App() {
               <div className=" items-center z-10 bg-amber-100 border-2 border-amber-200 rounded-xl w-fit inline-flex">
                 <button
                   className="hover:bg-orange-200 active:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-l-lg h-full"
-                  onClick={() => setZoomValue(Math.max(zoomValue - 10, 10))}
+                  onClick={() => {
+                    if (zoomValue === 10) return;
+                    const screenCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+                    const oldScale = zoomValue / 100;
+                    const newScale = (zoomValue - 10) / 100;
+                    const worldCenter = { x: (screenCenter.x - stageCoor.x) / oldScale, y: (screenCenter.y - stageCoor.y) / oldScale }
+                    setStageCoor({ x: screenCenter.x - worldCenter.x * newScale, y: screenCenter.y - worldCenter.y * newScale })
+                    setZoomValue(Math.max(zoomValue - 10, 10));
+                  }}
                 >
                   <HiOutlineZoomOut />
                 </button>
@@ -1721,6 +1736,12 @@ function App() {
                 <button
                   className="hover:bg-orange-200 active:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-r-lg h-full"
                   onClick={() => {
+                    if (zoomValue === 500) return;
+                    const screenCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+                    const oldScale = zoomValue / 100;
+                    const newScale = (zoomValue + 10) / 100;
+                    const worldCenter = ({ x: (screenCenter.x - stageCoor.x) / oldScale, y: (screenCenter.y - stageCoor.y) / oldScale });
+                    setStageCoor({ x: screenCenter.x - worldCenter.x * newScale, y: screenCenter.y - worldCenter.y * newScale })
                     setZoomValue(Math.min(zoomValue + 10, 500));
                   }}
                 >

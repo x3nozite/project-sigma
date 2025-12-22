@@ -555,11 +555,12 @@ const ShapeCanvas = ({
         }}
         onPointerUp={() => {
           if (tool === "draw") {
-            handleStageMouseUp(strokeColor, setShapes);
+            const newLine = handleStageMouseUp(strokeColor, setShapes);
+            if (!newLine) return;
             pushUndo({
               action: "add",
-              before: shapes[shapes.length - 1],
-              after: shapes[shapes.length - 1],
+              before: newLine,
+              after: newLine
             });
           }
           if (tool === "eraser") handleEraseLinesMouseUp(setMouseHeldDown);

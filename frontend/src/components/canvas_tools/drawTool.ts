@@ -80,7 +80,8 @@ export function handleStageMouseUp(
   };
 
   setShapes((prev) => [...prev, newLine]);
-
   line.destroy();
   drawingLineRef.current = null;
+
+  return newLine
 }

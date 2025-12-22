@@ -37,6 +37,7 @@ import {
   HiOutlineGlobeAlt,
   HiOutlineX,
   HiOutlineInformationCircle,
+  HiAcademicCap,
 } from "react-icons/hi";
 import { HiMiniArrowUturnLeft, HiMiniArrowUturnRight } from "react-icons/hi2";
 import { FaGithub } from "react-icons/fa";
@@ -123,13 +124,28 @@ function App() {
     );
   });
 
+  // for resizing
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 639px)");
+
+    const update = () => setIsMobile(mq.matches);
+    update();
+
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+  const showMobileToolbar = toolVis && isMobile;
+  const showDekstopToolbar = toolVis && !isMobile;
+
   useEffect(() => {
     let mounted = true;
 
-    const tourCompleted = localStorage.getItem('tourCompleted');
-    if (tourCompleted !== 'true') {
+    const tourCompleted = localStorage.getItem("tourCompleted");
+    if (tourCompleted !== "true") {
       setIsOpen(true);
-      localStorage.setItem('tourCompleted', 'true');
+      localStorage.setItem("tourCompleted", "true");
     }
 
     (async () => {
@@ -163,7 +179,7 @@ function App() {
           // first session ever
           setConnectors([]);
           setShapes([]);
-          
+
           showToast("Create your first object!", "empty");
         }
 
@@ -224,11 +240,10 @@ function App() {
       }
     })();
 
-
     return () => {
       mounted = false;
     };
-  }, [init, session, currentCanvasId]);
+  }, [init, session, currentCanvasId, setIsOpen]);
 
   // async function getInstruments() {
   //   const { data } = await supabase.from("instruments").select();
@@ -314,11 +329,11 @@ function App() {
       x: parent
         ? parent.x + 400
         : (stageCoor.x * -1 + (window.innerWidth - 200) / 2) *
-        (100 / zoomValue),
+          (100 / zoomValue),
       y: parent
         ? parent.y
         : (stageCoor.y * -1 + (window.innerHeight - 200) / 2) *
-        (100 / zoomValue),
+          (100 / zoomValue),
       color: newFields.color, // default is green
       isCollapsed: false,
       scaleX: 1,
@@ -435,12 +450,12 @@ function App() {
       prev.map((r) =>
         r.id === shape.id
           ? {
-            ...r,
-            title: newData.title,
-            description: newData.description,
-            color: newData.color,
-            dueDate: newData.date,
-          }
+              ...r,
+              title: newData.title,
+              description: newData.description,
+              color: newData.color,
+              dueDate: newData.date,
+            }
           : r
       )
     );
@@ -451,12 +466,12 @@ function App() {
       prev.map((t) =>
         t.id === shape.id
           ? {
-            ...t,
-            title: newData.title,
-            dueDate: newData.date,
-            completed: newData.completed,
-            color: newData.color,
-          }
+              ...t,
+              title: newData.title,
+              dueDate: newData.date,
+              completed: newData.completed,
+              color: newData.color,
+            }
           : t
       )
     );
@@ -788,9 +803,10 @@ function App() {
                                       className={`
                                         flex items-center justify-between p-4 rounded-lg border-2 
                                         transition-all
-                                        ${currentCanvasId === canvas.canvas_id
-                                          ? "bg-blue-100 border-blue-400"
-                                          : "bg-gray-50 border-gray-200"
+                                        ${
+                                          currentCanvasId === canvas.canvas_id
+                                            ? "bg-blue-100 border-blue-400"
+                                            : "bg-gray-50 border-gray-200"
                                         }
                                       `}
                                     >
@@ -809,7 +825,7 @@ function App() {
                                         <HiOutlineFolder className="w-5 h-5 text-blue-600" />
                                         <div className="flex-1">
                                           {editingCanvasId ===
-                                            canvas.canvas_id ? (
+                                          canvas.canvas_id ? (
                                             <input
                                               type="text"
                                               value={editingCanvasName}
@@ -856,13 +872,13 @@ function App() {
                                       <div className="flex items-center gap-2">
                                         {currentCanvasId ===
                                           canvas.canvas_id && (
-                                            <span className="text-xs text-blue-600 font-medium mr-2">
-                                              Current
-                                            </span>
-                                          )}
+                                          <span className="text-xs text-blue-600 font-medium mr-2">
+                                            Current
+                                          </span>
+                                        )}
 
                                         {editingCanvasId ===
-                                          canvas.canvas_id ? (
+                                        canvas.canvas_id ? (
                                           <>
                                             <button
                                               onClick={(e) => {
@@ -1008,6 +1024,15 @@ function App() {
                         Feedback & Support
                       </div>
                     </a>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item className="py-1 pl-2  hover:bg-sky-200 rounded-lg hover:text-blue-700">
+                    <div
+                      onClick={() => setIsOpen(true)}
+                      className="flex items-center gap-2"
+                    >
+                      <HiAcademicCap />
+                      Redo Tutorial
+                    </div>
                   </DropdownMenu.Item>
                   <DropdownMenu.Item
                     onSelect={(event: Event) => event.preventDefault()}
@@ -1273,8 +1298,8 @@ function App() {
                                     </h2>
                                     <span>
                                       The <b>Select</b> tool allows you to
-                                      select, move, resize, or transform the objects on the
-                                      canvas.
+                                      select, move, resize, or transform the
+                                      objects on the canvas.
                                     </span>
                                   </div>
 
@@ -1282,8 +1307,8 @@ function App() {
                                     <h2 className="text-md font-bold">Hand</h2>
                                     <span>
                                       The <b>Hand</b> tool lets you pan around
-                                      the canvas without moving objects. You can also
-                                      double-click the shapes to edit them.
+                                      the canvas without moving objects. You can
+                                      also double-click the shapes to edit them.
                                     </span>
                                   </div>
 
@@ -1429,28 +1454,22 @@ function App() {
               </DropdownMenu.Portal>
             </DropdownMenu.Root>
           </div>
-          <div className="tool-bar absolute left-1/2 transform -translate-x-1/2 hidden sm:flex">
-            {/* <BottomNav
-              onShapeClick={openForm}
-              onEraserClick={toggleEraser}
-              onClearClick={clearCanvas}
-              onDrawClick={togglePencil}
-              onColorSelect={setStrokeColor}
-              isActive={tool === "eraser" || tool === "draw"}
-            /> */}
-            {toolVis && (
-              <AppToolbar
-                onShapeClick={() => openForm(null)}
-                onTodoClick={() => openTodoForm(null, null)}
-                onTextClick={addText}
-                onEraserClick={toggleEraser}
-                onClearClick={clearCanvas}
-                onDrawClick={togglePencil}
-                onSelectClick={toggleSelect}
-                isActive={tool === "eraser" || tool === "draw"}
-                tool={tool}
-                setTool={setTool}
-              />
+          <div className="tool-bar-desk absolute left-1/2 transform -translate-x-1/2 hidden sm:flex">
+            {showDekstopToolbar && (
+              <div className="tool-bar">
+                <AppToolbar
+                  onShapeClick={() => openForm(null)}
+                  onTodoClick={() => openTodoForm(null, null)}
+                  onTextClick={addText}
+                  onEraserClick={toggleEraser}
+                  onClearClick={clearCanvas}
+                  onDrawClick={togglePencil}
+                  onSelectClick={toggleSelect}
+                  isActive={tool === "eraser" || tool === "draw"}
+                  tool={tool}
+                  setTool={setTool}
+                />
+              </div>
             )}
           </div>
           <div className="user-account">
@@ -1707,11 +1726,20 @@ function App() {
                   className="hover:bg-orange-200 active:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-l-lg h-full"
                   onClick={() => {
                     if (zoomValue === 10) return;
-                    const screenCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+                    const screenCenter = {
+                      x: window.innerWidth / 2,
+                      y: window.innerHeight / 2,
+                    };
                     const oldScale = zoomValue / 100;
                     const newScale = (zoomValue - 10) / 100;
-                    const worldCenter = { x: (screenCenter.x - stageCoor.x) / oldScale, y: (screenCenter.y - stageCoor.y) / oldScale }
-                    setStageCoor({ x: screenCenter.x - worldCenter.x * newScale, y: screenCenter.y - worldCenter.y * newScale })
+                    const worldCenter = {
+                      x: (screenCenter.x - stageCoor.x) / oldScale,
+                      y: (screenCenter.y - stageCoor.y) / oldScale,
+                    };
+                    setStageCoor({
+                      x: screenCenter.x - worldCenter.x * newScale,
+                      y: screenCenter.y - worldCenter.y * newScale,
+                    });
                     setZoomValue(Math.max(zoomValue - 10, 10));
                   }}
                 >
@@ -1719,12 +1747,20 @@ function App() {
                 </button>
                 <button
                   onClick={() => {
-                    const screenCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+                    const screenCenter = {
+                      x: window.innerWidth / 2,
+                      y: window.innerHeight / 2,
+                    };
                     const scale = zoomValue / 100;
-                    const worldCenter = ({ x: (screenCenter.x - stageCoor.x) / scale * -1, y: (screenCenter.y - stageCoor.y) / scale * -1 });
+                    const worldCenter = {
+                      x: ((screenCenter.x - stageCoor.x) / scale) * -1,
+                      y: ((screenCenter.y - stageCoor.y) / scale) * -1,
+                    };
                     setZoomValue(100);
-                    setStageCoor({ x: worldCenter.x + (window.innerWidth / 2), y: worldCenter.y + (window.innerHeight / 2) });
-
+                    setStageCoor({
+                      x: worldCenter.x + window.innerWidth / 2,
+                      y: worldCenter.y + window.innerHeight / 2,
+                    });
                   }}
                   className="relative w-20 py-2 hover:cursor-pointer text-center group"
                 >
@@ -1737,11 +1773,20 @@ function App() {
                   className="hover:bg-orange-200 active:bg-orange-200 hover:cursor-pointer p-2 sm:px-4 sm:py-2 rounded-r-lg h-full"
                   onClick={() => {
                     if (zoomValue === 500) return;
-                    const screenCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+                    const screenCenter = {
+                      x: window.innerWidth / 2,
+                      y: window.innerHeight / 2,
+                    };
                     const oldScale = zoomValue / 100;
                     const newScale = (zoomValue + 10) / 100;
-                    const worldCenter = ({ x: (screenCenter.x - stageCoor.x) / oldScale, y: (screenCenter.y - stageCoor.y) / oldScale });
-                    setStageCoor({ x: screenCenter.x - worldCenter.x * newScale, y: screenCenter.y - worldCenter.y * newScale })
+                    const worldCenter = {
+                      x: (screenCenter.x - stageCoor.x) / oldScale,
+                      y: (screenCenter.y - stageCoor.y) / oldScale,
+                    };
+                    setStageCoor({
+                      x: screenCenter.x - worldCenter.x * newScale,
+                      y: screenCenter.y - worldCenter.y * newScale,
+                    });
                     setZoomValue(Math.min(zoomValue + 10, 500));
                   }}
                 >
@@ -1781,20 +1826,22 @@ function App() {
               </button>
             </div>
           </div>
-          <div className="toolbar-mob  flex sm:hidden z-100 w-full  justify-center  ">
-            {toolVis && (
-              <AppToolbar
-                onShapeClick={() => openForm(null)}
-                onTodoClick={() => openTodoForm(null, null)}
-                onTextClick={addText}
-                onEraserClick={toggleEraser}
-                onClearClick={clearCanvas}
-                onDrawClick={togglePencil}
-                onSelectClick={toggleSelect}
-                isActive={tool === "eraser" || tool === "draw"}
-                tool={tool}
-                setTool={setTool}
-              />
+          <div className="tool-bar-mob  sm:hidden   ">
+            {showMobileToolbar && (
+              <div className="tool-bar flex z-100 w-full  justify-center">
+                <AppToolbar
+                  onShapeClick={() => openForm(null)}
+                  onTodoClick={() => openTodoForm(null, null)}
+                  onTextClick={addText}
+                  onEraserClick={toggleEraser}
+                  onClearClick={clearCanvas}
+                  onDrawClick={togglePencil}
+                  onSelectClick={toggleSelect}
+                  isActive={tool === "eraser" || tool === "draw"}
+                  tool={tool}
+                  setTool={setTool}
+                />
+              </div>
             )}
           </div>
         </div>

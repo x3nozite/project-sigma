@@ -1456,7 +1456,7 @@ function App() {
           </div>
           <div className="tool-bar-desk absolute left-1/2 transform -translate-x-1/2 hidden sm:flex">
             {showDekstopToolbar && (
-              <div className="tool-bar">
+              <div className="tool-bar z-100">
                 <AppToolbar
                   onShapeClick={() => openForm(null)}
                   onTodoClick={() => openTodoForm(null, null)}
@@ -1826,9 +1826,9 @@ function App() {
               </button>
             </div>
           </div>
-          <div className="tool-bar-mob  sm:hidden   ">
+          <div className="tool-bar-mob  z-100 sm:hidden   ">
             {showMobileToolbar && (
-              <div className="tool-bar flex z-100 w-full  justify-center">
+              <div className="tool-bar flex  w-full  justify-center">
                 <AppToolbar
                   onShapeClick={() => openForm(null)}
                   onTodoClick={() => openTodoForm(null, null)}

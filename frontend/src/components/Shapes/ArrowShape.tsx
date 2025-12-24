@@ -7,9 +7,10 @@ import { getConnectorPoints } from "../utilities/ArrowFunction"
 interface Props {
   connector: ArrowType,
   mainLayer: React.RefObject<Konva.Layer | null>,
+  eraseConnector: (id: string) => void;
 }
 
-const ArrowShape = ({ connector, mainLayer }: Props) => {
+const ArrowShape = ({ connector, mainLayer, eraseConnector }: Props) => {
   const [points, setPoints] = useState<number[]>([]);
 
   useEffect(() => {
@@ -35,6 +36,8 @@ const ArrowShape = ({ connector, mainLayer }: Props) => {
       points={points}
       fill="black"
       stroke="black"
+      onClick={() => eraseConnector(connector.id)}
+      hitStrokeWidth={30}
     />
   );
 };

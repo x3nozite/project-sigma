@@ -5,10 +5,11 @@ import ArrowShape from "./Shapes/ArrowShape";
 interface Props {
   connectors: ArrowType[],
   mainLayer: React.RefObject<Konva.Layer | null>,
+  eraseConnector: (id: string) => void;
 }
 
 
-const ArrowLayer = ({ connectors, mainLayer }: Props) => {
+const ArrowLayer = ({ connectors, mainLayer, eraseConnector }: Props) => {
 
   return (
     <>
@@ -18,6 +19,7 @@ const ArrowLayer = ({ connectors, mainLayer }: Props) => {
             key={connector.id}
             connector={connector}
             mainLayer={mainLayer}
+            eraseConnector={eraseConnector}
           />
         )
       })}

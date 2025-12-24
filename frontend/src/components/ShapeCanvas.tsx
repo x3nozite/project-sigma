@@ -453,6 +453,7 @@ const ShapeCanvas = ({
   const handleEraserClick = (shapeId: string) => {
     if (tool === "eraser") {
       const groupId = crypto.randomUUID();
+
       connectors.forEach((connector) => {
         if (
           connector.to === "group-" + shapeId ||
@@ -497,6 +498,32 @@ const ShapeCanvas = ({
 
     return border;
   };
+
+  const eraseConnector = (id: string) => {
+    if (tool !== "eraser") return;
+    const connector = connectors.find(c => c.id === id);
+    if (!connector) return;
+    const groupId = crypto.randomUUID();
+    setConnectors(prev => prev.filter(c => c.id !== id));
+    pushUndo({
+      id: groupId,
+      before: connector,
+      after: connector,
+      action: "delete",
+    });
+    setShapes(prev =>
+      prev.map(shape => {
+        if (shape.shape !== "todo" && shape.shape !== "rect") return shape;
+        if (shape.shape === "rect" && "group-" + shape.id === connector.to) {
+          return { ...shape, children: shape.children.filter(child => child !== connector.from) }
+        }
+        else if ("group-" + shape.id === connector.from) {
+          return { ...shape, parents: (shape.parents === connector.to) ? "" : shape.parents }
+        }
+        return shape;
+      })
+    )
+  }
 
   return (
     <div className="canvas-wrapper" style={{ padding: 0, margin: 0 }}>
@@ -654,7 +681,7 @@ const ShapeCanvas = ({
           />
         </Layer>
         <Layer ref={arrowLayer}>
-          <ArrowLayer connectors={connectors} mainLayer={mainLayer} />
+          <ArrowLayer connectors={connectors} mainLayer={mainLayer} eraseConnector={eraseConnector} />
         </Layer>
 
         <Layer ref={mainLayer}>

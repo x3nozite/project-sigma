@@ -135,19 +135,16 @@ export function UndoRedoProvider({ children }: { children: ReactNode }) {
           setConnectors(prev => prev.filter(c => c.id !== element.id));
           setShapes(prev =>
             prev.map(shape => {
-              if (shape.shape !== "rect" && shape.shape !== "todo") return shape;
+              if (shape.shape === "todo") {
+                return { ...shape, parents: (shape.parents === element.to) ? "" : shape.parents }
+              };
+              if (shape.shape !== "rect") return shape;
+              return {
+                ...shape,
+                children: shape.children.filter(child => child !== element.from),
+                parents: (shape.parents === element.to) ? "" : shape.parents
+              };
 
-              // remove child reference if it was in children
-              if (shape.shape === "rect" && shape.children.includes(element.to)) {
-                return { ...shape, children: shape.children.filter(c => c !== element.to) };
-              }
-
-              // remove parent reference if it was pointing to from
-              if (shape.parents === element.from) {
-                return { ...shape, parents: "" };
-              }
-
-              return shape;
             })
           );
         } else {

@@ -2,6 +2,7 @@ import Konva from "konva";
 import type { Vector2d } from "konva/lib/types";
 import type { RefObject } from "react";
 import type { ShapeType, UndoEntry } from "../types";
+import type { Stage } from "konva/lib/Stage";
 
 export function handleDragStart(
   e: Konva.KonvaEventObject<DragEvent>,
@@ -165,4 +166,14 @@ export function handleStageDragEnd(
   //   })
   //   arrowLayer.current?.batchDraw();
   // }
+}
+
+export function handleDragWithSwipe(stage: RefObject<Stage | null>, e: Konva.KonvaEventObject<WheelEvent>) {
+  if (e.evt.ctrlKey) return;
+  if (!stage.current) return;
+  const dx = e.evt.deltaX;
+  const dy = e.evt.deltaY;
+  stage.current.position({ x: stage.current.x() - dx, y: stage.current.y() - dy });
+
+  stage.current.batchDraw();
 }

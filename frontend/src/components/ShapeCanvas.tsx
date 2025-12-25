@@ -16,6 +16,7 @@ import {
   handleDragStart,
   handleDragMove,
   handleDragEnd,
+  handleDragWithSwipe,
 } from "./utilities/DragHandler";
 import { arrowMovement } from "./utilities/ArrowFunction.ts";
 import RectLayer from "./RectLayer";
@@ -537,6 +538,7 @@ const ShapeCanvas = ({
         onWheel={(e) => {
           handleZoomWithScroll(stageRef, e, setZoomValue);
           if (!stageRef.current) return;
+          handleDragWithSwipe(stageRef, e);
           setStageCoor({ x: stageRef.current.x(), y: stageRef.current.y() });
         }}
         onPointerDown={(e) => {

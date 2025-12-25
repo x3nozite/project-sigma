@@ -44,18 +44,18 @@ export default function TaskForm({
     defaultValues:
       initialData && initialData.behavior === "node"
         ? {
-            title: initialData.title,
-            description: initialData.description,
-            date: initialData.dueDate,
-            time: "09:11",
-            color: initialData.color,
-          }
+          title: initialData.title,
+          description: initialData.description,
+          date: initialData.dueDate,
+          time: "09:11",
+          color: initialData.color,
+        }
         : {
-            title: "My New Subject",
-            // description: "abcedfghijkl",
-            date: formattedToday,
-            time: "06:07",
-          },
+          title: "My New Subject",
+          // description: "abcedfghijkl",
+          date: formattedToday,
+          time: "06:07",
+        },
     resolver: zodResolver(schema),
   });
 
@@ -116,6 +116,7 @@ export default function TaskForm({
               <div className="text-red-500">{errors.title?.message}</div>
             )}
             <button
+              type="button"
               onClick={onCloseForm}
               className="hidden md:block hover:cursor-pointer p-2 h-full"
             >
@@ -199,6 +200,7 @@ export default function TaskForm({
 
           <div className="flex flex-row justify-between gap-2 w-full h-full">
             <button
+              type="button"
               className="border py-2.5 px-5 h-fit border-red-500 font-medium text-red-500 bg-red-50 rounded-lg hover:bg-red-500 hover:text-white hover:cursor-pointer"
               onClick={onCloseForm}
             >

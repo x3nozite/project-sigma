@@ -54,17 +54,17 @@ export default function TodoForm({
   } = useForm<todoFields>({
     defaultValues: isEditing
       ? {
-          title: initialTodo.title,
-          date: formatted,
-          completed: initialTodo.completed,
-          color: initialTodo.color,
-        }
+        title: initialTodo.title,
+        date: formatted,
+        completed: initialTodo.completed,
+        color: initialTodo.color,
+      }
       : {
-          title: "My Newest Todo",
-          date: formatted,
-          completed: false,
-          color: parent?.color,
-        },
+        title: "My Newest Todo",
+        date: formatted,
+        completed: false,
+        color: parent?.color,
+      },
 
     resolver: zodResolver(schema),
   });
@@ -209,6 +209,7 @@ export default function TodoForm({
           </div>
           <div className="flex flex-row w-full justify-start gap-5 items-center h-fit">
             <button
+              type="button"
               className="py-1 px-2 bg-red-200 border-2 rounded-md border-red-300"
               onClick={onCloseForm}
             >

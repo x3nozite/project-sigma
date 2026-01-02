@@ -171,9 +171,8 @@ export function handleStageDragEnd(
 export function handleDragWithSwipe(stage: RefObject<Stage | null>, e: Konva.KonvaEventObject<WheelEvent>) {
   if (e.evt.ctrlKey) return;
   if (!stage.current) return;
+  e.evt.preventDefault();
   const dx = e.evt.deltaX;
   const dy = e.evt.deltaY;
   stage.current.position({ x: stage.current.x() - dx, y: stage.current.y() - dy });
-
-  stage.current.batchDraw();
 }

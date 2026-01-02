@@ -112,6 +112,7 @@ const ShapeCanvas = ({
   const [isEditingText, setIsEditingText] = useState(false);
   const nodeMap = useRef(new Map<string, Konva.Node>());
   const [shapeDraggable, setShapeDraggable] = useState<boolean>(true);
+  const wheelEndTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
     if (!mainLayer.current) return;
@@ -526,6 +527,14 @@ const ShapeCanvas = ({
     )
   }
 
+  const updateStageAfterWheelEvent = () => {
+    clearTimeout(wheelEndTimeout.current);
+    wheelEndTimeout.current = setTimeout(() => {
+      if (!stageRef.current) return;
+      setStageCoor({ x: stageRef.current.x(), y: stageRef.current.y() });
+    }, 100)
+  }
+
   return (
     <div className="canvas-wrapper" style={{ padding: 0, margin: 0 }}>
       <Stage
@@ -539,7 +548,7 @@ const ShapeCanvas = ({
           handleZoomWithScroll(stageRef, e, setZoomValue);
           if (!stageRef.current) return;
           handleDragWithSwipe(stageRef, e);
-          setStageCoor({ x: stageRef.current.x(), y: stageRef.current.y() });
+          updateStageAfterWheelEvent();
         }}
         onPointerDown={(e) => {
           if (tool === "draw")
